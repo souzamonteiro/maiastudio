@@ -1,0 +1,11 @@
+a = 1
+b = 2.5
+c = "Hello, World!"
+e = 2.123
+f = {
+     "v1": 1,
+     "v2": 2
+}
+
+system.println(string.sprintf("a = %4d, b = %.2f, c = %s", a, b, c))
+system.printf("e = %.2f, f = %j", e, f)

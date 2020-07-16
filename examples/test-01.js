@@ -1,0 +1,1 @@
+a={"var1": "value 1","var2": "value 2","var3": "value 3","var4": "value 4"};system.showMessageDialog(core.toString(a));

@@ -1,0 +1,16 @@
+// Namespace test.
+namespace a {
+    x = 1
+    function b (c) {
+        system.showMessageDialog(c)
+    }
+    function d (e) {
+        system.showMessageDialog(e)
+    }
+}
+a.b("Hello, World!")
+a.d("Ok!")
+a.b(a.x)
+e = a
+e.x = 2
+e.b(e.x)

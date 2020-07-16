@@ -1,0 +1,364 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "statement": {
+                    "function": {
+                        "TOKEN": [
+                            "function",
+                            "(",
+                            ")",
+                            "{",
+                            "}"
+                        ],
+                        "identifier": "showMessage",
+                        "expression": {
+                            "operation": {
+                                "primary": {
+                                    "member": {
+                                        "identifier": [
+                                            "system",
+                                            "showMessageDialog"
+                                        ],
+                                        "TOKEN": [
+                                            ".",
+                                            "(",
+                                            ")"
+                                        ],
+                                        "arguments": {
+                                            "expression": {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "string": "\"Hello, World!\""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "html"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "string": "\"data:text/html;charset=utf-8,\""
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "html"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "html"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"<html>\""
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "+"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "html"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "html"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"<head><title>Hello</title></head>\""
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "+"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "html"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "html"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"<body>\""
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "+"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "html"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "html"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"<button id='clickMe' onclick='window.parent.opener.showMessage()'>Click me!</button>\""
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "+"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "html"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "html"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"<button id='closeWindow' onclick='window.close()'>Close me!</button>\""
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "+"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "html"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "html"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"</body>\""
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "+"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "html"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "html"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"</html>\""
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "+"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "win"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "window",
+                                        "open"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": [
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "member": {
+                                                            "identifier": "html"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "string": "\"_blank\""
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "string": "\"width=640, height=480\""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": [
+                                            ",",
+                                            ","
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            }
+        ]
+    }
+}

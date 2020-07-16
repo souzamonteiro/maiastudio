@@ -1,0 +1,59 @@
+namespace a {1}
+function a (b) {1}
+if (a) {1}
+if (a) {1} elseif (b) {2}
+if (a) {1} elseif (b) {2} elseif (c) {3} else {4}
+do {1} while (a)
+while (a) {1}
+for (a;b;c) {1}
+foreach (a;b;c) {1}
+try {1}
+try {1} catch (a) {b}
+test () {}
+test (a) {1}
+test (a;b) {1}
+test (a;b;c) {1}
+test (a;b;c) {1} catch (d) {2}
+break
+continue
+return ()
+return (1)
+throw ()
+throw (1)
+import (a)
+require (a)
+a=1
+1||2
+1&&2
+1|2
+1`2
+1&2
+a==1
+a!=1
+a<1
+a>1
+a<=1
+a>=1
+a<<1
+a>>1
+a+1
+a-1
+a^1
+a*1
+a/1
+a%1
+~a
+!a
+a
+a.b
+a(1,2)
+a[3,4]
+1
+1.0
+1.0+2.0*i
+"Test"
+{1,2}
+{"a":1,"b":2}
+[1,2]
+(1)
+// This file tests all MaiaScript tokens.

@@ -1,0 +1,39 @@
+MaiaStudio (The MaiaScript IDE), version 1.0.0
+
+Copyright (C) 2020 Roberto Luiz Souza Monteiro,
+                   Renata Souza Barreto,
+                   Hernane Borges de Barros Pereira.
+
+This software is distributed under the terms of several open sources licenses.
+
+Please read the files LICENSE, COPYING or COPYING.LIB for further information.
+
+guash is an interpreter that implements the GuaraScript programming language.
+
+MaiaScript is a programming language aimed at developing adaptable and
+intelligent applications. An adaptive application modifies its code to
+suit the conditions of the environment. An intelligent application,
+it learns to process the data it receives and adjusts to possible changes
+in its characteristics, over time. The MaiaScript language implements the
+adaptation paradigm, combining it with a variation of the object-oriented
+paradigm, simplified to exclude definitions of types and access restrictions.
+These characteristics make MaiaScript a programming language suitable for
+rapid learning, both by Computer Science professionals and scientists who
+are starting to implement computational algorithms. The characteristics of
+this language, also allow the rapid development of complex applications,
+especially when adaptability is necessary. MaiaScript also presents a syntax
+similar to that used in Mathematics, including libraries for Numerical Calculation,
+Complex Network Analysis, Database Access, Regular Expression Processing, and an
+abstraction layer between the MaiaScript interpreter and the underlying Operating System.
+
+The complete documentation, including the EBNF grammar file and the compiler's
+syntax diagrams (railroad diagrams) can be found in the grammar directory.
+For more information send mail to: support@maiascript.com
+
+You can get the last MaiaStudio version at
+http://www.maiascript.com
+
+Lauro de Freitas, July 2020.
+
+Roberto Luiz Souza Monteiro
+

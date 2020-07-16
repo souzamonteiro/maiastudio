@@ -1,0 +1,26 @@
+// One line comment.
+a = 1
+b = 1
+c = 0
+d = a && b
+e = a || c
+f = a ` b
+g = a > b
+h = a < b
+i = a >= b
+j = a <= b
+k = !a & b
+l = ~a | b
+
+system.println(a)
+system.println(b)
+system.println(c)
+system.println(d)
+system.println(e)
+system.println(f)
+system.println(g)
+system.println(h)
+system.println(i)
+system.println(j)
+system.println(k)
+system.println(l)
