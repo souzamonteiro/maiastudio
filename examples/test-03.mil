@@ -1,0 +1,1775 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "a"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "matrix": {
+                                        "TOKEN": [
+                                            "[",
+                                            ";",
+                                            ";",
+                                            "]"
+                                        ],
+                                        "row": [
+                                            {
+                                                "column": [
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "1"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "0"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "0"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ","
+                                                ]
+                                            },
+                                            {
+                                                "column": [
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "0"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "1"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "0"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ","
+                                                ]
+                                            },
+                                            {
+                                                "column": [
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "0"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "0"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "1"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ","
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "b"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "matrix": {
+                                        "TOKEN": [
+                                            "[",
+                                            ";",
+                                            ";",
+                                            "]"
+                                        ],
+                                        "row": [
+                                            {
+                                                "column": [
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "1"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "2"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "3"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ","
+                                                ]
+                                            },
+                                            {
+                                                "column": [
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "4"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "5"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "6"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ","
+                                                ]
+                                            },
+                                            {
+                                                "column": [
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "7"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "8"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "9"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ","
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "c"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "matrix": {
+                                        "TOKEN": [
+                                            "[",
+                                            ";",
+                                            ";",
+                                            "]"
+                                        ],
+                                        "row": [
+                                            {
+                                                "column": [
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "2"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "3"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "-1"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ","
+                                                ]
+                                            },
+                                            {
+                                                "column": [
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "4"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "4"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "-3"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ","
+                                                ]
+                                            },
+                                            {
+                                                "column": [
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "2"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "-3"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "real": "1"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ","
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "d"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "core",
+                                        "matrix"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": [
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "real": "0"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "real": "1"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "real": "3"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": [
+                                            ",",
+                                            ","
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "e"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "core",
+                                        "matrix"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": [
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "real": "0"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "real": "3"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "real": "3"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": [
+                                            ",",
+                                            ","
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "avg"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "matrix",
+                                        "avg"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": "b"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"avg(b) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "avg",
+                                                            "avg"
+                                                        ],
+                                                        "TOKEN": "."
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\", dev(b) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "avg",
+                                                            "dev"
+                                                        ],
+                                                        "TOKEN": "."
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": [
+                                            "+",
+                                            "+",
+                                            "+"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"count(a) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "matrix",
+                                                            "count"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": "a"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"max(b) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "matrix",
+                                                            "max"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": "b"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"min(b) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "matrix",
+                                                            "min"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": "b"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"trans(b) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "matrix",
+                                                                                "trans"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "member": {
+                                                                                                "identifier": "b"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"det(c) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "det"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": "c"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"diag(c) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "core",
+                                                                                "diag"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "member": {
+                                                                                                "identifier": "c"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"triang(c) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "matrix",
+                                                                                "triang"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "member": {
+                                                                                                "identifier": "c"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"cross([1,2,3], [4,5,6]) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "matrix",
+                                                                                "cross"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": [
+                                                                                    {
+                                                                                        "operation": {
+                                                                                            "primary": {
+                                                                                                "value": {
+                                                                                                    "matrix": {
+                                                                                                        "TOKEN": [
+                                                                                                            "[",
+                                                                                                            "]"
+                                                                                                        ],
+                                                                                                        "row": {
+                                                                                                            "column": [
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "1"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "2"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "3"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            ],
+                                                                                                            "TOKEN": [
+                                                                                                                ",",
+                                                                                                                ","
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    {
+                                                                                        "operation": {
+                                                                                            "primary": {
+                                                                                                "value": {
+                                                                                                    "matrix": {
+                                                                                                        "TOKEN": [
+                                                                                                            "[",
+                                                                                                            "]"
+                                                                                                        ],
+                                                                                                        "row": {
+                                                                                                            "column": [
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "4"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "5"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "6"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            ],
+                                                                                                            "TOKEN": [
+                                                                                                                ",",
+                                                                                                                ","
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                ],
+                                                                                "TOKEN": ","
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"dot([1,2,5], [2,-7,12]) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "matrix",
+                                                                                "dot"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": [
+                                                                                    {
+                                                                                        "operation": {
+                                                                                            "primary": {
+                                                                                                "value": {
+                                                                                                    "matrix": {
+                                                                                                        "TOKEN": [
+                                                                                                            "[",
+                                                                                                            "]"
+                                                                                                        ],
+                                                                                                        "row": {
+                                                                                                            "column": [
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "1"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "2"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "5"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            ],
+                                                                                                            "TOKEN": [
+                                                                                                                ",",
+                                                                                                                ","
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    {
+                                                                                        "operation": {
+                                                                                            "primary": {
+                                                                                                "value": {
+                                                                                                    "matrix": {
+                                                                                                        "TOKEN": [
+                                                                                                            "[",
+                                                                                                            "]"
+                                                                                                        ],
+                                                                                                        "row": {
+                                                                                                            "column": [
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "2"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "-7"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "expression": {
+                                                                                                                        "operation": {
+                                                                                                                            "primary": {
+                                                                                                                                "value": {
+                                                                                                                                    "real": "12"
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            ],
+                                                                                                            "TOKEN": [
+                                                                                                                ",",
+                                                                                                                ","
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                ],
+                                                                                "TOKEN": ","
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"dim([1,2,3]) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "core",
+                                                                                "dim"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "matrix": {
+                                                                                                    "TOKEN": [
+                                                                                                        "[",
+                                                                                                        "]"
+                                                                                                    ],
+                                                                                                    "row": {
+                                                                                                        "column": [
+                                                                                                            {
+                                                                                                                "expression": {
+                                                                                                                    "operation": {
+                                                                                                                        "primary": {
+                                                                                                                            "value": {
+                                                                                                                                "real": "1"
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            },
+                                                                                                            {
+                                                                                                                "expression": {
+                                                                                                                    "operation": {
+                                                                                                                        "primary": {
+                                                                                                                            "value": {
+                                                                                                                                "real": "2"
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            },
+                                                                                                            {
+                                                                                                                "expression": {
+                                                                                                                    "operation": {
+                                                                                                                        "primary": {
+                                                                                                                            "value": {
+                                                                                                                                "real": "3"
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            }
+                                                                                                        ],
+                                                                                                        "TOKEN": [
+                                                                                                            ",",
+                                                                                                            ","
+                                                                                                        ]
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"d = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": "d"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"e = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": "e"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

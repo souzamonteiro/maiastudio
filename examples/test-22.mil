@@ -1,0 +1,395 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "date"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "core",
+                                        "date"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "date",
+                                                    "getFullYear"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "date",
+                                                    "getMonth"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "date",
+                                                    "getDay"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "date",
+                                                    "getDate"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "date",
+                                                    "getHours"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "date",
+                                                    "getMinutes"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "date",
+                                                    "getSeconds"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "date",
+                                                    "getMilliseconds"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "date",
+                                                    "getTime"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "Date",
+                                                    "now"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

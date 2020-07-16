@@ -1,0 +1,282 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "a"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "real": "1"
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "b"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "real": "2.5"
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "c"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "string": "\"Hello, World!\""
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "e"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "real": "2.123"
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "f"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "array": {
+                                        "TOKEN": [
+                                            "{",
+                                            ",",
+                                            "}"
+                                        ],
+                                        "element": [
+                                            {
+                                                "key": {
+                                                    "string": "\"v1\""
+                                                },
+                                                "TOKEN": ":",
+                                                "expression": {
+                                                    "operation": {
+                                                        "primary": {
+                                                            "value": {
+                                                                "real": "1"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "key": {
+                                                    "string": "\"v2\""
+                                                },
+                                                "TOKEN": ":",
+                                                "expression": {
+                                                    "operation": {
+                                                        "primary": {
+                                                            "value": {
+                                                                "real": "2"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "string",
+                                                    "sprintf"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ],
+                                                "arguments": {
+                                                    "expression": [
+                                                        {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "value": {
+                                                                        "string": "\"a = %4d, b = %.2f, c = %s\""
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "member": {
+                                                                        "identifier": "a"
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "member": {
+                                                                        "identifier": "b"
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "member": {
+                                                                        "identifier": "c"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    ],
+                                                    "TOKEN": [
+                                                        ",",
+                                                        ",",
+                                                        ","
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "printf"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": [
+                                    {
+                                        "operation": {
+                                            "primary": {
+                                                "value": {
+                                                    "string": "\"e = %.2f, f = %j\""
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "operation": {
+                                            "primary": {
+                                                "member": {
+                                                    "identifier": "e"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "operation": {
+                                            "primary": {
+                                                "member": {
+                                                    "identifier": "f"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ],
+                                "TOKEN": [
+                                    ",",
+                                    ","
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

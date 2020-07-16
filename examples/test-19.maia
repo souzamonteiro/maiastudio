@@ -1,0 +1,25 @@
+a = [1,2;3,4]
+b = [5,6;7,8]
+c = 1+2*i
+d = 3+4*i
+
+system.println("a + b = " + core.toString(a + b))
+system.println("a - b = " + core.toString(a - b))
+system.println("a * b = " + core.toString(a * b))
+system.println("a * 2 = " + core.toString(a * 2))
+system.println("2 * b = " + core.toString(2 * b))
+system.println("a ^ 2 = " + core.toString(a ^ 2))
+system.println("a ^ -1 = " + core.toString(a ^ -1))
+system.println("core.det(a) = " + core.det(a))
+system.println("core.diag(a) = " + core.diag(a))
+system.println("c + d = " + core.toString(c + d))
+system.println("c - d = " + core.toString(c - d))
+system.println("c + 2 = " + core.toString(c + 2))
+system.println("2 + d = " + core.toString(2 + d))
+system.println("c - 2 = " + core.toString(c - 2))
+system.println("2 - d = " + core.toString(2 - d))
+system.println("c ^ 2 = " + core.toString(c ^ 2))
+system.println("c * d = " + core.toString(c * d))
+system.println("c * 2 = " + core.toString(c * 2))
+system.println("2 * d = " + core.toString(2 * d))
+system.println("c / d = " + core.toString(c / d))

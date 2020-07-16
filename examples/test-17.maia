@@ -1,0 +1,36 @@
+system.println("abs(-1) = " + math.abs(-1))
+system.println("abs(2+2*i) = " + math.abs(2+2*i))
+
+system.println("arg(2+2*i) = " + math.arg(2+2*i))
+
+system.println("cos(1) = " + core.toString(math.cos(1)))
+system.println("cos(2+2*i) = " + core.toString(math.cos(2+2*i)))
+
+system.println("cosh(1) = " + core.toString(math.cosh(1)))
+system.println("cosh(2+2*i) = " + core.toString(math.cosh(2+2*i)))
+
+system.println("exp(1) = " + core.toString(math.exp(1)))
+system.println("exp(2+2*i) = " + core.toString(math.exp(2+2*i)))
+
+system.println("log(1) = " + core.toString(math.log(1)))
+system.println("log(2+2*i) = " + core.toString(math.log(2+2*i)))
+
+system.println("pow(2,3) = " + math.pow(2,3))
+system.println("pow(2+2*i,3) = " + core.toString(math.pow(2+2*i,3)))
+
+system.println("sin(1) = " + core.toString(math.sin(1)))
+system.println("sin(2+2*i) = " + core.toString(math.sin(2+2*i)))
+
+system.println("sinh(1) = " + core.toString(math.sinh(1)))
+system.println("sinh(2+2*i) = " + core.toString(math.sinh(2+2*i)))
+
+system.println("sqrt(16) = " + math.sqrt(16))
+system.println("sqrt(2+2*i) = " + core.toString(math.sqrt(2+2*i)))
+
+system.println("cbrt(8) = " + math.cbrt(8))
+
+system.println("tan(1) = " + core.toString(math.tan(1)))
+system.println("tan(2+2*i) = " + core.toString(math.tan(2+2*i)))
+
+system.println("tanh(1) = " + core.toString(math.tanh(1)))
+system.println("tanh(2+2*i) = " + core.toString(math.tanh(2+2*i)))

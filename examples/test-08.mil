@@ -1,0 +1,82 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "comment": "//a = (2 + 3 * 4) * [1, 2; 3, 4 + 5]"
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "a"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "value": {
+                                            "real": "2"
+                                        }
+                                    }
+                                },
+                                {
+                                    "op": [
+                                        {
+                                            "primary": {
+                                                "value": {
+                                                    "real": "3"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "primary": {
+                                                "value": {
+                                                    "real": "4"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "TOKEN": "*"
+                                }
+                            ],
+                            "TOKEN": "+"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "a"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

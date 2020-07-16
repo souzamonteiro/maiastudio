@@ -1,0 +1,144 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "a"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "array": {
+                                        "TOKEN": [
+                                            "{",
+                                            ",",
+                                            ",",
+                                            ",",
+                                            "}"
+                                        ],
+                                        "element": [
+                                            {
+                                                "key": {
+                                                    "string": "\"var1\""
+                                                },
+                                                "TOKEN": ":",
+                                                "expression": {
+                                                    "operation": {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"value 1\""
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "key": {
+                                                    "string": "\"var2\""
+                                                },
+                                                "TOKEN": ":",
+                                                "expression": {
+                                                    "operation": {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"value 2\""
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "key": {
+                                                    "string": "\"var3\""
+                                                },
+                                                "TOKEN": ":",
+                                                "expression": {
+                                                    "operation": {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"value 3\""
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "key": {
+                                                    "string": "\"var4\""
+                                                },
+                                                "TOKEN": ":",
+                                                "expression": {
+                                                    "operation": {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"value 4\""
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "showMessageDialog"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "core",
+                                                    "toString"
+                                                ],
+                                                "TOKEN": [
+                                                    ".",
+                                                    "(",
+                                                    ")"
+                                                ],
+                                                "arguments": {
+                                                    "expression": {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "a"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

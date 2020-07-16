@@ -1,0 +1,14 @@
+function showMessage () {
+    system.showMessageDialog("Hello, World!")
+}
+
+html = "data:text/html;charset=utf-8,"
+html = html + "<html>"
+html = html + "<head><title>Hello</title></head>"
+html = html + "<body>"
+html = html + "<button id='clickMe' onclick='window.parent.opener.showMessage()'>Click me!</button>"
+html = html + "<button id='closeWindow' onclick='window.close()'>Close me!</button>"
+html = html + "</body>"
+html = html + "</html>"
+
+win = window.open(html, "_blank", "width=640, height=480")
