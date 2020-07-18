@@ -112,7 +112,7 @@ function MaiaCompiler() {
             console.log(e.message);
         }
     }
-
+    
     /**
      * Compiles the MaiaScript XML tree for Maia Internal Code (MIL).
      * @param {xml}    xml - The XML data.
@@ -1219,28 +1219,13 @@ function MaiaCompiler() {
             'childNode': 'maiascript',
             'terminalNode' : ''
         };
+
         var mil = {};
         var js = "";
-        
-        mil = this.xmlToMil(xml);
 
+        mil = this.xmlToMil(xml);
         js = this.parse(mil, nodeInfo);
 
         return js;
-    }
-
-    /**
-     * Compiles the MaiaScript MIL data for Text.
-     * @param {json}     mil - Code in Maia Internal Language (MIL).
-     * @return {string}  MIL code converted to Text.
-     */
-    this.export = function(mil, indent) {
-        if (indent) {
-            var text = JSON.stringify(mil, null, 4);
-        } else {
-            var text = JSON.stringify(mil);
-        }
-
-        return text;
     }
 }

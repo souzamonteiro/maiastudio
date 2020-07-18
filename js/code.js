@@ -4,14 +4,14 @@
  *                Renata Souza Barreto,
  *                Hernane Borges de Barros Pereira.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an 'AS IS' BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -22,12 +22,13 @@ var lang = 'pt-BR';
 var editorMode = 'maia';
 var flask = {};
 var storedCode;
+var fileName;
 var fileExtension;
 
 compiledCode = {
-    "xml": "",
-    "mil": "",
-    "js": ""
+    'xml': '',
+    'mil': '',
+    'js': ''
 }
 
 /**
@@ -46,7 +47,7 @@ function base64EncodeUnicode(str) {
     // First we escape the string using encodeURIComponent to get the UTF-8 encoding of the characters, 
     // then we convert the percent encodings into raw bytes, and finally feed it to btoa() function.
     utf8Bytes = encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-            return String.fromCharCode('0x' + p1);
+        return String.fromCharCode('0x' + p1);
     });
 
     return btoa(utf8Bytes);
@@ -56,7 +57,7 @@ function base64EncodeUnicode(str) {
  * Creates a new document.
  */
 function newWorkspace() {
-    var win = window.open('index.html', "", "");
+    var win = window.open('index.html', '', '');
 }
 
 /**
@@ -68,7 +69,7 @@ function clearWorkspace() {
     var res = confirm(msg);
 
     if (res == true) {
-        flask.updateCode("");;
+        flask.updateCode('');;
     }
 }
 
@@ -78,7 +79,7 @@ function clearWorkspace() {
 function downloadCode() {
     const code = flask.getCode();
     var uri = 'data:text/plain;charset=utf-8;base64,' + base64EncodeUnicode(code);
-    var downloadLink = document.createElement("a");
+    var downloadLink = document.createElement('a');
 
     downloadLink.href = uri;
     downloadLink.download = 'untitled.' + editorMode;
@@ -96,13 +97,13 @@ function uploadCode() {
 
     input.onchange = e => { 
         var file = e.target.files[0]; 
-        fileName = file.name; 
-        fileExtension = fileName.split('.').pop();
+        fileName = file.name;
+        var fileExtension = fileName.split('.').pop();
         
         var reader = new FileReader();
         reader.readAsText(file,'UTF-8');
         reader.onload = readerEvent => {
-            code = readerEvent.target.result;
+            var code = readerEvent.target.result;
             flask.updateCode(code);
 
             editorMode = fileExtension;
@@ -121,7 +122,7 @@ function uploadCode() {
  */
 function downloadMil() {
     const code = flask.getCode();
-    compiledCode.xml = "";
+    compiledCode.xml = '';
     function getXml (data) {
         compiledCode.xml += data;
     }
@@ -139,13 +140,13 @@ function downloadMil() {
         }
     }
     var parser = new DOMParser();
-    var xml = parser.parseFromString(compiledCode.xml,"text/xml");
+    var xml = parser.parseFromString(compiledCode.xml,'text/xml');
     
     var compiler = new MaiaCompiler();
     compiledCode.mil = compiler.xmlToMil(xml);
          
     var uri = 'data:text/json;charset=utf-8;base64,' + base64EncodeUnicode(JSON.stringify(compiledCode.mil, null, 4));
-    var downloadLink = document.createElement("a");
+    var downloadLink = document.createElement('a');
     
     downloadLink.href = uri;
     downloadLink.download = 'untitled.mil';
@@ -159,7 +160,7 @@ function downloadMil() {
  */
 function downloadJs() {
     const code = flask.getCode();
-    compiledCode.xml = "";
+    compiledCode.xml = '';
     function getXml (data) {
         compiledCode.xml += data;
     }
@@ -177,13 +178,13 @@ function downloadJs() {
         }
     }
     var parser = new DOMParser();
-    var xml = parser.parseFromString(compiledCode.xml,"text/xml");
+    var xml = parser.parseFromString(compiledCode.xml,'text/xml');
     
     var compiler = new MaiaCompiler();
     compiledCode.js = compiler.compile(xml);
     
     var uri = 'data:text/js;charset=utf-8;base64,' + base64EncodeUnicode(compiledCode.js);
-    var downloadLink = document.createElement("a");
+    var downloadLink = document.createElement('a');
     
     downloadLink.href = uri;
     downloadLink.download = 'untitled.js';
@@ -199,8 +200,8 @@ function compileAndRun() {
     const code = flask.getCode();
 
     if (editorMode == 'maia') {
-        compiledCode.xml = "";
-        function getXml (data) {
+        compiledCode.xml = '';
+        function getXml(data) {
             compiledCode.xml += data;
         }
         var s = new MaiaScript.XmlSerializer(getXml, true);
@@ -217,7 +218,7 @@ function compileAndRun() {
             }
         }
         var parser = new DOMParser();
-        var xml = parser.parseFromString(compiledCode.xml,"text/xml");
+        var xml = parser.parseFromString(compiledCode.xml,'text/xml');
         
         var compiler = new MaiaCompiler();
         compiledCode.js = compiler.compile(xml);
@@ -233,12 +234,16 @@ function compileAndRun() {
     } else if (editorMode == 'js') {
         compiledCode.js = code;
     }
-    try {
-        eval(compiledCode.js);
-    } catch (e) {
-        var evalError = e.message;
-        console.log(evalError);
-        alert(evalError);
+    if (editorMode == 'html') {
+        var win = window.open('data:text/html;charset=utf-8,' + code, '_blank', 'width=640,height=480');
+    } else if ((editorMode == 'maia') || (editorMode == 'mil') || (editorMode == 'js')) {
+        try {
+            eval(compiledCode.js);
+        } catch (e) {
+            var evalError = e.message;
+            console.log(evalError);
+            alert(evalError);
+        }
     }
 }
 
@@ -251,6 +256,7 @@ function saveWorkspace() {
     localStorage.setItem('maiascript.maia', code);
     localStorage.setItem('language', $('#language').val());
     localStorage.setItem('editorMode', $('#editorMode').val());
+    localStorage.setItem('fileName', fileName);
 }
 
 /**
@@ -290,6 +296,10 @@ function loadWorkspace() {
         $('#editorMode').val(editorMode);
     }
 
+    if (localStorage.getItem('fileName') != undefined) {
+        fileName = localStorage.getItem('fileName');
+    }
+
     translate(lang);
 }
 
@@ -317,7 +327,7 @@ function setEditorMode() {
  * Displays copyright information.
  */
 function aboutApp() {
-    var copyright = "Copyright (C) Roberto Luiz Souza Monteiro,\nRenata Souza Barreto,\nHernane Barrros de Borges Pereira.\n\nwww.maiascript.com";
+    var copyright = 'Copyright (C) Roberto Luiz Souza Monteiro,\nRenata Souza Barreto,\nHernane Barrros de Borges Pereira.\n\nwww.maiascript.com';
     
     alert(copyright);
 }
@@ -325,7 +335,7 @@ function aboutApp() {
 /**
  * Saves the workspace when exiting the application.
  */
-window.addEventListener("unload", function(event) {
+window.addEventListener('unload', function(event) {
     saveWorkspace();
 });
 

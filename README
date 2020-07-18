@@ -33,6 +33,24 @@ For more information send mail to: support@maiascript.com
 You can get the last MaiaStudio version at
 http://www.maiascript.com
 
+INSTRUCTIONS FOR USE:
+
+To use the MaiaScript language in HTML documents, just include the
+file "js/maiascript.js" in the document and insert the MaiaScript code
+in <script> tags of type "text/maiascript":
+
+<script type = "text/maiascript"> ... </script>
+
+To compile and run the scripts configure the page's onload event to execute
+the "maiavm.compile()" method:
+
+<body onload = "maiavm.compile();" ... </body>
+
+To run MaiaScript code from the console, you need to install "Node.js" and the
+npm packages "jsdom" and "websql". To run a script use:
+
+node js/maiascript.js "script name".maia
+
 Lauro de Freitas, July 2020.
 
 Roberto Luiz Souza Monteiro
