@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // This file was generated on Tue Jul 14, 2020 07:53 (UTC-03) by REx v5.52 which is Copyright (c) 1979-2020 by Gunther Rademacher <grd@gmx.net>
 // REx command line: MaiaScript.ebnf -backtrack -tree -javascript
 
@@ -8010,6 +8011,52 @@ matrix = new Matrix();/**
     {
         var scripts = document.querySelectorAll('script[type="text/maiascript"]');
         for (index in scripts) {
+            if (typeof scripts[index].getAttribute != 'undefined') {
+                var fileName = scripts[index].getAttribute('src');
+                if (typeof fileName != 'undefined') {
+                    if (fileName) {
+                        compiledCode.maia = '';
+                        fetch(fileName)
+                        .then(response => response.text())
+                        .then(data => {
+                            var code = data;
+                            if (typeof code != 'undefined') {
+                                if (typeof code == 'string') {
+                                    compiledCode.xml = '';
+                                    function getXml (data) {
+                                        compiledCode.xml += data;
+                                    }
+                                    var s = new MaiaScript.XmlSerializer(getXml, true);
+                                    var maiaScriptParser = new MaiaScript(code, s);
+                                    try {
+                                        maiaScriptParser.parse_maiascript();
+                                    } catch (pe) {
+                                        if (!(pe instanceof maiaScriptParser.ParseException)) {
+                                            throw pe;
+                                        } else {
+                                            var parserError = maiaScriptParser.getErrorMessage(pe);
+                                            console.log(parserError);
+                                            throw parserError;
+                                        }
+                                    }
+                                    var parser = new DOMParser();
+                                    var xml = parser.parseFromString(compiledCode.xml,'text/xml');
+                                    var compiler = new MaiaCompiler();
+                                    compiledCode.js = compiler.compile(xml);
+                                    try {
+                                        eval(compiledCode.js);
+                                    } catch (e) {
+                                        var evalError = e.message;
+                                        console.log(evalError);
+                                        throw evalError;
+                                    }
+                                    //document.write('<script type="text/javascript">' + compiledCode.js + '</script>\n');
+                                }
+                            }
+                        });
+                    }
+                }
+            }
             var code = scripts[index].innerHTML;
             if (typeof code != 'undefined') {
                 if (typeof code == 'string') {
@@ -8100,6 +8147,9 @@ matrix = new Matrix();/**
                     var evalError = e.message;
                     console.log(evalError);
                 }
+            } else {
+                console.log('MaiaStudio (The MaiaScript IDE), version 1.0.0');
+                console.log('usage: maiascript "file name"');
             }
         }
     }
@@ -8117,7 +8167,7 @@ if (typeof process !== 'undefined') {
     var doc = new JSDOM();
     var DOMParser = doc.window.DOMParser;
     
-    var openDatabase = require('websql');
+    const openDatabase = require('websql');
     
     var alert = console.log;
 

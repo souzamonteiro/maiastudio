@@ -8,7 +8,7 @@ This software is distributed under the terms of several open sources licenses.
 
 Please read the files LICENSE, COPYING or COPYING.LIB for further information.
 
-guash is an interpreter that implements the GuaraScript programming language.
+maiascript.js is a compiler that implements the MaiaScript programming language.
 
 MaiaScript is a programming language aimed at developing adaptable and
 intelligent applications. An adaptive application modifies its code to

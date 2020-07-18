@@ -1,0 +1,30 @@
+{
+  "name": "maiascript-cli",
+  "version": "1.0.0",
+  "description": "MaiaStudio (The MaiaScript IDE)",
+  "keywords": [],
+  "author": "The MaiaScript Team (https://www.maiascript.com)",
+  "license": "Apache-2.0",
+  "homepage": "https://www.maiascript.com",
+  "bugs": {
+    "url": "https://github.com/souzamonteiro/maiastudio/issues"
+  },
+  "main": "bin/maiascript.js",
+  "bin": {
+    "maiascript": "./bin/maiascript.js"
+  },
+  "dependencies": {
+    "jsdom": "^16.2.2",
+    "websql": "^1.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/souzamonteiro/maiastudio.git"
+  }
+}
