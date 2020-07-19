@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: MaiaCompiler.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: MaiaCompiler.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @license
  * Copyright 2020 Roberto Luiz Souza Monteiro,
  *                Renata Souza Barreto,
@@ -60,17 +88,17 @@ function MaiaCompiler() {
                               'catch',
                               'test'];
         operators = {'||': 'core.logicalOR',
-                     '&&': 'core.logicalAND',
+                     '&amp;&amp;': 'core.logicalAND',
                      '|':  'core.bitwiseOR',
                      '`':  'core.bitwiseXOR',
-                     '&':  'core.bitwiseAND',
+                     '&amp;':  'core.bitwiseAND',
                      '==': 'core.equal',
                      '!=': 'core.different',
-                     '<':  'core.LT',
-                     '<=': 'core.LE',
+                     '&lt;':  'core.LT',
+                     '&lt;=': 'core.LE',
                      '>=': 'core.GE',
                      '>':  'core.GT',
-                     '<<': 'core.leftShift',
+                     '&lt;&lt;': 'core.leftShift',
                      '>>': 'core.rightShift',
                      '+':  'core.add',
                      '-':  'core.sub',
@@ -93,7 +121,7 @@ function MaiaCompiler() {
         try {
             var obj = {};
             if (xml.children.length > 0) {
-                for (var i = 0; i < xml.children.length; i++) {
+                for (var i = 0; i &lt; xml.children.length; i++) {
                     var item = xml.children.item(i);
                     nodeName = item.nodeName;
                     if (typeof(obj[nodeName]) == 'undefined') {
@@ -129,7 +157,7 @@ function MaiaCompiler() {
 
             if (itemName == '') {
                 if (xml.children.length > 0) {
-                    for (var i = 0; i < xml.children.length; i++) {
+                    for (var i = 0; i &lt; xml.children.length; i++) {
                         var item = xml.children.item(i);
                         nodeName = item.nodeName;
                         if (typeof(obj[nodeName]) == 'undefined') {
@@ -149,7 +177,7 @@ function MaiaCompiler() {
             } else {
                 if (binaryExpression.includes(itemName)) {
                     if (xml.children.length > 1) {
-                        for (var i = 0; i < xml.children.length; i++) {
+                        for (var i = 0; i &lt; xml.children.length; i++) {
                             var item = xml.children.item(i);
                             nodeName = item.nodeName;
                             if (nodeName != 'TOKEN') {
@@ -177,7 +205,7 @@ function MaiaCompiler() {
                     }
                 } else {
                     if (xml.children.length > 0) {
-                        for (var i = 0; i < xml.children.length; i++) {
+                        for (var i = 0; i &lt; xml.children.length; i++) {
                             var item = xml.children.item(i);
                             nodeName = item.nodeName;
                             if (typeof(obj[nodeName]) == 'undefined') {
@@ -289,10 +317,10 @@ function MaiaCompiler() {
 
             if (typeof node != 'undefined') {
                 if (Array.isArray(node)) {
-                    for (var i = 0; i < node.length; i++) {
+                    for (var i = 0; i &lt; node.length; i++) {
                         text = this.parse(node[i], nodeInfo);
                         parentNodeInfo.terminalNode = nodeInfo.terminalNode;
-                        if (statementCodeBlock.includes(parentNodeInfo.parentNode) && (nodeInfo.childNode != 'comment') && (nodeInfo.childNode != 'condition')) {
+                        if (statementCodeBlock.includes(parentNodeInfo.parentNode) &amp;&amp; (nodeInfo.childNode != 'comment') &amp;&amp; (nodeInfo.childNode != 'condition')) {
                             if (parentNodeInfo.parentNode == 'namespace') {
                                 js += 'this.' + text + ';';
                             } else {
@@ -309,7 +337,7 @@ function MaiaCompiler() {
                 } else {
                     text = this.parse(node, nodeInfo);
                     parentNodeInfo.terminalNode = nodeInfo.terminalNode;
-                    if (statementCodeBlock.includes(parentNodeInfo.parentNode) && (nodeInfo.childNode != 'comment') && (nodeInfo.childNode != 'condition')) {
+                    if (statementCodeBlock.includes(parentNodeInfo.parentNode) &amp;&amp; (nodeInfo.childNode != 'comment') &amp;&amp; (nodeInfo.childNode != 'condition')) {
                         if (parentNodeInfo.parentNode == 'namespace') {
                             js += 'this.' + text + ';';
                         } else {
@@ -418,7 +446,7 @@ function MaiaCompiler() {
                         };
                         var condition = this.parse(nodeCondition, nodeInfo);
 
-                        for (var i = 1; i < nodeExpression.length; i++) {
+                        for (var i = 1; i &lt; nodeExpression.length; i++) {
                             var commandLine = nodeExpression[i];
                             var bodyExpression = {
                                 'expression': commandLine
@@ -432,7 +460,7 @@ function MaiaCompiler() {
                     var body = '';
                     var nodeElseIf = node['elseif'];
                     if (Array.isArray(nodeElseIf)) {
-                        for (var i = 0; i < nodeElseIf.length; i++) {
+                        for (var i = 0; i &lt; nodeElseIf.length; i++) {
                             if ('expression' in nodeElseIf[i]) {
                                 var nodeElseIfExpression = nodeElseIf[i]['expression'];
                                 if (Array.isArray(nodeElseIfExpression)) {
@@ -443,7 +471,7 @@ function MaiaCompiler() {
                                     };
                                     var condition = this.parse(nodeCondition, nodeInfo);
                                     
-                                    for (var j = 1; j < nodeElseIfExpression.length; j++) {
+                                    for (var j = 1; j &lt; nodeElseIfExpression.length; j++) {
                                         var commandLine = nodeElseIfExpression[j];
                                         var bodyExpression = {
                                             'expression': commandLine
@@ -465,7 +493,7 @@ function MaiaCompiler() {
                                 };
                                 var condition = this.parse(nodeCondition, nodeInfo);
                                 
-                                for (var j = 1; j < nodeElseIfExpression.length; j++) {
+                                for (var j = 1; j &lt; nodeElseIfExpression.length; j++) {
                                     var commandLine = nodeElseIfExpression[j];
                                     var bodyExpression = {
                                         'expression': commandLine
@@ -483,7 +511,7 @@ function MaiaCompiler() {
                     if ('expression' in nodeElse) {
                         var nodeExpression = nodeElse['expression'];
                         if (Array.isArray(nodeExpression)) {
-                            for (var i = 0; i < nodeExpression.length; i++) {
+                            for (var i = 0; i &lt; nodeExpression.length; i++) {
                                 var commandLine = nodeExpression[i];
                                 var bodyExpression = {
                                     'expression': commandLine
@@ -514,7 +542,7 @@ function MaiaCompiler() {
                     var body = '';
                     var nodeExpression = node['expression'];
                     if (Array.isArray(nodeExpression)) {
-                        for (var i = 0; i < nodeExpression.length - 1; i++) {
+                        for (var i = 0; i &lt; nodeExpression.length - 1; i++) {
                             var commandLine = nodeExpression[i];
                             var bodyExpression = {
                                 'expression': commandLine
@@ -549,7 +577,7 @@ function MaiaCompiler() {
                         };
                         var condition = this.parse(nodeCondition, nodeInfo);
 
-                        for (var i = 1; i < nodeExpression.length; i++) {
+                        for (var i = 1; i &lt; nodeExpression.length; i++) {
                             var commandLine = nodeExpression[i];
                             var bodyExpression = {
                                 'expression': commandLine
@@ -590,7 +618,7 @@ function MaiaCompiler() {
                         };
                         var after = this.parse(nodeAfter, nodeInfo);
 
-                        for (var i = 3; i < nodeExpression.length; i++) {
+                        for (var i = 3; i &lt; nodeExpression.length; i++) {
                             var commandLine = nodeExpression[i];
                             var bodyExpression = {
                                 'expression': commandLine
@@ -630,7 +658,7 @@ function MaiaCompiler() {
                         };
                         var valueVarName = this.parse(nodeValueVar, nodeInfo);
 
-                        for (var i = 3; i < nodeExpression.length; i++) {
+                        for (var i = 3; i &lt; nodeExpression.length; i++) {
                             var commandLine = nodeExpression[i];
                             var bodyExpression = {
                                 'expression': commandLine
@@ -671,7 +699,7 @@ function MaiaCompiler() {
                             };
                             var catchVar = this.parse(nodeVar, nodeInfo);
 
-                            for (var i = 1; i < nodeExpression.length; i++) {
+                            for (var i = 1; i &lt; nodeExpression.length; i++) {
                                 var commandLine = nodeExpression[i];
                                 var bodyExpression = {
                                     'expression': commandLine
@@ -833,7 +861,7 @@ function MaiaCompiler() {
                             } else {
                                 js += operators[operator[j]] + '(' + left + ',' + right + ')';
                             }
-                            for (var i = 2; i < node.length; i++) {
+                            for (var i = 2; i &lt; node.length; i++) {
                                 var right = this.parse(node[i], nodeInfo);
                                 parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                                 if (operator[j] == '=') {
@@ -912,7 +940,7 @@ function MaiaCompiler() {
                         } else if (tokenType.indexOf('[') != -1) {
                             var arrayOfArgs = args.split(',');
                             if (Array.isArray(arrayOfArgs)) {
-                                for (var i = 0; i < arrayOfArgs.length; i++) {
+                                for (var i = 0; i &lt; arrayOfArgs.length; i++) {
                                     js += '[' + arrayOfArgs[i] + ']';
                                 }
                             } else {
@@ -943,8 +971,8 @@ function MaiaCompiler() {
 
             if (typeof node != 'undefined') {
                 if (Array.isArray(node)) {
-                    for (var i = 0; i < node.length; i++) {
-                        if (i < (node.length - 1)) {
+                    for (var i = 0; i &lt; node.length; i++) {
+                        if (i &lt; (node.length - 1)) {
                             js += node[i] + '.';
                         } else {
                             js += node[i];
@@ -967,8 +995,8 @@ function MaiaCompiler() {
                 if ('expression' in node) {
                     var nodeExpression = node['expression'];
                     if (Array.isArray(nodeExpression)) {
-                        for (var i = 0; i < nodeExpression.length; i++) {
-                            if (i < (nodeExpression.length - 1)) {
+                        for (var i = 0; i &lt; nodeExpression.length; i++) {
+                            if (i &lt; (nodeExpression.length - 1)) {
                                 js += this.parse(nodeExpression[i], nodeInfo) + ',';
                                 parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                             } else {
@@ -1050,11 +1078,11 @@ function MaiaCompiler() {
                     var nodeElements = node['element'];
                     js += '{';
                     if (Array.isArray(nodeElements)) {
-                        for (var i = 0; i < nodeElements.length; i++) {
+                        for (var i = 0; i &lt; nodeElements.length; i++) {
                             var nodeElement = {
                                 'element': nodeElements[i]
                             };
-                            if (i < (nodeElements.length - 1)) {
+                            if (i &lt; (nodeElements.length - 1)) {
                                 js += this.parse(nodeElement, nodeInfo) + ',';
                                 parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                             } else {
@@ -1110,11 +1138,11 @@ function MaiaCompiler() {
                     var nodeRows = node['row'];
                     if (Array.isArray(nodeRows)) {
                         js += '[';
-                        for (var i = 0; i < nodeRows.length; i++) {
+                        for (var i = 0; i &lt; nodeRows.length; i++) {
                             var nodeRow = {
                                 'row': nodeRows[i]
                             }
-                            if (i < (nodeRows.length - 1)) {
+                            if (i &lt; (nodeRows.length - 1)) {
                                 js += this.parse(nodeRow, nodeInfo) + ',';
                                 parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                             } else {
@@ -1146,8 +1174,8 @@ function MaiaCompiler() {
             if (typeof node != 'undefined') {
                 js += '[';
                 if (Array.isArray(node)) {
-                    for (var i = 0; i < node.length; i++) {
-                        if (i < (node.length - 1)) {
+                    for (var i = 0; i &lt; node.length; i++) {
+                        if (i &lt; (node.length - 1)) {
                             js += this.parse(node[i], nodeInfo) + ',';
                             parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                         } else {
@@ -1172,8 +1200,8 @@ function MaiaCompiler() {
 
             if (typeof node != 'undefined') {
                 if (Array.isArray(node)) {
-                    for (var i = 0; i < node.length; i++) {
-                        if (i < (node.length - 1)) {
+                    for (var i = 0; i &lt; node.length; i++) {
+                        if (i &lt; (node.length - 1)) {
                             js += this.parse(node[i], nodeInfo) + ',';
                             parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                         } else {
@@ -1232,3 +1260,26 @@ function MaiaCompiler() {
         return js;
     }
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Core.html">Core</a></li><li><a href="MaiaCompiler.html">MaiaCompiler</a></li><li><a href="MaiaString.html">MaiaString</a></li><li><a href="MaiaVM.html">MaiaVM</a></li><li><a href="Mathematics.html">Mathematics</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="System.html">System</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Jul 19 2020 13:45:20 GMT-0300 (GMT-03:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

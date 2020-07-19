@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Core.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Core.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @license
  * Copyright 2020 Roberto Luiz Souza Monteiro,
  *                Renata Souza Barreto,
@@ -98,7 +126,7 @@
     this.complex = function(real, img)
     {
         var num;
-        if ((typeof real == 'number') && (typeof img == 'number')) {
+        if ((typeof real == 'number') &amp;&amp; (typeof img == 'number')) {
             num = {
                 "real": real,
                 "imaginary": img
@@ -133,29 +161,29 @@
             // Convert to the diagonal equivalent matrix.
             var cpy = obj.slice();
             mtx = core.ident(m);
-            for (var j = 0; j < m; j++) {
+            for (var j = 0; j &lt; m; j++) {
                 if (cpy[j][j] != 0) {
-                    for (var i = 0; i < m; i++) {
+                    for (var i = 0; i &lt; m; i++) {
                         if (i != j) {
                             var scale = -cpy[i][j] / cpy[j][j];
-                            for (k = j; k < n; k++) {
+                            for (k = j; k &lt; n; k++) {
                                 cpy[i][k] = cpy[i][k] + scale * cpy[j][k];
                             }
-                            for (k = 0; k < n; k++) {
+                            for (k = 0; k &lt; n; k++) {
                                 mtx[i][k] = mtx[i][k] + scale * mtx[j][k];
                             }
                         }
                     }
                 }
             }
-            for (i = 0; i < m; i++) {
-                for (j = 0; j < n; j++) {
+            for (i = 0; i &lt; m; i++) {
+                for (j = 0; j &lt; n; j++) {
                     mtx[i][j] = mtx[i][j] / cpy[i][i];
                 }
             }
             // Calculates the determinant of the matrix.
             var det = 1;
-            for (i = 0; i < m; i++) {
+            for (i = 0; i &lt; m; i++) {
                 det = det * cpy[i][i];
             }
         } else {
@@ -177,12 +205,12 @@
             var n = dim[1];
             // Convert to the diagonal equivalent matrix.
             var cpy = obj.slice();
-            for (var j = 0; j < m; j++) {
+            for (var j = 0; j &lt; m; j++) {
                 if (cpy[j][j] != 0) {
-                    for (var i = 0; i < m; i++) {
+                    for (var i = 0; i &lt; m; i++) {
                         if (i != j) {
                             var scale = -cpy[i][j] / cpy[j][j];
-                            for (k = j; k < n; k++) {
+                            for (k = j; k &lt; n; k++) {
                                 cpy[i][k] = cpy[i][k] + scale * cpy[j][k];
                             }
                         }
@@ -191,7 +219,7 @@
             }
             // Calculates the determinant of the matrix.
             var det = 1;
-            for (i = 0; i < m; i++) {
+            for (i = 0; i &lt; m; i++) {
                 det = det * cpy[i][i];
             }
             if (det == 0) {
@@ -272,7 +300,7 @@
     this.ident = function(rows)
     {
         var mtx = core.matrix(0, rows, rows);
-        for (var i = 0; i < rows; i++) {
+        for (var i = 0; i &lt; rows; i++) {
             mtx[i][i] = 1;
         }
         return mtx;
@@ -335,29 +363,29 @@
             // Convert to the diagonal equivalent matrix.
             var cpy = obj.slice();
             mtx = core.ident(m);
-            for (var j = 0; j < m; j++) {
+            for (var j = 0; j &lt; m; j++) {
                 if (cpy[j][j] != 0) {
-                    for (var i = 0; i < m; i++) {
+                    for (var i = 0; i &lt; m; i++) {
                         if (i != j) {
                             var scale = -cpy[i][j] / cpy[j][j];
-                            for (k = j; k < n; k++) {
+                            for (k = j; k &lt; n; k++) {
                                 cpy[i][k] = cpy[i][k] + scale * cpy[j][k];
                             }
-                            for (k = 0; k < n; k++) {
+                            for (k = 0; k &lt; n; k++) {
                                 mtx[i][k] = mtx[i][k] + scale * mtx[j][k];
                             }
                         }
                     }
                 }
             }
-            for (i = 0; i < m; i++) {
-                for (j = 0; j < n; j++) {
+            for (i = 0; i &lt; m; i++) {
+                for (j = 0; j &lt; n; j++) {
                     mtx[i][j] = mtx[i][j] / cpy[i][i];
                 }
             }
             // Calculates the determinant of the matrix.
             var det = 1;
-            for (i = 0; i < m; i++) {
+            for (i = 0; i &lt; m; i++) {
                 det = det * cpy[i][i];
             }
             if (det == 0) {
@@ -412,16 +440,16 @@
     {
         var mtx = [];
         if (rows > 1) {
-            for (var i = 0; i < rows; i++) {
+            for (var i = 0; i &lt; rows; i++) {
                 var row = [];
-                for (var j = 0; j < columns; j++) {
+                for (var j = 0; j &lt; columns; j++) {
                     row.push(obj);
                 }
                 mtx.push(row);
             }
         } else {
             var row = [];
-            for (var j = 0; j < columns; j++) {
+            for (var j = 0; j &lt; columns; j++) {
                 row.push(obj);
             }
             mtx = row;
@@ -782,7 +810,7 @@
      */
     this.logicalAND = function(left, right)
     {
-        return left && right;
+        return left &amp;&amp; right;
     }
 
     /**
@@ -815,7 +843,7 @@
      */
     this.bitwiseAND = function(left, right)
     {
-        return left & right;
+        return left &amp; right;
     }
 
     /**
@@ -848,7 +876,7 @@
      */
     this.LT = function(left, right)
     {
-        return left < right;
+        return left &lt; right;
     }
 
     /**
@@ -859,7 +887,7 @@
      */
     this.LE = function(left, right)
     {
-        return left <= right;
+        return left &lt;= right;
     }
 
     /**
@@ -892,7 +920,7 @@
      */
     this.leftShift = function(left, right)
     {
-        return left << right;
+        return left &lt;&lt; right;
     }
 
     /**
@@ -942,12 +970,12 @@
                 res = [];
                 var dimLeft = core.dim(left);
                 var dimRight = core.dim(right);
-                if ((dimLeft[0] == dimRight[0]) && (dimLeft[1] == dimRight[1])) {
+                if ((dimLeft[0] == dimRight[0]) &amp;&amp; (dimLeft[1] == dimRight[1])) {
                     var rows = dimLeft[0];
                     var columns = dimLeft[1];
-                    for (var i = 0; i < rows; i++) {
+                    for (var i = 0; i &lt; rows; i++) {
                         var row = [];
-                        for (var j = 0; j < columns; j++) {
+                        for (var j = 0; j &lt; columns; j++) {
                             row.push(left[i][j] + right[i][j]);
                         }
                         res.push(row);
@@ -1000,12 +1028,12 @@
                 res = [];
                 var dimLeft = core.dim(left);
                 var dimRight = core.dim(right);
-                if ((dimLeft[0] == dimRight[0]) && (dimLeft[1] == dimRight[1])) {
+                if ((dimLeft[0] == dimRight[0]) &amp;&amp; (dimLeft[1] == dimRight[1])) {
                     var rows = dimLeft[0];
                     var columns = dimLeft[1];
-                    for (var i = 0; i < rows; i++) {
+                    for (var i = 0; i &lt; rows; i++) {
                         var row = [];
-                        for (var j = 0; j < columns; j++) {
+                        for (var j = 0; j &lt; columns; j++) {
                             row.push(left[i][j] - right[i][j]);
                         }
                         res.push(row);
@@ -1055,7 +1083,7 @@
                     res = left;
                 } else if (right > 1) {
                     res = 1;
-                    for (var i = 0; i < right; i++) {
+                    for (var i = 0; i &lt; right; i++) {
                         res = core.mul(res, left);
                     }
                 }
@@ -1097,8 +1125,8 @@
             } else if (core.type(right) == 'matrix') {
                 var dimRight = core.dim(right);
                 res = core.matrix(0, dimRight[0], dimRight[1]);
-                for (var i = 0; i < dimRight[0]; i++) {
-                    for (var j = 0; j < dimRight[1]; j++) {
+                for (var i = 0; i &lt; dimRight[0]; i++) {
+                    for (var j = 0; j &lt; dimRight[1]; j++) {
                         res[i][j] = left * right[i][j];
                     }
                 }
@@ -1113,9 +1141,9 @@
                 var dimRight = core.dim(right);
                 res = core.matrix(0, dimLeft[0], dimRight[1]);
                 if (dimLeft[1] == dimRight[0]) {
-                    for (var i = 0; i < dimLeft[0]; i++) {
-                        for (var j = 0; j < dimRight[1]; j++) {
-                            for (var k = 0; k < dimRight[1]; k++) {
+                    for (var i = 0; i &lt; dimLeft[0]; i++) {
+                        for (var j = 0; j &lt; dimRight[1]; j++) {
+                            for (var k = 0; k &lt; dimRight[1]; k++) {
                                 res[i][j] = res[i][j] + left[i][k] * right[k][j];
                             }
                         }
@@ -1126,8 +1154,8 @@
             } else if (core.type(right) == 'number') {
                 dimLeft = core.dim(left);
                 res = core.matrix(0, dimLeft[0], dimLeft[1]);
-                for (var i = 0; i < dimLeft[0]; i++) {
-                    for (var j = 0; j < dimLeft[1]; j++) {
+                for (var i = 0; i &lt; dimLeft[0]; i++) {
+                    for (var j = 0; j &lt; dimLeft[1]; j++) {
                         res[i][j] = left[i][j] * right;
                     }
                 }
@@ -1211,3 +1239,26 @@
 }
 
 core = new Core();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Core.html">Core</a></li><li><a href="MaiaCompiler.html">MaiaCompiler</a></li><li><a href="MaiaString.html">MaiaString</a></li><li><a href="MaiaVM.html">MaiaVM</a></li><li><a href="Mathematics.html">Mathematics</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="System.html">System</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Jul 19 2020 13:45:20 GMT-0300 (GMT-03:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

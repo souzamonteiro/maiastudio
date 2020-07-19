@@ -51,6 +51,22 @@ npm packages "jsdom" and "websql". To run a script use:
 
 node js/maiascript.js "script name".maia
 
+Or, if you installed the MaiaScript compiler using npm:
+
+maiascript "script name".maia
+
+INSTALL COMMAND LINE CLI:
+
+To install the MaiaScript compiler command line tool use the command:
+
+npm install -g maiascript-cli
+
+Or, if you downloaded the compiler from GitHub:
+
+unzip maiastudio-master.zip
+cd maiastudio-master
+npm install -g .
+
 Lauro de Freitas, July 2020.
 
 Roberto Luiz Souza Monteiro

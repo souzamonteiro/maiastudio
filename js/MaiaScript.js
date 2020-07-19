@@ -4308,7 +4308,10 @@ ComplexNumber.TOKEN =
  * limitations under the License.
  */
 
-/** MaiaScript compiler class. */
+/**
+ * MaiaScript compiler class.
+ * @class
+ */
 function MaiaCompiler() {
     init();
 
@@ -5539,7 +5542,10 @@ function MaiaCompiler() {
  * limitations under the License.
  */
 
- /** MaiaScript core library. */
+ /** 
+  * MaiaScript core library.
+  * @class
+  */
  function Core() {
     init();
 
@@ -6779,8 +6785,11 @@ core = new Core();
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- /** MaiaScript string library. */
- function StringClass() {
+ /**
+  * MaiaScript string library.
+  * @class
+  */
+ function MaiaString() {
     // Regular expressions used by sprintf the parser.
     this.re = {
         not_string: /[^s]/,
@@ -6811,9 +6820,9 @@ core = new Core();
 
     /**
      * Formats a string based on format specifiers passed to the function.
-     * @param {string}      fmt - A string containing format specifiers.
-     * @param {object ...}  arguments - Objects to be formatted.
-     * @return {string}     A formatted string based on format specifiers passed to the function.
+     * @param {string}   fmt - A string containing format specifiers.
+     * @param {object}   arguments - Objects to be formatted.
+     * @return {string}  A formatted string based on format specifiers passed to the function.
      */
     this.sprintf = function(fmt) {
         /*
@@ -7003,7 +7012,7 @@ core = new Core();
     }
 }
 
-string = new StringClass();
+string = new MaiaString();
 /**
  * @license
  * Copyright 2020 Roberto Luiz Souza Monteiro,
@@ -7023,7 +7032,10 @@ string = new StringClass();
  * limitations under the License.
  */
 
- /** MaiaScript system library. */
+ /**
+  * MaiaScript system library.
+  * @class
+  */
  function System() {
     init();
 
@@ -7076,7 +7088,7 @@ string = new StringClass();
    /**
      * Displays a formated string based on format specifiers passed to the function.
      * @param {string}      fmt - A string containing format specifiers.
-     * @param {object ...}  arguments - Objects to be formatted.
+     * @param {object}  arguments - Objects to be formatted.
      * @return {string}     A formatted string based on format specifiers passed to the function.
      */
     this.printf = function(fmt)
@@ -7114,7 +7126,10 @@ system = new System();
  * limitations under the License.
  */
 
- /** MaiaScript math library. */
+ /**
+  * MaiaScript math library.
+  * @class
+  */
  function Mathematics() {
     this.E       = Math.E;
     this.PI      = Math.PI;
@@ -7594,7 +7609,10 @@ math = new Mathematics();
  * limitations under the License.
  */
 
- /** MaiaScript matrix library. */
+ /**
+  * MaiaScript matrix library.
+  * @class
+  */
  function Matrix() {
     init();
 
@@ -7976,7 +7994,10 @@ matrix = new Matrix();/**
  * limitations under the License.
  */
 
- /** MaiaScript virtual machine. */
+ /**
+  * MaiaScript virtual machine.
+  * @class
+  */
  function MaiaVM() {
     init();
 
@@ -8099,12 +8120,12 @@ matrix = new Matrix();/**
      * and executes the code in the JavaScript interpreter from which
      * this method was invoked.
      */
-    this.run = function(args)
+    this.run = function()
     {
         // Supports only the Node.js interpreter.
         if (typeof process !== 'undefined') {
             var command = 'node';
-            var arguments = process.argv.slice(2);
+            var argv = process.argv.slice(2);
             compiledCode.xml = '';
             var fs = require('fs');
             var readTextFile = fs.readFileSync;
@@ -8122,8 +8143,8 @@ matrix = new Matrix();/**
                 }
             }
 
-            if (arguments.length != 0) {
-                var code = read(String(arguments[0]));
+            if (argv.length != 0) {
+                var code = read(String(argv[0]));
                 var s = new MaiaScript.XmlSerializer(getXml, false);
                 var maiaScriptParser = new MaiaScript(code, s);
                 try {
@@ -8171,5 +8192,5 @@ if (typeof process !== 'undefined') {
     
     var alert = console.log;
 
-    maiavm.run(arguments);
+    maiavm.run();
 }
