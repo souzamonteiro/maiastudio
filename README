@@ -61,7 +61,11 @@ To install the MaiaScript compiler command line tool use the command:
 
 npm install -g maiascript-cli
 
-Or, if you downloaded the compiler from GitHub:
+Or, get it from GitHub:
+
+git clone https://github.com/souzamonteiro/maiastudio.git
+
+Or, download the latest zipped version:
 
 unzip maiastudio-master.zip
 cd maiastudio-master
