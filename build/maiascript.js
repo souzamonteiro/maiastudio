@@ -7032,11 +7032,11 @@ string = new MaiaString();
  * limitations under the License.
  */
 
- /**
-  * MaiaScript system library.
-  * @class
-  */
- function System() {
+/**
+ * MaiaScript system library.
+ * @class
+ */
+function System() {
     init();
 
     /**
@@ -7126,11 +7126,11 @@ system = new System();
  * limitations under the License.
  */
 
- /**
-  * MaiaScript math library.
-  * @class
-  */
- function Mathematics() {
+/**
+ * MaiaScript math library.
+ * @class
+ */
+function Mathematics() {
     this.E       = Math.E;
     this.PI      = Math.PI;
     this.SQRT2   = Math.SQRT2;
@@ -7994,11 +7994,11 @@ matrix = new Matrix();/**
  * limitations under the License.
  */
 
- /**
-  * MaiaScript virtual machine.
-  * @class
-  */
- function MaiaVM() {
+/**
+ * MaiaScript virtual machine.
+ * @class
+ */
+function MaiaVM() {
     init();
 
     /**

@@ -33,7 +33,7 @@ For more information send mail to: support@maiascript.com
 You can get the last MaiaStudio version at
 http://www.maiascript.com
 
-MaiaScript uses CAS Algebrite to solve complex expressions involving linear algebra,
+MaiaScript uses the Algebrite CAS to solve complex expressions involving linear algebra,
 systems of equations and differential and integral calculus. For complete reference,
 see the Algebrite documentation at http://algebrite.org
 
