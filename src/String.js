@@ -47,11 +47,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- /**
-  * MaiaScript string library.
-  * @class
-  */
- function MaiaString() {
+/**
+ * MaiaScript string library.
+ * @class
+ */
+function MaiaString() {
     // Regular expressions used by sprintf the parser.
     this.re = {
         not_string: /[^s]/,
@@ -88,9 +88,9 @@
      */
     this.sprintf = function(fmt) {
         /*
-         * Functions with variable number of arguments, use the variable 'arguments'
-         * to contain the arguments passed to the function.
-         */
+            * Functions with variable number of arguments, use the variable 'arguments'
+            * to contain the arguments passed to the function.
+            */
         return this.sprintFormat(this.sprintfParse(fmt), arguments);
     }
 

@@ -9,6 +9,8 @@ cat src/Shebang.js src/MaiaScript.js src/ComplexNumber.js src/MaiaCompiler.js sr
 cp build/maiascript.js bin/
 cp build/maiascript.js js/
 cp build/maiascript.js examples/js/
+cp src/CAS.js examples/js/
+cp src/CAS.js js/
 
 chmod 755 bin/*
 

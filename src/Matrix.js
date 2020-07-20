@@ -17,11 +17,11 @@
  * limitations under the License.
  */
 
- /**
-  * MaiaScript matrix library.
-  * @class
-  */
- function Matrix() {
+/**
+ * MaiaScript matrix library.
+ * @class
+ */
+function Matrix() {
     init();
 
     /**
