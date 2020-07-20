@@ -17,11 +17,11 @@
  * limitations under the License.
  */
 
- /**
-  * MaiaScript virtual machine.
-  * @class
-  */
- function MaiaVM() {
+/**
+ * MaiaScript virtual machine.
+ * @class
+ */
+function MaiaVM() {
     init();
 
     /**

@@ -17,11 +17,11 @@
  * limitations under the License.
  */
 
- /**
-  * MaiaScript system library.
-  * @class
-  */
- function System() {
+/**
+ * MaiaScript system library.
+ * @class
+ */
+function System() {
     init();
 
     /**

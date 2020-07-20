@@ -17,11 +17,11 @@
  * limitations under the License.
  */
 
- /**
-  * MaiaScript math library.
-  * @class
-  */
- function Mathematics() {
+/**
+ * MaiaScript math library.
+ * @class
+ */
+function Mathematics() {
     this.E       = Math.E;
     this.PI      = Math.PI;
     this.SQRT2   = Math.SQRT2;
