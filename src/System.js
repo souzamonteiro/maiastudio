@@ -32,12 +32,22 @@ function System() {
     }
 
     /**
-     * Displays a message in a dialog box.
+     * Displays a message in the console.
      * @param {string}  text - Text to display.
      */
-    this.showMessageDialog = function(text)
+    this.log = function(text)
     {
-        alert(text);
+        console.log(text);
+    }
+
+    /**
+     * Displays a message in a dialog box asking for confirmation.
+     * @param {string}   text - Text to display.
+     * @return {string}  User choice.
+     */
+    const showConfirmDialog = function(text)
+    {
+        return confirm(text);
     }
 
     /**
@@ -52,13 +62,12 @@ function System() {
     }
 
     /**
-     * Displays a message in a dialog box asking for confirmation.
-     * @param {string}   text - Text to display.
-     * @return {string}  User choice.
+     * Displays a message in a dialog box.
+     * @param {string}  text - Text to display.
      */
-    const showConfirmDialog = function(text)
+    this.showMessageDialog = function(text)
     {
-        return confirm(text);
+        alert(text);
     }
 
     /**
@@ -67,7 +76,7 @@ function System() {
      */
     this.print = function(text)
     {
-        console.log(text);
+        this.log(text);
     }
 
    /**
@@ -78,7 +87,7 @@ function System() {
      */
     this.printf = function(fmt)
     {
-        console.log(string.sprintFormat(string.sprintfParse(fmt), arguments));
+        this.log(string.sprintFormat(string.sprintfParse(fmt), arguments));
     }
 
     /**
@@ -87,7 +96,7 @@ function System() {
      */
     this.println = function(text)
     {
-        console.log(text + '\n');
+        this.log(text + '\n');
     }
 }
 

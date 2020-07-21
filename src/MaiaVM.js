@@ -79,7 +79,7 @@ function MaiaVM() {
                                             throw pe;
                                         } else {
                                             var parserError = maiaScriptParser.getErrorMessage(pe);
-                                            console.log(parserError);
+                                            system.log(parserError);
                                             throw parserError;
                                         }
                                     }
@@ -91,7 +91,7 @@ function MaiaVM() {
                                         eval(compiledCode.js);
                                     } catch (e) {
                                         var evalError = e.message;
-                                        console.log(evalError);
+                                        system.log(evalError);
                                         throw evalError;
                                     }
                                     //document.write('<script type="text/javascript">' + compiledCode.js + '</script>\n');
@@ -117,7 +117,7 @@ function MaiaVM() {
                             throw pe;
                         } else {
                             var parserError = maiaScriptParser.getErrorMessage(pe);
-                            console.log(parserError);
+                            system.log(parserError);
                             throw parserError;
                         }
                     }
@@ -129,7 +129,7 @@ function MaiaVM() {
                         eval(compiledCode.js);
                     } catch (e) {
                         var evalError = e.message;
-                        console.log(evalError);
+                        system.log(evalError);
                         throw evalError;
                     }
                     //document.write('<script type="text/javascript">' + compiledCode.js + '</script>\n');
@@ -177,7 +177,7 @@ function MaiaVM() {
                         throw pe;
                     } else {
                         var parserError = maiaScriptParser.getErrorMessage(pe);
-                        console.log(parserError);
+                        system.log(parserError);
                         throw parserError;
                     }
                 }
@@ -189,11 +189,11 @@ function MaiaVM() {
                     eval(compiledCode.js);
                 } catch (e) {
                     var evalError = e.message;
-                    console.log(evalError);
+                    system.log(evalError);
                 }
             } else {
-                console.log('MaiaStudio (The MaiaScript IDE), version 1.0.0');
-                console.log('usage: maiascript "file name"');
+                system.log('MaiaStudio (The MaiaScript IDE)');
+                system.log('usage: maiascript "file name"');
             }
         }
     }
@@ -213,7 +213,7 @@ if (typeof process !== 'undefined') {
     
     const openDatabase = require('websql');
     
-    var alert = console.log;
+    var alert = system.log;
 
     maiavm.run();
 }

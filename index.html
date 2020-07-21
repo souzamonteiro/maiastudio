@@ -10,11 +10,13 @@
   <script src="js/components/prism-core.js"></script>
   <script src="js/components.js"></script>
   <script src="js/components/prism-maiascript.js"></script>
+  <script src="js/jquery.terminal.min.js"></script>
+  <script src="js/keyboard.js"></script>
   <script src="js/algebrite.bundle-for-browser.js"></script>
-  <script src="js/CAS.js"></script>
   <script src="js/maiascript.js"></script>
   <script src="js/lang.js"></script>
   <script src="js/code.js"></script>
+  <link href="css/jquery.terminal.min.css" rel="stylesheet"/>
   <style>
     body {
       font-family: Arial;
@@ -22,7 +24,9 @@
     }
     .sourceCode {
       background: #eee;
+      overflow-x: scroll;
       overflow-y: scroll;
+      position: relative;
       height: 480px;
     }
   </style>
@@ -50,7 +54,7 @@
       <option value="pt-BR" selected="selected">Português</option>
     </select>
   </div>
-
-  <div class="sourceCode"></div>
+    <div class="sourceCode"></div>
+    <div id="terminal" style="position: relative; bottom: unset;"></div>
 </body>
 </html>

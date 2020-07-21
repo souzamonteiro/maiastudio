@@ -4403,7 +4403,7 @@ function MaiaCompiler() {
             }
             return obj;
         } catch (e) {
-            console.log(e.message);
+            system.log(e.message);
         }
     }
     
@@ -4489,7 +4489,7 @@ function MaiaCompiler() {
             }
             return obj;
         } catch (e) {
-            console.log(e.message);
+            system.log(e.message);
         }
     }
 
@@ -5783,7 +5783,7 @@ function MaiaCompiler() {
             result = eval(compiledCode.js);
         } catch (e) {
             var evalError = e.message;
-            console.log(evalError);
+            system.log(evalError);
         }
 
         return result;
@@ -5991,7 +5991,7 @@ function MaiaCompiler() {
         try {
             db = openDatabase(name, version, displayName, estimatedSize);
         } catch (e) {
-            console.log(e.message);
+            system.log(e.message);
             throw new Error(e.message);
         }
 
@@ -7047,12 +7047,22 @@ function System() {
     }
 
     /**
-     * Displays a message in a dialog box.
+     * Displays a message in the console.
      * @param {string}  text - Text to display.
      */
-    this.showMessageDialog = function(text)
+    this.log = function(text)
     {
-        alert(text);
+        console.log(text);
+    }
+
+    /**
+     * Displays a message in a dialog box asking for confirmation.
+     * @param {string}   text - Text to display.
+     * @return {string}  User choice.
+     */
+    const showConfirmDialog = function(text)
+    {
+        return confirm(text);
     }
 
     /**
@@ -7067,13 +7077,12 @@ function System() {
     }
 
     /**
-     * Displays a message in a dialog box asking for confirmation.
-     * @param {string}   text - Text to display.
-     * @return {string}  User choice.
+     * Displays a message in a dialog box.
+     * @param {string}  text - Text to display.
      */
-    const showConfirmDialog = function(text)
+    this.showMessageDialog = function(text)
     {
-        return confirm(text);
+        alert(text);
     }
 
     /**
@@ -7082,7 +7091,7 @@ function System() {
      */
     this.print = function(text)
     {
-        console.log(text);
+        this.log(text);
     }
 
    /**
@@ -7093,7 +7102,7 @@ function System() {
      */
     this.printf = function(fmt)
     {
-        console.log(string.sprintFormat(string.sprintfParse(fmt), arguments));
+        this.log(string.sprintFormat(string.sprintfParse(fmt), arguments));
     }
 
     /**
@@ -7102,7 +7111,7 @@ function System() {
      */
     this.println = function(text)
     {
-        console.log(text + '\n');
+        this.log(text + '\n');
     }
 }
 
@@ -8109,7 +8118,7 @@ function MaiaVM() {
                                             throw pe;
                                         } else {
                                             var parserError = maiaScriptParser.getErrorMessage(pe);
-                                            console.log(parserError);
+                                            system.log(parserError);
                                             throw parserError;
                                         }
                                     }
@@ -8121,7 +8130,7 @@ function MaiaVM() {
                                         eval(compiledCode.js);
                                     } catch (e) {
                                         var evalError = e.message;
-                                        console.log(evalError);
+                                        system.log(evalError);
                                         throw evalError;
                                     }
                                     //document.write('<script type="text/javascript">' + compiledCode.js + '</script>\n');
@@ -8147,7 +8156,7 @@ function MaiaVM() {
                             throw pe;
                         } else {
                             var parserError = maiaScriptParser.getErrorMessage(pe);
-                            console.log(parserError);
+                            system.log(parserError);
                             throw parserError;
                         }
                     }
@@ -8159,7 +8168,7 @@ function MaiaVM() {
                         eval(compiledCode.js);
                     } catch (e) {
                         var evalError = e.message;
-                        console.log(evalError);
+                        system.log(evalError);
                         throw evalError;
                     }
                     //document.write('<script type="text/javascript">' + compiledCode.js + '</script>\n');
@@ -8207,7 +8216,7 @@ function MaiaVM() {
                         throw pe;
                     } else {
                         var parserError = maiaScriptParser.getErrorMessage(pe);
-                        console.log(parserError);
+                        system.log(parserError);
                         throw parserError;
                     }
                 }
@@ -8219,11 +8228,11 @@ function MaiaVM() {
                     eval(compiledCode.js);
                 } catch (e) {
                     var evalError = e.message;
-                    console.log(evalError);
+                    system.log(evalError);
                 }
             } else {
-                console.log('MaiaStudio (The MaiaScript IDE), version 1.0.0');
-                console.log('usage: maiascript "file name"');
+                system.log('MaiaStudio (The MaiaScript IDE)');
+                system.log('usage: maiascript "file name"');
             }
         }
     }
@@ -8243,7 +8252,7 @@ if (typeof process !== 'undefined') {
     
     const openDatabase = require('websql');
     
-    var alert = console.log;
+    var alert = system.log;
 
     maiavm.run();
 }

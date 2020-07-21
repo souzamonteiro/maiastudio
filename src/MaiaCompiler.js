@@ -112,7 +112,7 @@ function MaiaCompiler() {
             }
             return obj;
         } catch (e) {
-            console.log(e.message);
+            system.log(e.message);
         }
     }
     
@@ -198,7 +198,7 @@ function MaiaCompiler() {
             }
             return obj;
         } catch (e) {
-            console.log(e.message);
+            system.log(e.message);
         }
     }
 

@@ -241,7 +241,7 @@ function compileAndRun() {
             eval(compiledCode.js);
         } catch (e) {
             var evalError = e.message;
-            console.log(evalError);
+            system.log(evalError);
             alert(evalError);
         }
     }
@@ -360,6 +360,33 @@ function initApp() {
 
     if (storedCode) {
         flask.updateCode(storedCode);
+    }
+
+    jQuery(function($, undefined) {
+        $('#terminal').terminal(function(command) {
+            if (command !== '') {
+                try {
+                    var result = core.eval(command);
+                    if (result !== undefined) {
+                        this.echo(new String(result));
+                    }
+                } catch(e) {
+                    this.error(new String(e));
+                }
+            } else {
+               this.echo('');
+            }
+        }, {
+            greetings: 'MaiaStudio (The MaiaScript IDE)',
+            name: 'terminal',
+            height: 100,
+            prompt: 'maia> '
+        });
+    });
+
+    system.log = function (text) {
+        var term = $('#terminal').terminal(function(command) {});
+        term.echo(text);
     }
 }
 

@@ -258,7 +258,7 @@
             result = eval(compiledCode.js);
         } catch (e) {
             var evalError = e.message;
-            console.log(evalError);
+            system.log(evalError);
         }
 
         return result;
@@ -466,7 +466,7 @@
         try {
             db = openDatabase(name, version, displayName, estimatedSize);
         } catch (e) {
-            console.log(e.message);
+            system.log(e.message);
             throw new Error(e.message);
         }
 

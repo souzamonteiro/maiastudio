@@ -41,7 +41,7 @@ see the Algebrite documentation at http://algebrite.org
 
 To invoke CAS use the method:
 
-cas.eval("expression")
+`cas.eval("expression")`
 
 **INSTRUCTIONS FOR USE:**
 
