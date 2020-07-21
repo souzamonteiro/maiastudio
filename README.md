@@ -1,8 +1,8 @@
 #MaiaStudio (The MaiaScript IDE)
 
-*Copyright (C) 2020 Roberto Luiz Souza Monteiro,
-*                   Renata Souza Barreto,
-*                   Hernane Borges de Barros Pereira.
+*Copyright (C) 2020 Roberto Luiz Souza Monteiro,*
+                    *Renata Souza Barreto,*
+                    *Hernane Borges de Barros Pereira.*
 
 This software is distributed under the terms of several open sources licenses.
 
@@ -33,7 +33,7 @@ For more information send mail to: support@maiascript.com
 You can get the last MaiaStudio version at
 http://www.maiascript.com
 
-**COMPUTER ALGEBRA SYSTEM (CAS):
+**COMPUTER ALGEBRA SYSTEM (CAS):**
 
 MaiaScript uses the Algebrite CAS to solve complex expressions involving linear algebra,
 systems of equations and differential and integral calculus. For complete reference,
@@ -43,7 +43,7 @@ To invoke CAS use the method:
 
 cas.eval("expression")
 
-**INSTRUCTIONS FOR USE:
+**INSTRUCTIONS FOR USE:**
 
 To use the MaiaScript language in HTML documents, just include the
 file "js/maiascript.js" in the document and insert the MaiaScript code
@@ -65,7 +65,7 @@ Or, if you installed the MaiaScript compiler using npm:
 
 `maiascript "script name".maia`
 
-**INSTALL COMMAND LINE CLI:
+**INSTALL COMMAND LINE CLI:**
 
 To install the MaiaScript compiler command line tool use the command:
 
