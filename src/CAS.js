@@ -21,7 +21,7 @@
   * MaiaScript Computer Algebra System library.
   * @class 
   */
- function Cas() {
+ function CAS() {
     init();
 
     /**
@@ -38,10 +38,16 @@
      * @param {string}   expr - Algebraic expression.
      * @return {object}  Result of the expression.
      */
-    this.run = function(expr)
+    this.eval = function(expr)
     {
-        return Algebrite.run(expr);
+        var res;
+        if (typeof Algebrite != 'undefined') {
+            res = Algebrite.run(expr);
+        } else {
+            throw new Error("The Algebrite CAS was not loaded");
+        }
+        return res;
     }
 }
 
-cas = new Cas();
+cas = new CAS();
