@@ -235,7 +235,8 @@ function compileAndRun() {
         compiledCode.js = code;
     }
     if (editorMode == 'html') {
-        var win = window.open('data:text/html;charset=utf-8,' + code, '_blank', 'width=640,height=480');
+        var win = window.open('index.html', '', '');
+        win.location = 'data:text/html;charset=utf-8,' + code;
     } else if ((editorMode == 'maia') || (editorMode == 'mil') || (editorMode == 'js')) {
         try {
             eval(compiledCode.js);
