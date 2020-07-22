@@ -384,7 +384,7 @@ function initApp() {
         });
     });
 
-    system.log = function (text) {
+    system.log = function(text) {
         var term = $('#terminal').terminal(function(command) {});
         term.echo(text);
     }

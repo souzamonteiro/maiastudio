@@ -65,7 +65,7 @@ Or, if you installed the MaiaScript compiler using npm:
 
 `maiascript "script name".maia`
 
-**INSTALL COMMAND LINE CLI:**
+**INSTALL COMMAND LINE INTERFACE (CLI):**
 
 To install the MaiaScript compiler command line tool use the command:
 
