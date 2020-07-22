@@ -353,7 +353,7 @@ function initApp() {
         ariaLabelledby: 'header1',
         handleTabs: true
     });
-
+    
     flask.addLanguage('maia', Prism.languages['maiascript']);
 
     window['flask'] = flask;
