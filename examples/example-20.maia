@@ -7,7 +7,7 @@ e = "Hello, World!"
 system.println("splice(a, 1, 2) = " + core.toString(core.splice(a, 1, 2)))
 system.println("splice(a, 1, 2, b) = " + core.toString(core.splice(a, 0, 2, b)))
 
-system.println("split(c) = " + core.split(c))
+system.println("split(c) = " + core.split(c, ","))
 
 system.println("search(e) = " + core.search(e, ","))
 

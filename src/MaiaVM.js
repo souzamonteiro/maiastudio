@@ -148,7 +148,7 @@ function MaiaVM() {
         // Supports only the Node.js interpreter.
         if (typeof process !== 'undefined') {
             var command = 'node';
-            var argv = process.argv.slice(2);
+            var argv = process.argv.slice();
             compiledCode.xml = '';
             var fs = require('fs');
             var readTextFile = fs.readFileSync;
@@ -165,35 +165,83 @@ function MaiaVM() {
                     return content.length > 0 && content.charCodeAt(0) == 0xFEFF ? content.substring(1) : content;
                 }
             }
-
-            if (argv.length != 0) {
-                var code = read(String(argv[0]));
-                var s = new MaiaScript.XmlSerializer(getXml, false);
-                var maiaScriptParser = new MaiaScript(code, s);
-                try {
-                    maiaScriptParser.parse_maiascript();
-                } catch (pe) {
-                    if (!(pe instanceof maiaScriptParser.ParseException)) {
-                        throw pe;
+            
+            system.argv = argv.slice();
+            system.argc = argv.length;
+            var justCompile = false;
+            var inputFile;
+            var outputFile;
+            if (argv.length > 1) {
+                var i = 2;
+                while (i < argv.length) {
+                    if (argv[i] == '-c') {
+                        justCompile = true;
+                    } else if ((argv[i] == '-h') | (argv[i] == '--help')) {
+                        system.log('MaiaScript Command Line Interface (CLI)');
+                        system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
+                        system.log('Options:');
+                        system.log('-c                          Just compile, don\'t run the script;');
+                        system.log('-h     --help               Displays this help message;');
+                        system.log('-o     <script.js>          Output file name;');
+                        system.log('       --                   End of compiler options.\n');
+                    } else if (argv[i] == '-o') {
+                        i++;
+                        outputFile = argv[i];
+                    } else if (argv[i] == '--') {
+                        break;
                     } else {
-                        var parserError = maiaScriptParser.getErrorMessage(pe);
-                        system.log(parserError);
-                        throw parserError;
+                        inputFile = argv[i];
+                        break;
                     }
+                    i++;
                 }
-                var parser = new DOMParser();
-                var xml = parser.parseFromString(compiledCode.xml,'text/xml');
-                var compiler = new MaiaCompiler();
-                compiledCode.js = compiler.compile(xml);
-                try {
-                    eval(compiledCode.js);
-                } catch (e) {
-                    var evalError = e.message;
-                    system.log(evalError);
+                system.argv = argv.slice(i);
+                system.argc = system.argv.length;
+                if (typeof inputFile != 'undefined') {
+                    var code = read(String(inputFile));
+                    var s = new MaiaScript.XmlSerializer(getXml, false);
+                    var maiaScriptParser = new MaiaScript(code, s);
+                    try {
+                        maiaScriptParser.parse_maiascript();
+                    } catch (pe) {
+                        if (!(pe instanceof maiaScriptParser.ParseException)) {
+                            throw pe;
+                        } else {
+                            var parserError = maiaScriptParser.getErrorMessage(pe);
+                            system.log(parserError);
+                            throw parserError;
+                        }
+                    }
+                    var parser = new DOMParser();
+                    var xml = parser.parseFromString(compiledCode.xml,'text/xml');
+                    var compiler = new MaiaCompiler();
+                    compiledCode.js = compiler.compile(xml);
+                    if (justCompile) {
+                        if (typeof outputFile != 'undefined') {
+                            fs.writeFile(outputFile, compiledCode.js, function (err) {
+                                if (err) {
+                                    throw err;
+                                }
+                            });
+                        } else {
+                            system.log('MaiaScript Command Line Interface (CLI)');
+                            system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
+                        }
+                    } else {
+                        try {
+                            eval(compiledCode.js);
+                        } catch (e) {
+                            var evalError = e.message;
+                            system.log(evalError);
+                        }
+                    }
+                } else {
+                    system.log('MaiaScript Command Line Interface (CLI)');
+                    system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
                 }
             } else {
-                system.log('MaiaStudio (The MaiaScript IDE)');
-                system.log('usage: maiascript "file name"');
+                system.log('MaiaScript Command Line Interface (CLI)');
+                system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
             }
         }
     }

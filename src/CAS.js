@@ -21,7 +21,7 @@
   * MaiaScript Computer Algebra System library.
   * @class 
   */
- function CAS() {
+function CAS() {
     init();
 
     /**

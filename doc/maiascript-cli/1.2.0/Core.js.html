@@ -45,11 +45,16 @@
  * limitations under the License.
  */
 
- /** 
-  * MaiaScript core library.
-  * @class
-  */
- function Core() {
+/** 
+ * MaiaScript core library.
+ * @class
+ */
+function Core() {
+    this.testResult = {
+        "expected": {},
+        "obtained": {}
+    };
+
     init();
 
     /**
@@ -657,6 +662,57 @@
     }
 
     /**
+     * Tests a script, checking if the result of its execution corresponds to the expected result, considering the specified tolerance.
+     * @param {string}    _script - The script to be evaluated.
+     * @param {number}    _times - Number of times the test must be repeated.
+     * @param {number}    _value - Expected value.
+     * @param {number}    _tolerance - Tolerance.
+     * @param {string}    _catchScript - Script to be evaluated if the test fails.
+     * @return {boolean}  True if the test was successful or false, otherwise.
+     */
+    this.testScript = function(_script, _times, _value, _tolerance, _catchScript)
+    {
+        if (typeof _times == 'undefined') {
+            _times = 1;
+        }
+        if (typeof _tolerance == 'undefined') {
+            _tolerance = 0;
+        }
+        var _successfulTest = true;
+        var _i = 0;
+         while (_i &lt; _times) {
+            this.testResult.obtained = eval(_script);
+            if (typeof _value != 'undefined') {
+                if (_tolerance > 0) {
+                    if ((typeof this.testResult.obtained == 'number') &amp;&amp; (typeof _value == 'number')) {
+                        if (!((this.testResult.obtained >= (_value - _tolerance)) &amp;&amp; (this.testResult.obtained &lt;= (_value + _tolerance)))) {
+                            this.testResult.expected = _value;
+                            _successfulTest = false;
+                            if (typeof _catchScript != 'undefined') {
+                                eval(_catchScript);
+                            }
+                            break;
+                        }
+                    } else {
+                        throw new Error('The test statement only supports tolerance with numeric values.');
+                    }
+                } else {
+                    if (!core.equal(this.testResult.obtained, _value)) {
+                        this.testResult.expected = _value;
+                        _successfulTest = false;
+                        if (typeof _catchScript != 'undefined') {
+                            eval(_catchScript);
+                        }
+                        break;
+                    }
+                }
+            }
+            _i++;
+        }
+        return _successfulTest;
+    }
+
+    /**
      * Converts a string to lower case.
      * @param {string}   text - The string to convert.
      * @return {string}  A new string.
@@ -854,7 +910,53 @@
      */
     this.equal = function(left, right)
     {
-        return left == right;
+        var res;
+
+        Array.prototype.equals = function(array) {
+            if (!array) {
+                return false;
+            }
+            if (this.length != array.length) {
+                return false;
+            }
+            for (var i = 0, l = this.length; i &lt; l; i++) {
+                if (this[i] instanceof Array &amp;&amp; array[i] instanceof Array) {
+                    if (!this[i].equals(array[i])) {
+                        return false;
+                    }
+                } else if (this[i] != array[i]) {
+                     return false;
+                }
+            }
+            return true;
+        }
+        Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+
+        isEquivalent = function(a, b) {
+            var aProperties = Object.getOwnPropertyNames(a);
+            var aProperties = Object.getOwnPropertyNames(b);
+            if (aProperties.length != aProperties.length) {
+                return false;
+            }
+            for (var i = 0; i &lt; aProperties.length; i++) {
+                var propertiesName = aProperties[i];
+                if (a[propertiesName] !== b[propertiesName]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        if (Array.isArray(left) &amp;&amp; Array.isArray(right)) {
+            res = left.equals(right);
+        } else {
+            if ((typeof left == 'object') &amp;&amp; (typeof right == 'object')) {
+                res = isEquivalent(left, right);
+            } else {
+                res = left == right;
+            }
+        }
+        return res;
     }
 
     /**
@@ -970,18 +1072,31 @@
                 res = [];
                 var dimLeft = core.dim(left);
                 var dimRight = core.dim(right);
-                if ((dimLeft[0] == dimRight[0]) &amp;&amp; (dimLeft[1] == dimRight[1])) {
-                    var rows = dimLeft[0];
-                    var columns = dimLeft[1];
-                    for (var i = 0; i &lt; rows; i++) {
-                        var row = [];
-                        for (var j = 0; j &lt; columns; j++) {
-                            row.push(left[i][j] + right[i][j]);
+                if ((dimLeft.length > 1) &amp;&amp; (dimRight.length > 1)) {
+                    if ((dimLeft[0] == dimRight[0]) &amp;&amp; (dimLeft[1] == dimRight[1])) {
+                        var rows = dimLeft[0];
+                        var columns = dimLeft[1];
+                        for (var i = 0; i &lt; rows; i++) {
+                            var row = [];
+                            for (var j = 0; j &lt; columns; j++) {
+                                row.push(left[i][j] + right[i][j]);
+                            }
+                            res.push(row);
                         }
-                        res.push(row);
+                    } else {
+                        throw new Error('Operand invalid for operator "+", in the expression ' + core.toString(left) + ' + ' + core.toString(right) + '. The matrices must have the same dimensions.');
                     }
                 } else {
-                    throw new Error('Operand invalid for operator "+", in the expression ' + core.toString(left) + ' + ' + core.toString(right) + '. The matrices must have the same dimensions.');
+                    if (dimLeft[0] == dimRight[0]) {
+                        var columns = dimLeft[0];
+                        var row = [];
+                        for (var i = 0; i &lt; columns; i++) {
+                            row.push(left[i] + right[i]);
+                        }
+                        res = row;
+                    } else {
+                        throw new Error('Operand invalid for operator "+", in the expression ' + core.toString(left) + ' + ' + core.toString(right) + '. The matrices must have the same dimensions.');
+                    }
                 }
             } else {
                 throw new Error('Invalid operand for operator "+", in the expression ' + core.toString(left) + ' + ' + core.toString(right) + '.');
@@ -1019,7 +1134,7 @@
                 var img = core.toNumber(right.imaginary);
                 res = core.complex(real, img);
             } else if (core.type(right) == 'number') {
-                res = left + right;
+                res = left - right;
             } else {
                 throw new Error('Invalid operand for operator "-", in the expression ' + core.toString(left) + ' - ' + core.toString(right) + '.');
             }
@@ -1028,18 +1143,31 @@
                 res = [];
                 var dimLeft = core.dim(left);
                 var dimRight = core.dim(right);
-                if ((dimLeft[0] == dimRight[0]) &amp;&amp; (dimLeft[1] == dimRight[1])) {
-                    var rows = dimLeft[0];
-                    var columns = dimLeft[1];
-                    for (var i = 0; i &lt; rows; i++) {
-                        var row = [];
-                        for (var j = 0; j &lt; columns; j++) {
-                            row.push(left[i][j] - right[i][j]);
+                if ((dimLeft.length > 1) &amp;&amp; (dimRight.length > 1)) {
+                    if ((dimLeft[0] == dimRight[0]) &amp;&amp; (dimLeft[1] == dimRight[1])) {
+                        var rows = dimLeft[0];
+                        var columns = dimLeft[1];
+                        for (var i = 0; i &lt; rows; i++) {
+                            var row = [];
+                            for (var j = 0; j &lt; columns; j++) {
+                                row.push(left[i][j] - right[i][j]);
+                            }
+                            res.push(row);
                         }
-                        res.push(row);
+                    } else {
+                        throw new Error('Operand invalid for operator "-", in the expression ' + core.toString(left) + ' - ' + core.toString(right) + '. The matrices must have the same dimensions.');
                     }
                 } else {
-                    throw new Error('Operand invalid for operator "-", in the expression ' + core.toString(left) + ' - ' + core.toString(right) + '. The matrices must have the same dimensions.');
+                    if (dimLeft[0] == dimRight[0]) {
+                        var columns = dimLeft[0];
+                        var row = [];
+                        for (var i = 0; i &lt; columns; i++) {
+                            row.push(left[i] - right[i]);
+                        }
+                        res = row;
+                    } else {
+                        throw new Error('Operand invalid for operator "-", in the expression ' + core.toString(left) + ' - ' + core.toString(right) + '. The matrices must have the same dimensions.');
+                    }
                 }
             } else {
                 throw new Error('Invalid operand for operator "-", in the expression ' + core.toString(left) + ' - ' + core.toString(right) + '.');
@@ -1249,13 +1377,13 @@ core = new Core();
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CAS.html">CAS</a></li><li><a href="Core.html">Core</a></li><li><a href="MaiaCompiler.html">MaiaCompiler</a></li><li><a href="MaiaString.html">MaiaString</a></li><li><a href="MaiaVM.html">MaiaVM</a></li><li><a href="Mathematics.html">Mathematics</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="System.html">System</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ANN.html">ANN</a></li><li><a href="CAS.html">CAS</a></li><li><a href="Core.html">Core</a></li><li><a href="MaiaCompiler.html">MaiaCompiler</a></li><li><a href="MaiaString.html">MaiaString</a></li><li><a href="MaiaVM.html">MaiaVM</a></li><li><a href="Mathematics.html">Mathematics</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="System.html">System</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jul 22 2020 16:54:40 GMT-0300 (GMT-03:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Jul 27 2020 18:36:17 GMT-0300 (GMT-03:00)
 </footer>
 
 <script> prettyPrint(); </script>

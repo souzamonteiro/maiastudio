@@ -1,6 +1,6 @@
 {
   "name": "maiascript-cli",
-  "version": "1.1.6",
+  "version": "1.2.0",
   "description": "MaiaStudio (The MaiaScript IDE)\n\nMaiaScript is a programming language aimed at developing adaptable and intelligent applications.",
   "keywords": [
     "maia",
@@ -26,7 +26,8 @@
     "websql": "^1.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "./build.sh",
+    "test": "./test.sh"
   },
   "directories": {
     "example": "examples"

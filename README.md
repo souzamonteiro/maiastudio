@@ -67,7 +67,7 @@ Or, if you installed the MaiaScript compiler using npm:
 
 **INSTALL COMMAND LINE INTERFACE (CLI):**
 
-To install the MaiaScript compiler command line tool use the command:
+To install the MaiaScript compiler command line tool and MaiaStudio use the command:
 
 `npm install -g maiascript-cli`
 
@@ -80,6 +80,18 @@ Or, download the latest zipped version:
 `unzip maiastudio-master.zip`
 `cd maiastudio-master`
 `npm install -g .`
+
+**USING THE COMMAND LINE INTERFACE (CLI) AND MAIASTUDIO:**
+
+To run the command line tool, use the command:
+
+`maiascript [options] [script.maia] [--] [arguments]`
+
+To see the command line tool options run the command:
+
+`maiascript --help`
+
+To launch MaiaStudio open the file `index.html`, in the main directory of the package, in a browser.
 
 Lauro de Freitas, July 2020.
 

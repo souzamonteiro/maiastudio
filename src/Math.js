@@ -236,7 +236,7 @@ function Mathematics() {
         if (core.type(x) == 'complex') {
             y = core.complex(Math.cosh(x.real) * Math.cos(x.imaginary), Math.sinh(x.real) * Math.sin(x.imaginary));
         } else {
-            y = Math.cos(x);
+            y = Math.cosh(x);
         }
         return y;
     }
@@ -313,11 +313,11 @@ function Mathematics() {
      * @param {object}   y - Value of y.
      * @return {number}  The largest value between x and y.
      */
-    this.max = function(x)
+    this.max = function(x, y)
     {
         var y;
-        if (core.type(x) == 'number') {
-            y = Math.max(x);
+        if ((core.type(x) == 'number') && (core.type(y) == 'number')) {
+            y = Math.max(x, y);
         }
         return y;
     }
@@ -328,11 +328,11 @@ function Mathematics() {
      * @param {object}   y - Value of y.
      * @return {number}  The smallest value between x and y.
      */
-    this.min = function(x)
+    this.min = function(x, y)
     {
         var y;
-        if (core.type(x) == 'number') {
-            y = Math.min(x);
+        if ((core.type(x) == 'number') && (core.type(y) == 'number')) {
+            y = Math.min(x, y);
         }
         return y;
     }
@@ -353,12 +353,9 @@ function Mathematics() {
      * Returns a random number between 0 and 1.
      * @return {number}  A random number.
      */
-    this.random = function(x)
+    this.random = function()
     {
-        var y;
-        if (core.type(x) == 'number') {
-            y = Math.random();
-        }
+        var y = Math.random();
         return y;
     }
 
@@ -405,7 +402,7 @@ function Mathematics() {
         if (core.type(x) == 'complex') {
             y = core.complex(Math.sinh(x.real) * Math.cos(x.imaginary), Math.cosh(x.real) * Math.sin(x.imaginary));
         } else {
-            y = Math.sin(x);
+            y = Math.sinh(x);
         }
         return y;
     }
@@ -460,7 +457,7 @@ function Mathematics() {
         if (core.type(x) == 'complex') {
             y = core.div(this.sinh(x), this.cosh(x));
         } else {
-            y = Math.tan(x);
+            y = Math.tanh(x);
         }
         return y;
     }

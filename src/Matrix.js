@@ -38,7 +38,7 @@ function Matrix() {
      * @param {number}   c1 - First column.
      * @param {number}   r2 - Last row.
      * @param {number}   c2 - Last column.
-     * @return {number}  mean and standard deviation of the values contained in a matrix.
+     * @return {number}  Mean and standard deviation of the values contained in a matrix.
      */
     this.avg = function(mtx, r1, c1, r2, c2)
     {
@@ -78,7 +78,27 @@ function Matrix() {
                     }
                 }
             } else {
-                throw new Error('Invalid argument for function avg. The matrix must be two-dimensional.');
+                if (dimMatrix.length == 1) {
+                    if (typeof c1 == 'undefined') {
+                        c1 = 0;
+                    }
+                    if (typeof c2 == 'undefined') {
+                        c2 = dimMatrix[0] - 1;
+                    }
+                    sx = 0;
+                    sx2 = 0;
+                    n = dimMatrix[0];
+                    for (var j = c1; j <= c2; j++) {
+                        if (core.type(mtx[j]) == 'number') {
+                            sx += mtx[j];
+                            sx2 += mtx[j] * mtx[j];
+                        } else {
+                            throw new Error('Invalid element ' + mtx[j] + ' in matrix for function avg. All elements must be numeric.');
+                        }
+                    }
+                } else {
+                    throw new Error('Invalid argument for function avg. The matrix must be one or two-dimensional.');
+                }
             }
         } else {
             throw new Error('Invalid argument for function avg. Argument must be a matrix.');
@@ -128,7 +148,26 @@ function Matrix() {
                     }
                 }
             } else {
-                throw new Error('Invalid argument for function count. The matrix must be two-dimensional.');
+                if (dimMatrix.length == 1) {
+                    res = 0;
+                    if (typeof c1 == 'undefined') {
+                        c1 = 0;
+                    }
+                    if (typeof c2 == 'undefined') {
+                        c2 = dimMatrix[0] - 1;
+                    }
+                    for (var j = c1; j <= c2; j++) {
+                        if (core.type(mtx[j]) == 'number') {
+                            if (mtx[j] != 0) {
+                                res++;
+                            }
+                        } else {
+                            throw new Error('Invalid element ' + mtx[j] + ' in matrix for function count. All elements must be numeric.');
+                        }
+                    }
+                } else {
+                    throw new Error('Invalid argument for function count. The matrix must be one or two-dimensional.');
+                }
             }
         } else {
             throw new Error('Invalid argument for function count. Argument must be a matrix.');
@@ -240,7 +279,30 @@ function Matrix() {
                     }
                 }
             } else {
-                throw new Error('Invalid argument for function max. The matrix must be two-dimensional.');
+                if (dimMatrix.length == 1) {
+                    res = 0;
+                    if (typeof c1 == 'undefined') {
+                        c1 = 0;
+                    }
+                    if (typeof c2 == 'undefined') {
+                        c2 = dimMatrix[0] - 1;
+                    }
+                    for (var j = c1; j <= c2; j++) {
+                        if (core.type(mtx[j]) == 'number') {
+                            if (typeof res == 'undefined') {
+                                res = mtx[j];
+                            } else {
+                                if (mtx[j] > res) {
+                                    res = mtx[j];
+                                }
+                            }
+                        } else {
+                            throw new Error('Invalid element ' + mtx[j] + ' in matrix for function max. All elements must be numeric.');
+                        }
+                    }
+                } else {
+                    throw new Error('Invalid argument for function max. The matrix must be one or two-dimensional.');
+                }
             }
         } else {
             throw new Error('Invalid argument for function max. Argument must be a matrix.');
@@ -263,7 +325,6 @@ function Matrix() {
         if (core.type(mtx) == 'matrix') {
             dimMatrix = core.dim(mtx);
             if (dimMatrix.length == 2) {
-                res = 0;
                 if (typeof r1 == 'undefined') {
                     r1 = 0;
                 }
@@ -292,11 +353,164 @@ function Matrix() {
                     }
                 }
             } else {
-                throw new Error('Invalid argument for function min. The matrix must be two-dimensional.');
+                if (dimMatrix.length == 1) {
+                    res = 0;
+                    if (typeof c1 == 'undefined') {
+                        c1 = 0;
+                    }
+                    if (typeof c2 == 'undefined') {
+                        c2 = dimMatrix[0] - 1;
+                    }
+                    for (var j = c1; j <= c2; j++) {
+                        if (core.type(mtx[j]) == 'number') {
+                            if (typeof res == 'undefined') {
+                                res = mtx[j];
+                            } else {
+                                if (mtx[j] < res) {
+                                    res = mtx[j];
+                                }
+                            }
+                        } else {
+                            throw new Error('Invalid element ' + mtx[j] + ' in matrix for function min. All elements must be numeric.');
+                        }
+                    }
+                } else {
+                    throw new Error('Invalid argument for function min. The matrix must be one or two-dimensional.');
+                }
             }
         } else {
             throw new Error('Invalid argument for function min. Argument must be a matrix.');
         }
+        return res;
+    }
+
+    /**
+     * Calculates the sum of all cells in the matrix.
+     * @param {object}   mtx - The matrix.
+     * @param {number}   r1 - First row.
+     * @param {number}   c1 - First column.
+     * @param {number}   r2 - Last row.
+     * @param {number}   c2 - Last column.
+     * @return {number}  Sum of the values contained in a matrix.
+     */
+    this.sum = function(mtx, r1, c1, r2, c2)
+    {
+        var res;
+        var sx;
+        if (core.type(mtx) == 'matrix') {
+            dimMatrix = core.dim(mtx);
+            if (dimMatrix.length == 2) {
+                if (typeof r1 == 'undefined') {
+                    r1 = 0;
+                }
+                if (typeof c1 == 'undefined') {
+                    c1 = 0;
+                }
+                if (typeof r2 == 'undefined') {
+                    r2 = dimMatrix[0] - 1;
+                }
+                if (typeof c2 == 'undefined') {
+                    c2 = dimMatrix[1] - 1;
+                }
+                sx = 0;
+                for (var i = r1; i <= r2; i++) {
+                    for (var j = c1; j <= c2; j++) {
+                        if (core.type(mtx[i][j]) == 'number') {
+                            sx += mtx[i][j];
+                        } else {
+                            throw new Error('Invalid element ' + mtx[i][j] + ' in matrix for function sum. All elements must be numeric.');
+                        }
+                    }
+                }
+            } else {
+                if (dimMatrix.length == 1) {
+                    if (typeof c1 == 'undefined') {
+                        c1 = 0;
+                    }
+                    if (typeof c2 == 'undefined') {
+                        c2 = dimMatrix[0] - 1;
+                    }
+                    sx = 0;
+                    for (var j = c1; j <= c2; j++) {
+                        if (core.type(mtx[j]) == 'number') {
+                            sx += mtx[j];
+                        } else {
+                            throw new Error('Invalid element ' + mtx[j] + ' in matrix for function sum. All elements must be numeric.');
+                        }
+                    }
+                } else {
+                    throw new Error('Invalid argument for function sum. The matrix must be one or two-dimensional.');
+                }
+            }
+        } else {
+            throw new Error('Invalid argument for function sum. Argument must be a matrix.');
+        }
+        res = sx;
+        return res;
+    }
+
+    /**
+     * Calculates the squared sum of all cells in the matrix.
+     * @param {object}   mtx - The matrix.
+     * @param {number}   r1 - First row.
+     * @param {number}   c1 - First column.
+     * @param {number}   r2 - Last row.
+     * @param {number}   c2 - Last column.
+     * @return {number}  Sum of the values contained in a matrix.
+     */
+    this.sum2 = function(mtx, r1, c1, r2, c2)
+    {
+        var res;
+        var sx;
+        if (core.type(mtx) == 'matrix') {
+            dimMatrix = core.dim(mtx);
+            if (dimMatrix.length == 2) {
+                if (typeof r1 == 'undefined') {
+                    r1 = 0;
+                }
+                if (typeof c1 == 'undefined') {
+                    c1 = 0;
+                }
+                if (typeof r2 == 'undefined') {
+                    r2 = dimMatrix[0] - 1;
+                }
+                if (typeof c2 == 'undefined') {
+                    c2 = dimMatrix[1] - 1;
+                }
+                sx = 0;
+                for (var i = r1; i <= r2; i++) {
+                    for (var j = c1; j <= c2; j++) {
+                        if (core.type(mtx[i][j]) == 'number') {
+                            sx += mtx[i][j] * mtx[i][j];
+                        } else {
+                            throw new Error('Invalid element ' + mtx[i][j] + ' in matrix for function sum. All elements must be numeric.');
+                        }
+                    }
+                }
+            } else {
+                if (dimMatrix.length == 1) {
+                    if (typeof c1 == 'undefined') {
+                        c1 = 0;
+                    }
+                    if (typeof c2 == 'undefined') {
+                        c2 = dimMatrix[0] - 1;
+                    }
+                    sx = 0;
+                    for (var j = c1; j <= c2; j++) {
+                        if (core.type(mtx[j]) == 'number') {
+                            sx += mtx[j] * mtx[j];
+                        } else {
+                            throw new Error('Invalid element ' + mtx[j] + ' in matrix for function sum. All elements must be numeric.');
+                        }
+                    }
+                } else {
+                    throw new Error('Invalid argument for function sum. The matrix must be one or two-dimensional.');
+                }
+            }
+        } else {
+            throw new Error('Invalid argument for function sum. Argument must be a matrix.');
+        }
+        res = sx;
         return res;
     }
 

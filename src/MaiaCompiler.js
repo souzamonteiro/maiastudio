@@ -246,6 +246,9 @@ function MaiaCompiler() {
                     json.number.complex.imaginary = json.number.complex.imaginary.substring(0, json.number.complex.imaginary.length - 2);
                 }
             }
+            if (typeof json.number.complex.real == 'undefined') {
+                json.number.complex.real = 0;
+            }
             maiaScriptComplexNumber = {
                 'real': core.toNumber(json.number.complex.real),
                 'imaginary': core.toNumber(json.number.complex.imaginary)
@@ -684,6 +687,69 @@ function MaiaCompiler() {
                 }
             }
         } else if ('test' in mil) {
+            node = mil['test'];
+            var nodeInfo = {
+                'parentNode': 'test',
+                'childNode': '',
+                'terminalNode' : 'test'
+            };
+            parentNodeInfo.childNode = 'test';
+
+            if (typeof node != 'undefined') {
+                if ('expression' in node) {
+                    var body = '';
+                    var nodeExpression = node['expression'];
+                    if (Array.isArray(nodeExpression)) {
+                        var _script = '';
+                        var nodeExpression = node['expression'];
+                        var nodeTimes = {
+                            'expression': nodeExpression[0]
+                        };
+                        var _times = this.parse(nodeTimes, nodeInfo);
+
+                        var nodeValue = {
+                            'expression': nodeExpression[1]
+                        };
+                        var _value = this.parse(nodeValue, nodeInfo);
+
+                        var nodeTolerance = {
+                            'expression': nodeExpression[2]
+                        };
+                        var _tolerance = this.parse(nodeTolerance, nodeInfo);
+                        
+                        for (var i = 3; i < nodeExpression.length; i++) {
+                            var commandLine = nodeExpression[i];
+                            var bodyExpression = {
+                                'expression': commandLine
+                            };
+                            _script += this.parse(bodyExpression, nodeInfo) + ';';
+                        }
+                    }
+                }
+                if ('catch' in node) {
+                    nodeInfo.parentNode = 'catch';
+                    var nodeCatch = node['catch'];
+                    if ('expression' in node) {
+                        if (Array.isArray(nodeExpression)) {
+                            var _catch = '';
+                            var nodeExpression = nodeCatch['expression'];
+                            var nodeVar = {
+                                'expression': nodeExpression[0]
+                            };
+                            var catchVar = this.parse(nodeVar, nodeInfo);
+
+                            for (var i = 1; i < nodeExpression.length; i++) {
+                                var commandLine = nodeExpression[i];
+                                var bodyExpression = {
+                                    'expression': commandLine
+                                };
+                                _catch += this.parse(bodyExpression, nodeInfo) + ';';
+                            }
+                        }
+                        js += 'core.testScript(' + '\'' + _script + '\',' + _times + ',' + _value + ',' + _tolerance + ',\'' + 'var ' + catchVar + ' = core.testResult.obtained;' + _catch + '\');';
+                    }
+                }
+            }
         } else if ('break' in mil) {
             node = mil['break'];
             var nodeInfo = {
@@ -806,7 +872,7 @@ function MaiaCompiler() {
                 'terminalNode' : ''
             };
             parentNodeInfo.childNode = 'op';
-
+            
             if (typeof node != 'undefined') {
                 if (Array.isArray(node)) {
                     var nodeInfo = {
@@ -821,7 +887,16 @@ function MaiaCompiler() {
                         'childNode': '',
                         'terminalNode' : ''
                     };
-                    var right = this.parse(node[1], nodeInfo);
+                    if ('TOKEN' in node[1]) {
+                        var operator = node[1]['TOKEN'];
+                        if ((operator == '!') || (operator == '~')) {
+                            var right = operators[operator] + '(' + this.parse(node[1], nodeInfo) + ')';
+                        } else {
+                            var right = this.parse(node[1], nodeInfo);
+                        }
+                    } else {
+                        var right = this.parse(node[1], nodeInfo);
+                    }
                     parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                     if ('TOKEN' in mil) {
                         var operator = mil['TOKEN'];

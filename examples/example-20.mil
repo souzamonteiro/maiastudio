@@ -415,15 +415,27 @@
                                                             ")"
                                                         ],
                                                         "arguments": {
-                                                            "expression": {
-                                                                "operation": {
-                                                                    "primary": {
-                                                                        "member": {
-                                                                            "identifier": "c"
+                                                            "expression": [
+                                                                {
+                                                                    "operation": {
+                                                                        "primary": {
+                                                                            "member": {
+                                                                                "identifier": "c"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "operation": {
+                                                                        "primary": {
+                                                                            "value": {
+                                                                                "string": "\",\""
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
-                                                            }
+                                                            ],
+                                                            "TOKEN": ","
                                                         }
                                                     }
                                                 }
