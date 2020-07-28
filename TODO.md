@@ -2,6 +2,7 @@
 - [ ] Add import e require to system library
 - [ ] Add version property to core library
 - [ ] Add arch property to system library
+- [ ] Try another editor for MaiaStudio
 - [ ] Implement support for complex network analysis
 - [ ] Implement retractable terminal
 - [ ] Prepare binary distributions for macOS, Windows and Linux
