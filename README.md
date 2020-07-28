@@ -93,7 +93,7 @@ To see the command line tool options run the command:
 
 To launch MaiaStudio open the file `index.html`, in the main directory of the package, in a browser.
 
-To try MaiaStudio on-line go to http://www.maiastudio.com
+To try MaiaStudio on-line go to http://www.maiastudio.com.br
 
 Lauro de Freitas, July 2020.
 
