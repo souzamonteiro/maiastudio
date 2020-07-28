@@ -1,4 +1,7 @@
-- [ ] Add core.version property
+- [ ] Remove import e require from compiler
+- [ ] Add import e require to system library
+- [ ] Add version property to core library
+- [ ] Add arch property to system library
 - [ ] Implement support for complex network analysis
 - [ ] Implement retractable terminal
 - [ ] Prepare binary distributions for macOS, Windows and Linux
