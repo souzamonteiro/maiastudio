@@ -1,4 +1,4 @@
-#MaiaStudio (The MaiaScript IDE)
+# MaiaStudio (The MaiaScript IDE)
 
 *Copyright (C) 2020 Roberto Luiz Souza Monteiro,*
                     *Renata Souza Barreto,*
