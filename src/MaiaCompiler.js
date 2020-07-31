@@ -808,36 +808,6 @@ function MaiaCompiler() {
                     js += 'throw ()';
                 }
             }
-        } else if ('import' in mil) {
-            node = mil['import'];
-            var nodeInfo = {
-                'parentNode': 'import',
-                'childNode': '',
-                'terminalNode' : 'import'
-            };
-            parentNodeInfo.childNode = 'import';
-
-            if (typeof node != 'undefined') {
-                if ('expression' in node) {
-                    var argumentValue = this.parse(node, nodeInfo);
-                    js += 'import (' + argumentValue + ')';
-                }
-            }
-        } else if ('require' in mil) {
-            node = mil['require'];
-            var nodeInfo = {
-                'parentNode': 'require',
-                'childNode': '',
-                'terminalNode' : 'require'
-            };
-            parentNodeInfo.childNode = 'require';
-
-            if (typeof node != 'undefined') {
-                if ('expression' in node) {
-                    var argumentValue = this.parse(node, nodeInfo);
-                    js += 'require (' + argumentValue + ')';
-                }
-            }
         } else if ('operation' in mil) {
             node = mil['operation'];
             var nodeInfo = {
@@ -1303,7 +1273,7 @@ function MaiaCompiler() {
 
         mil = this.xmlToMil(xml);
         js = this.parse(mil, nodeInfo);
-
+        
         return js;
     }
 }

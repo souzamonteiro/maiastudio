@@ -20,7 +20,9 @@
 /** Global variables. */
 var lang = 'pt-BR';
 var editorMode = 'maia';
-var flask = {};
+var terminalMode = 'block';
+var editor = {};
+var jar = {};
 var storedCode;
 var fileName;
 var fileExtension;
@@ -69,7 +71,7 @@ function clearWorkspace() {
     var res = confirm(msg);
 
     if (res == true) {
-        flask.updateCode('');;
+        jar.updateCode('');;
     }
 }
 
@@ -77,7 +79,7 @@ function clearWorkspace() {
  * Download the code being edited.
  */
 function downloadCode() {
-    const code = flask.getCode();
+    const code = jar.toString();
     var uri = 'data:text/plain;charset=utf-8;base64,' + base64EncodeUnicode(code);
     var downloadLink = document.createElement('a');
 
@@ -104,7 +106,7 @@ function uploadCode() {
         reader.readAsText(file,'UTF-8');
         reader.onload = readerEvent => {
             var code = readerEvent.target.result;
-            flask.updateCode(code);
+            jar.updateCode(code);
 
             editorMode = fileExtension;
 
@@ -121,7 +123,7 @@ function uploadCode() {
  * Download the code being edited compiled for MIL.
  */
 function downloadMil() {
-    const code = flask.getCode();
+    const code = jar.toString();
     compiledCode.xml = '';
     function getXml (data) {
         compiledCode.xml += data;
@@ -159,7 +161,7 @@ function downloadMil() {
  * Download the code being edited compiled for JavaScript.
  */
 function downloadJs() {
-    const code = flask.getCode();
+    const code = jar.toString();
     compiledCode.xml = '';
     function getXml (data) {
         compiledCode.xml += data;
@@ -197,8 +199,7 @@ function downloadJs() {
  * Compiles the code being edited and runs on the virtual machine.
  */
 function compileAndRun() {
-    const code = flask.getCode();
-
+    const code = jar.toString();
     if (editorMode == 'maia') {
         compiledCode.xml = '';
         function getXml(data) {
@@ -252,11 +253,12 @@ function compileAndRun() {
  * Save the workspace.
  */
 function saveWorkspace() {
-    const code = flask.getCode();
+    const code = jar.toString();
 
     localStorage.setItem('maiascript.maia', code);
     localStorage.setItem('language', $('#language').val());
     localStorage.setItem('editorMode', $('#editorMode').val());
+    localStorage.setItem('terminalMode', $('#terminal').css("display"));
     localStorage.setItem('fileName', fileName);
 }
 
@@ -267,11 +269,11 @@ function loadWorkspace() {
     $('#language').val(lang);
     $('#editorMode').val(editorMode);
 
-    if (localStorage.getItem('maiascript.maia') != undefined) {
+    if (typeof localStorage.getItem('maiascript.maia') != 'undefined') {
         storedCode = localStorage.getItem('maiascript.maia');
     }
 
-    if (localStorage.getItem('language') != undefined) {
+    if (typeof localStorage.getItem('language') != 'undefined') {
         lang = localStorage.getItem('language');
         if (lang) {
             $('#language').val(lang);
@@ -284,7 +286,7 @@ function loadWorkspace() {
         $('#language').val(lang);
     }
 
-    if (localStorage.getItem('editorMode') != undefined) {
+    if (typeof localStorage.getItem('editorMode') != 'undefined') {
         editorMode = localStorage.getItem('editorMode');
         if (editorMode) {
             $('#editorMode').val(editorMode);
@@ -297,8 +299,21 @@ function loadWorkspace() {
         $('#editorMode').val(editorMode);
     }
 
-    if (localStorage.getItem('fileName') != undefined) {
+    if (typeof localStorage.getItem('fileName') != 'undefined') {
         fileName = localStorage.getItem('fileName');
+    }
+
+    if (typeof localStorage.getItem("terminalMode") != 'undefined') {
+        terminalMode = localStorage.getItem("terminalMode") ;
+        if (editorMode) {
+            $('#terminal').css("display", terminalMode);
+        } else {
+            terminalMode = 'block';
+            $('#terminal').css("display", terminalMode);
+        }
+    } else {
+        terminalMode = 'block';
+        $('#terminal').css("display", terminalMode);
     }
 
     translate(lang);
@@ -347,20 +362,10 @@ function initApp() {
     installLanguages(lang, 'language');
     loadWorkspace();
 
-    flask = new CodeFlask('.sourceCode', {
-        language: editorMode,
-        lineNumbers: true,
-        areaId: 'thing1',
-        ariaLabelledby: 'header1',
-        handleTabs: true
-    });
+    editor.className = "editor language-" + editorMode;
     
-    flask.addLanguage('maia', Prism.languages['maiascript']);
-
-    window['flask'] = flask;
-
     if (storedCode) {
-        flask.updateCode(storedCode);
+        jar.updateCode(storedCode);
     }
 
     jQuery(function($, undefined) {
@@ -385,9 +390,23 @@ function initApp() {
         });
     });
 
+    // We have rewritten system.log so that all output and error messages are displayed on the console.
     system.log = function(text) {
         var term = $('#terminal').terminal(function(command) {});
         term.echo(text);
+    }
+
+    // This code is used to retract the console.
+    var coll = document.getElementsByClassName("collapsible");
+    for (var i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
     }
 }
 

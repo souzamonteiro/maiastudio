@@ -22,6 +22,12 @@
  * @class
  */
 function Core() {
+    /*
+     * This property needs to be updated
+     * with each new version of MaiaStudio.
+     */
+    this.version = "1.2.1";
+
     this.testResult = {
         "expected": {},
         "obtained": {}
@@ -40,7 +46,7 @@ function Core() {
             "js": ""
         }
     }
-
+    
     /*
      * The following functions allow you to manipulate MaiaScript objects.
      */

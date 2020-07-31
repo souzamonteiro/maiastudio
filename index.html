@@ -5,11 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>MaiaStudio</title>
-  <script src="js/jquery-3.5.1.min.js"></script>
-  <script src="js/codeflask.min.js"></script>
+  <link rel="stylesheet" href="themes/prism.css">
   <script src="js/components/prism-core.js"></script>
   <script src="js/components.js"></script>
+  <script src="js/components/prism-clike.js"></script>
+  <script src="js/components/prism-markup.js"></script>
+  <script src="js/components/prism-css.js"></script>
   <script src="js/components/prism-maiascript.js"></script>
+  <script src="js/components/prism-javascript.js"></script>
+  <script src="js/components/prism-json.js"></script>
+  <script src="js/jquery-3.5.1.min.js"></script>
   <script src="js/jquery.terminal.min.js"></script>
   <script src="js/keyboard.js"></script>
   <script src="js/algebrite.bundle-for-browser.js"></script>
@@ -21,29 +26,49 @@
     body {
       font-family: Arial;
     }
-    .sourceCode {
+    .editor {
+        margin: 2px;
+        padding: 10px;
+        height: 480px;
+        color: gray;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #dcdcdc;
+        overflow-y: scroll;
+        overflow-wrap: break-word;
+        font-family: "Courier";
+        font-size: 14px;
+        letter-spacing: normal;
+        line-height: 20px;
+        tab-size: 4;
+    }
+    .collapsible {
+      margin: 2px;
+      cursor: pointer;
+    }
+    .content {
+      display: none;
+      overflow: hidden;
       position: relative;
-      height: 480px;
+      bottom: unset;
+      margin: 2px;
+      padding: 5px;
       border-style: solid;
       border-width: 1px;
       border-color: #dcdcdc;
-      margin: 2px;
-      background: #eee;
-      overflow-y: scroll;
-      overflow-wrap: break-word;
     }
   </style>
 </head>
 <body>
   <div id="toolbar" style="height: 24px; width: 100%;">
-    <img src="images/maiascript.png" onclick="aboutApp();">
-    <img src="images/plus-square.png" onclick="newWorkspace();">
-    <img src="images/upload.png" onclick="uploadCode();">
-    <img src="images/download.png" onclick="downloadCode();">
-    <img src="images/play.png" onclick="compileAndRun();">
-    <img src="images/mil.png" onclick="downloadMil();">
-    <img src="images/javascript.png" onclick="downloadJs();">
-    <img src="images/x-square.png" style="float: right;" onclick="clearWorkspace();">
+    <img src="images/maiascript.png" style="cursor: pointer;" onclick="aboutApp();">
+    <img src="images/plus-square.png" style="cursor: pointer;" onclick="newWorkspace();">
+    <img src="images/upload.png" style="cursor: pointer;" onclick="uploadCode();">
+    <img src="images/download.png" style="cursor: pointer;" onclick="downloadCode();">
+    <img src="images/play.png" style="cursor: pointer;" onclick="compileAndRun();">
+    <img src="images/mil.png" style="cursor: pointer;" onclick="downloadMil();">
+    <img src="images/javascript.png" style="cursor: pointer;" onclick="downloadJs();">
+    <img src="images/x-square.png" style="float: right; cursor: pointer;" onclick="clearWorkspace();">
     <select id="editorMode" style="float: right; vertical-align: middle;" onchange="setEditorMode();">
       <option value="maia" selected="selected">MaiaScript</option>
       <option value="mil" selected="selected">MIL</option>
@@ -57,7 +82,19 @@
       <option value="pt-BR" selected="selected">Português</option>
     </select>
   </div>
-    <div class="sourceCode"></div>
-    <div id="terminal" style="position: relative; bottom: unset; border-style: solid; border-width: 1px; border-color: #dcdcdc; margin: 2px;"></div>
+    <div class="editor language-maia"></div>
+    <script type="module">
+      import {CodeJar} from './js/codejar.js';
+      // Import line numbers helper.
+      import {withLineNumbers} from './js/linenumbers.js';
+      editor = document.querySelector('.editor');
+      var options = {
+          'tab': ' '.repeat(4), // Default is '\t'.
+          'indentOn': /[(\[]$/, // Default is /{$/.
+      }
+      jar = CodeJar(editor, withLineNumbers(Prism.highlightElement), options);
+    </script>
+    <img src="images/console.png" class="collapsible">
+    <div id="terminal" class="content"></div>
 </body>
 </html>

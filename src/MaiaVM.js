@@ -33,7 +33,7 @@ function MaiaVM() {
             'xml': '',
             'mil': '',
             'js': ''
-        }    
+        }
     }
 
     /**

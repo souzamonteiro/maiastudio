@@ -7,5 +7,6 @@
 ./bin/maiascript.js test/loop.maia 10
 ./bin/maiascript.js test/math.maia 10
 ./bin/maiascript.js test/matrix.maia 10
+./bin/maiascript.js test/source.maia 10
 ./bin/maiascript.js test/sprintf.maia 10
 ./bin/maiascript.js test/string.maia 10

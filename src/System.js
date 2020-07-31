@@ -41,6 +41,39 @@ function System() {
     }
 
     /**
+     * Load a MaiaScript module.
+     * @param {string}   inputFile - Module name.
+     * @return {object}  The MaiaScript module loaded.
+     */
+    this.source = function(inputFile)
+    {
+        if (typeof process !== 'undefined') {
+            var fs = require('fs');
+            var readTextFile = fs.readFileSync;
+
+            function getXml(data) {
+                compiledCode.xml += data;
+            }
+
+            function read(input) {
+                if (/^{.*}$/.test(input)) {
+                    return input.substring(1, input.length - 1);
+                } else {
+                    var content = readTextFile(input, 'utf-8');
+                    return content.length > 0 && content.charCodeAt(0) == 0xFEFF ? content.substring(1) : content;
+                }
+            }
+
+            if (typeof inputFile != 'undefined') {
+                var code = read(String(inputFile));
+                core.eval(code);
+            } else {
+                throw new Error('Invalid argument for function source. Argument must be a string.');
+            }
+        }
+    }
+
+    /**
      * Displays a message in a dialog box asking for confirmation.
      * @param {string}   text - Text to display.
      * @return {string}  User choice.

@@ -35,8 +35,6 @@ statement                ::= namespace
                            | continue
                            | return
                            | throw
-                           | import
-                           | require
                            
 namespace                ::= 'namespace' identifier '{' expression* '}'
 function                 ::= 'function' identifier '(' arguments? ')' '{' expression* '}'
@@ -54,8 +52,6 @@ break                    ::= 'break'
 continue                 ::= 'continue'
 return                   ::= 'return' '(' expression? ')'
 throw                    ::= 'throw' '(' expression? ')'
-import                   ::= 'import' '(' expression ')'
-require                  ::= 'require' '(' expression ')'
                            
 expression               ::= statement
                            | operation
@@ -63,11 +59,11 @@ expression               ::= statement
 
 arguments                ::= expression (',' expression)*
 
-member                   ::= identifier ('.' identifier)* '(' arguments* ')'
+member                   ::= identifier ('.' identifier)* '(' arguments ')'
                            | identifier ('.' identifier)* ('[' arguments ']')*
 
 array                    ::= '{' element (',' element)* '}'
-matrix                   ::= '[' row? (';' row)* ']'
+matrix                   ::= '[' row (';' row)* ']'
 
 element                  ::= (key ':')? expression
 key                      ::= string
@@ -82,9 +78,6 @@ value                    ::= real
                            | string
                            | array
                            | matrix
-                           | null
-                           | true
-                           | false
                            
 whitespace               ::= whitespace^token
                           /* ws: definition */
@@ -115,16 +108,10 @@ keyword  ::= 'namespace'
            | 'continue'
            | 'return'
            | 'throw'
-           | 'import'
-           | 'require'
            
-nullLiteral              ::= null
-booleanLiteral           ::= true
-                           | false
-
-null                     ::= 'null'
-true                     ::= 'true'
-false                    ::= 'false'
+nullLiteral              ::= 'null'
+booleanLiteral           ::= 'true'
+                           | 'false'
 
 firstIdentifierChar      ::= '$' | '_' | [A-Za-z]
 identifierChar           ::= '$' | '_' | [0-9] | [A-Za-z]
@@ -145,12 +132,8 @@ imaginary                ::= (('+' | '-')? real '*' 'i')
 digit                    ::= [0-9]
 
 comment                  ::= singleLineComment
-                           | multipleLineComment
 
 singleLineComment        ::= '//' (sourceCharacter - lineTerminator)*
-                           | '#'  (sourceCharacter - lineTerminator)*
-
-multipleLineComment      ::= '/*' sourceCharacter* '*/'
 
 sourceCharacter          ::= .
 
