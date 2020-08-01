@@ -1,5 +1,5 @@
 export function withLineNumbers(highlight, options = {}) {
-    const opts = Object.assign({ class: "codejar-linenumbers", wrapClass: "codejar-wrap", width: "35px", backgroundColor: "rgba(128, 128, 128, 0.15)", color: "" }, options);
+    const opts = Object.assign({ class: "codejar-linenumbers", wrapClass: "codejar-wrap", width: "35px", backgroundColor: "rgba(128, 128, 128, 0)", color: "" }, options);
     let lineNumbers;
     return function (editor) {
         highlight(editor);
@@ -7,10 +7,10 @@ export function withLineNumbers(highlight, options = {}) {
             lineNumbers = init(editor, opts);
         }
         const code = editor.textContent || "";
-        const linesCount = code.replace(/\n+$/, "\n").split("\n").length + 1;
+        const linesCount = code.split(/\r\n|\r|\n/).length + (code.endsWith('\r') || code.endsWith('\n') ? 0 : 1);
         let text = "";
         for (let i = 1; i < linesCount; i++) {
-            text += `${i}\n`;
+            text += `${i}\r\n`;
         }
         lineNumbers.innerText = text;
     };
@@ -20,6 +20,9 @@ function init(editor, opts) {
     const wrap = document.createElement("div");
     wrap.className = opts.wrapClass;
     wrap.style.position = "relative";
+    wrap.style.setProperty("overflow-x", "auto");
+    wrap.style.setProperty("overflow-y", "auto");
+    wrap.style.setProperty("resize", "vertical");
     const lineNumbers = document.createElement("div");
     lineNumbers.className = opts.class;
     wrap.appendChild(lineNumbers);
@@ -29,10 +32,11 @@ function init(editor, opts) {
     lineNumbers.style.left = "0px";
     lineNumbers.style.bottom = "0px";
     lineNumbers.style.width = opts.width;
-    lineNumbers.style.overflow = "hidden";
+    lineNumbers.style.overflow = "unset";
     lineNumbers.style.backgroundColor = opts.backgroundColor;
     lineNumbers.style.color = opts.color || css.color;
     lineNumbers.style.setProperty("mix-blend-mode", "difference");
+    lineNumbers.style.setProperty("user-select", "none");
     // Copy editor styles
     lineNumbers.style.fontFamily = css.fontFamily;
     lineNumbers.style.fontSize = css.fontSize;
@@ -44,6 +48,10 @@ function init(editor, opts) {
     // Tweak editor styles
     editor.style.paddingLeft = `calc(${opts.width} + ${lineNumbers.style.paddingLeft})`;
     editor.style.whiteSpace = "pre";
+    editor.style.setProperty("overflow-x", "unset");
+    editor.style.setProperty("overflow-y", "unset");
+    editor.style.setProperty("resize", "none");
+    editor.style.setProperty("min-height", "100%");
     // Swap editor with a wrap
     editor.parentNode.insertBefore(wrap, editor);
     wrap.appendChild(editor);

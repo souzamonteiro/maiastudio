@@ -27,6 +27,15 @@
       font-family: Arial;
     }
     .editor {
+        height: 480px;
+        color: gray;
+        font-family: "Courier";
+        font-size: 14px;
+        letter-spacing: normal;
+        line-height: 20px;
+        tab-size: 4;
+    }
+    .editorFrame {
         margin: 2px;
         padding: 10px;
         height: 480px;
@@ -34,13 +43,6 @@
         border-style: solid;
         border-width: 1px;
         border-color: #dcdcdc;
-        overflow-y: scroll;
-        overflow-wrap: break-word;
-        font-family: "Courier";
-        font-size: 14px;
-        letter-spacing: normal;
-        line-height: 20px;
-        tab-size: 4;
     }
     .collapsible {
       margin: 2px;
@@ -82,19 +84,21 @@
       <option value="pt-BR" selected="selected">Português</option>
     </select>
   </div>
+  <div class="editorFrame">
     <div class="editor language-maia"></div>
-    <script type="module">
-      import {CodeJar} from './js/codejar.js';
-      // Import line numbers helper.
-      import {withLineNumbers} from './js/linenumbers.js';
-      editor = document.querySelector('.editor');
-      var options = {
-          'tab': ' '.repeat(4), // Default is '\t'.
-          'indentOn': /[(\[]$/, // Default is /{$/.
-      }
-      jar = CodeJar(editor, withLineNumbers(Prism.highlightElement), options);
-    </script>
-    <img src="images/console.png" class="collapsible">
-    <div id="terminal" class="content"></div>
+  </div>
+  <script type="module">
+    import {CodeJar} from './js/codejar.js';
+    // Import line numbers helper.
+    import {withLineNumbers} from './js/linenumbers.js';
+    editor = document.querySelector('.editor');
+    var options = {
+        'tab': ' '.repeat(4), // Default is '\t'.
+        'indentOn': /[(\[]$/, // Default is /{$/.
+    }
+    jar = CodeJar(editor, withLineNumbers(Prism.highlightElement), options);
+  </script>
+  <img src="images/console.png" class="collapsible">
+  <div id="terminal" class="content"></div>
 </body>
 </html>
