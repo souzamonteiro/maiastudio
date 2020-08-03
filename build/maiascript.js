@@ -5596,7 +5596,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.2.2";
+    this.version = "1.3.0";
 
     this.testResult = {
         "expected": {},
@@ -6933,7 +6933,7 @@ core = new Core();
  * See the License for the specific language governing permissions and;
  * limitations under the License.
  */
-;
+
 /**
  * MaiaScript Artificial Neural Network (ANN) library.
  * @class

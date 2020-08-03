@@ -2,8 +2,7 @@
 - [x] Add import e require to system library
 - [x] Add version property to core library
 - [x] Implement retractable terminal
-- [x] Try another editor for MaiaStudio
-- [x] Fix line numbers scroll
+- [ ] Replace the editor by MaiaEditor
 - [ ] Implement support for complex network analysis
 - [ ] Prepare binary distributions for macOS, Windows and Linux
 - [ ] Prepare binary distributions for iOS and Android

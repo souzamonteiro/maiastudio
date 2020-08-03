@@ -22,7 +22,6 @@ var lang = 'pt-BR';
 var editorMode = 'maia';
 var terminalMode = 'block';
 var editor = {};
-var jar = {};
 var storedCode;
 var fileName;
 var fileExtension;
@@ -71,7 +70,7 @@ function clearWorkspace() {
     var res = confirm(msg);
 
     if (res == true) {
-        jar.updateCode('');;
+        editor.setText('');;
     }
 }
 
@@ -79,7 +78,7 @@ function clearWorkspace() {
  * Download the code being edited.
  */
 function downloadCode() {
-    const code = jar.toString();
+    const code = editor.getText();
     var uri = 'data:text/plain;charset=utf-8;base64,' + base64EncodeUnicode(code);
     var downloadLink = document.createElement('a');
 
@@ -106,7 +105,7 @@ function uploadCode() {
         reader.readAsText(file,'UTF-8');
         reader.onload = readerEvent => {
             var code = readerEvent.target.result;
-            jar.updateCode(code);
+            editor.setText(code);
 
             editorMode = fileExtension;
 
@@ -123,7 +122,7 @@ function uploadCode() {
  * Download the code being edited compiled for MIL.
  */
 function downloadMil() {
-    const code = jar.toString();
+    const code = editor.getText();
     compiledCode.xml = '';
     function getXml (data) {
         compiledCode.xml += data;
@@ -161,7 +160,7 @@ function downloadMil() {
  * Download the code being edited compiled for JavaScript.
  */
 function downloadJs() {
-    const code = jar.toString();
+    const code = editor.getText();
     compiledCode.xml = '';
     function getXml (data) {
         compiledCode.xml += data;
@@ -199,7 +198,7 @@ function downloadJs() {
  * Compiles the code being edited and runs on the virtual machine.
  */
 function compileAndRun() {
-    const code = jar.toString();
+    const code = editor.getText();
     if (editorMode == 'maia') {
         compiledCode.xml = '';
         function getXml(data) {
@@ -253,7 +252,7 @@ function compileAndRun() {
  * Save the workspace.
  */
 function saveWorkspace() {
-    const code = jar.toString();
+    const code = editor.getText();
 
     localStorage.setItem('maiascript.maia', code);
     localStorage.setItem('language', $('#language').val());
@@ -362,10 +361,14 @@ function initApp() {
     installLanguages(lang, 'language');
     loadWorkspace();
 
-    editor.className = "editor language-" + editorMode;
+    if (editorMode == 'mil') {
+        editor = new MaiaEditor('editor', 'json');
+    } else {
+        editor = new MaiaEditor('editor', editorMode);
+    }
     
     if (storedCode) {
-        jar.updateCode(storedCode);
+        editor.setText(storedCode);
     }
 
     jQuery(function($, undefined) {

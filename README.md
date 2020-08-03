@@ -78,7 +78,9 @@ Or, get it from GitHub:
 Or, download the latest zipped version:
 
 `unzip maiastudio-master.zip`
+
 `cd maiastudio-master`
+
 `npm install -g .`
 
 **USING THE COMMAND LINE INTERFACE (CLI) AND MAIASTUDIO:**
