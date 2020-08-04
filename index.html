@@ -14,6 +14,8 @@
   <script src="js/components/prism-maiascript.js"></script>
   <script src="js/components/prism-javascript.js"></script>
   <script src="js/components/prism-json.js"></script>
+  <script src="js/components/prism-markdown.js"></script>
+  <script src="js/marked.min.js"></script>
   <script src="js/jquery-3.5.1.min.js"></script>
   <script src="js/jquery.terminal.min.js"></script>
   <script src="js/algebrite.bundle-for-browser.js"></script>
@@ -25,6 +27,12 @@
   <style>
     body {
       font-family: Arial;
+    }
+    .toolbar {
+        height: 24px;
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: hidden;
     }
     .editor {
         color: gray;
@@ -63,7 +71,7 @@
   </style>
 </head>
 <body>
-  <div id="toolbar" style="height: 24px; width: 100%;">
+  <div id="toolbar" style="" class="toolbar">
     <img src="images/maiascript.png" style="cursor: pointer;" onclick="aboutApp();">
     <img src="images/plus-square.png" style="cursor: pointer;" onclick="newWorkspace();">
     <img src="images/upload.png" style="cursor: pointer;" onclick="uploadCode();">
@@ -71,6 +79,7 @@
     <img src="images/play.png" style="cursor: pointer;" onclick="compileAndRun();">
     <img src="images/mil.png" style="cursor: pointer;" onclick="downloadMil();">
     <img src="images/javascript.png" style="cursor: pointer;" onclick="downloadJs();">
+    <img src="images/html.png" style="cursor: pointer;" onclick="downloadHtml();">
     <img src="images/copy.png" style="cursor: pointer;" onclick="editor.copySelection();">
     <img src="images/cut.png" style="cursor: pointer;" onclick="editor.cutSelection();">
     <img src="images/paste.png" style="cursor: pointer;" onclick="editor.pasteSelection();">
@@ -89,6 +98,7 @@
       <option value="xml" selected="selected">XML</option>
       <option value="html" selected="selected">HTML</option>
       <option value="css" selected="selected">CSS</option>
+      <option value="md" selected="selected">Markdown</option>
     </select>
     <select id="language" style="float: right; vertical-align: middle;" onchange="translateApp();">
       <option value="pt-BR" selected="selected">Português</option>

@@ -95,8 +95,16 @@ function MaiaEditor(container, language) {
      * Gets the editor's text.
      * @return {string}  The text in the editor.
      */
-    this.getText = function(text) {
+    this.getText = function() {
         return editor.textContent;
+    }
+
+    /**
+     * Gets the editor's text.
+     * @return {string}  The text in the editor.
+     */
+    this.getHtml = function() {
+        return editor.innerHTML;
     }
 
     /**

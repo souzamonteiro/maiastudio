@@ -78,7 +78,7 @@ function clearWorkspace() {
  * Download the code being edited.
  */
 function downloadCode() {
-    const code = editor.getText();
+    var code = editor.getText();
     var uri = 'data:text/plain;charset=utf-8;base64,' + base64EncodeUnicode(code);
     var downloadLink = document.createElement('a');
 
@@ -109,7 +109,7 @@ function uploadCode() {
 
             editorMode = fileExtension;
 
-            if (!['maia', 'mil', 'js', 'json', 'xml', 'html', 'css'].includes(fileExtension)) {
+            if (!['maia', 'mil', 'js', 'json', 'xml', 'html', 'css', 'md'].includes(fileExtension)) {
                 editorMode = 'maia';
             }
 
@@ -126,7 +126,7 @@ function uploadCode() {
  * Download the code being edited compiled for MIL.
  */
 function downloadMil() {
-    const code = editor.getText();
+    var code = editor.getText();
     compiledCode.xml = '';
     function getXml (data) {
         compiledCode.xml += data;
@@ -164,7 +164,7 @@ function downloadMil() {
  * Download the code being edited compiled for JavaScript.
  */
 function downloadJs() {
-    const code = editor.getText();
+    var code = editor.getText();
     compiledCode.xml = '';
     function getXml (data) {
         compiledCode.xml += data;
@@ -199,10 +199,39 @@ function downloadJs() {
 }
 
 /**
+ * Replaces line breaks with the <br /> tag.
+ * @param {string}   text - Text to replace line breaks with the <br /> tag.
+ * @return {string}  Line breaks replaced by <br />..
+ */
+function newLineToBr(text){
+    return text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+}
+
+/**
+ * Download the code being edited compiled for html.
+ */
+function downloadHtml() {
+    if (editorMode == 'md') {
+        var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked(editor.getText()) + '</body></html>';
+    } else {
+        var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet"/></head><body><pre>' + newLineToBr(editor.getHtml()) + '</pre></body></html>';
+    }
+
+    var uri = 'data:text/html;charset=utf-8;base64,' + base64EncodeUnicode(html);
+    var downloadLink = document.createElement('a');
+    
+    downloadLink.href = uri;
+    downloadLink.download = 'untitled.html';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+}
+
+/**
  * Compiles the code being edited and runs on the virtual machine.
  */
 function compileAndRun() {
-    const code = editor.getText();
+    var code = editor.getText();
     if (editorMode == 'maia') {
         compiledCode.xml = '';
         function getXml(data) {
@@ -241,6 +270,10 @@ function compileAndRun() {
     if (editorMode == 'html') {
         var win = window.open('index.html', '', '');
         win.location = 'data:text/html;charset=utf-8,' + code;
+    } else if (editorMode == 'md') {
+        var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked(code) + '</body></html>';
+        var win = window.open('index.html', '', '');
+        win.location = 'data:text/html;charset=utf-8,' + html;
     } else if ((editorMode == 'maia') || (editorMode == 'mil') || (editorMode == 'js')) {
         try {
             eval(compiledCode.js);
@@ -256,7 +289,7 @@ function compileAndRun() {
  * Save the workspace.
  */
 function saveWorkspace() {
-    const code = editor.getText();
+    var code = editor.getText();
 
     localStorage.setItem('maiascript.maia', code);
     localStorage.setItem('language', $('#language').val());
