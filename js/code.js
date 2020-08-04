@@ -109,6 +109,10 @@ function uploadCode() {
 
             editorMode = fileExtension;
 
+            if (!['maia', 'mil', 'js', 'json', 'xml', 'html', 'css'].includes(fileExtension)) {
+                editorMode = 'maia';
+            }
+
             if (editorMode) {
                 $('#editorMode').val(editorMode);
                 $('#editorMode').trigger('change');

@@ -17,6 +17,12 @@
  * limitations under the License.
  */
 
+ /*
+  * The cursor positioning functions, getCursorPosition and setCursorPosition 
+  * were based on the CodeJar library positioning code:
+  * https://github.com/antonmedv/codejar.git
+  */
+ 
 /**
  * MaiaScript code editor.
  * @class
@@ -102,77 +108,129 @@ function MaiaEditor(container, language) {
         editor.textContent = text;
         this.highlightCode(editor);
     }
-    
+
     /**
-     * Gets the current position of the cursor.
-     * @param {object}   element - Element where the cursor position will be obtained.
+     * Visits each of the text nodes in an object.
+     * @param {object}  editor - Editor object.
+     * @param {object}  visitor - Visiting object.
      * @return {number}  The current position of the cursor.
      */
-    this.getCursorPosition = function(element) {
-        var cursorOffset = 0;
-        var doc = element.ownerDocument || element.document;
-        var win = doc.defaultView || doc.parentWindow;
-        var sel;
-        if (typeof win.getSelection != 'undefined') {
-            sel = win.getSelection();
-            if (sel.rangeCount > 0) {
-                var range = win.getSelection().getRangeAt(0);
-                var preCursorRange = range.cloneRange();
-                preCursorRange.selectNodeContents(element);
-                preCursorRange.setEnd(range.endContainer, range.endOffset);
-                cursorOffset = preCursorRange.toString().length;
-            }
-        } else if ((sel = doc.selection) && sel.type != 'Control') {
-            var textRange = sel.createRange();
-            var preCursorTextRange = doc.body.createTextRange();
-            preCursorTextRange.moveToElementText(element);
-            preCursorTextRange.setEndPoint('EndToEnd', textRange);
-            cursorOffset = preCursorTextRange.text.length;
+    function visit(editor, visitor) {
+        var queue = [];
+        if (editor.firstChild) {
+            queue.push(editor.firstChild);
         }
-        return cursorOffset;
+        var element = queue.pop();
+        while (element) {
+            if (visitor(element) === "stop") {
+                break;
+            }
+            if (element.nextSibling) {
+                queue.push(element.nextSibling);
+            }
+            if (element.firstChild) {
+                queue.push(element.firstChild);
+            }
+            element = queue.pop();
+        }
+    }
+
+    /**
+     * Gets the current position of the cursor.
+     * @return {number}  The current position of the cursor.
+     */
+    this.getCursorPosition = function() {
+        var sel = window.getSelection();
+        var position = {'start': 0, 'end': 0, 'dir': 'undefined'};
+        visit(editor, element => {
+            if (element === sel.anchorNode && element === sel.focusNode) {
+                position.start += sel.anchorOffset;
+                position.end += sel.focusOffset;
+                position.dir = sel.anchorOffset <= sel.focusOffset ? "ltr" : "rtl";
+                return "stop";
+            }
+            if (element === sel.anchorNode) {
+                position.start += sel.anchorOffset;
+                if (!position.dir) {
+                    position.dir = "ltr";
+                } else {
+                    return "stop";
+                }
+            }
+            else if (element === sel.focusNode) {
+                position.end += sel.focusOffset;
+                if (!position.dir) {
+                    position.dir = "rtl";
+                }
+                else {
+                    return "stop";
+                }
+            }
+            if (element.nodeType === Node.TEXT_NODE) {
+                if (position.dir != "ltr") {
+                    position.start += element.nodeValue.length;
+                }
+                if (position.dir != "rtl") {
+                    position.end += element.nodeValue.length;
+                }
+            }
+        });
+        return position;
     }
 
     /**
      * Sets the cursor position.
-     * @param {object}  element - Element where the cursor position will be set.
-     * @param {object}  offset - The cursor position.
+     * @param {object}  position - The cursor position.
      * @return          The current position of the cursor is set.
      */
-    this.setCursorPosition = function(element, offset) {
-        var range = document.createRange();
+    this.setCursorPosition = function(position) {
         var sel = window.getSelection();
-        // Select appropriate node.
-        var currentNode = null;
-        var previousNode = null;
-        for (var i = 0; i < element.childNodes.length; i++) {
-            // Save previous node.
-            previousNode = currentNode;
-            // Get current node.
-            currentNode = element.childNodes[i];
-            // If we get span or something else then we should get child node.
-            while(currentNode.childNodes.length > 0){
-                currentNode = currentNode.childNodes[0];
-            }
-            // Calculate offset in current node.
-            if (previousNode != null) {
-                offset -= previousNode.length;
-            }
-            // Check whether current node has enough length.
-            if (offset <= currentNode.length) {
-                break;
-            }
+        var startNode, startOffset = 0;
+        var endNode, endOffset = 0;
+        if (!position.dir) {
+            position.dir = "ltr";
         }
-        // Move cursor to specified offset.
-        if (currentNode != null) {
-            try {
-                range.setStart(currentNode, offset);
-                range.collapse(true);
-                sel.removeAllRanges();
-                sel.addRange(range);
-            } catch (e) {
-                console.log(e.message);
-            }
+        if (position.start < 0) {
+            position.start = 0;
         }
+        if (position.end < 0) {
+            position.end = 0;
+        }
+        // Flip start and end if the direction reversed
+        if (position.dir == "rtl") {
+            const { start, end } = position;
+            position.start = end;
+            position.end = start;
+        }
+        var current = 0;
+        visit(editor, element => {
+            if (element.nodeType !== Node.TEXT_NODE) {
+                return;
+            }
+            var len = (element.nodeValue || "").length;
+            if (current + len >= position.start) {
+                if (!startNode) {
+                    startNode = element;
+                    startOffset = position.start - current;
+                }
+                if (current + len >= position.end) {
+                    endNode = element;
+                    endOffset = position.end - current;
+                    return "stop";
+                }
+            }
+            current += len;
+        });
+        // If everything deleted place cursor at editor
+        if (!startNode)
+            startNode = editor;
+        if (!endNode)
+            endNode = editor;
+        // Flip back the selection
+        if (position.dir == "<-") {
+            [startNode, startOffset, endNode, endOffset] = [endNode, endOffset, startNode, startOffset];
+        }
+        sel.setBaseAndExtent(startNode, startOffset, endNode, endOffset);
     }
 
     /**
@@ -189,11 +247,11 @@ function MaiaEditor(container, language) {
         // Gets the code in the editor.
         var code = thisEditor.textContent || '';
         // Saves the cursor position.
-        var position = this.getCursorPosition(thisEditor);
+        var position = this.getCursorPosition();
         // Highlights the code syntax in the editor.
         thisEditor.innerHTML = Prism.highlight(code, Prism.languages[language], language);
         // Restores the cursor position.
-        this.setCursorPosition(thisEditor, position);
+        this.setCursorPosition(position);
         // Displays line numbers.
         var numberOfLines = code.split(/\r\n|\r|\n/).length + (code.endsWith('\r') || code.endsWith('\n') ? 0 : 1);
         var text = '';
