@@ -70,8 +70,6 @@ function MaiaEditor(container, language) {
     lineNumbers.style.float = 'left';
     lineNumbers.style.width = '5%';
     lineNumbers.style.outline = 'none';
-    lineNumbers.style.overflowX = 'hidden';
-    lineNumbers.style.overflowY = 'hidden';
     lineNumbers.style.resize = 'none';
     lineNumbers.style.textAlign = 'right';
     
@@ -86,8 +84,6 @@ function MaiaEditor(container, language) {
     editor.style.float = 'right';
     editor.style.width = '95%';
     editor.style.outline = 'none';
-    editor.style.overflowX = 'hidden';
-    editor.style.overflowY = 'hidden';
     editor.style.resize = 'none';
     editor.style.textAlign = 'left';
 
