@@ -549,7 +549,7 @@ function MaiaEditor(container, language) {
                 }
                 var padding = textBeforeCursor.substring(i, j) || "";
                 // Checks whether the line contains open braces.
-                if (/{/.test(textBeforeCursor)) {
+                if (textBeforeCursor[textBeforeCursor.length - 1] == '{') {
                     var indentation = padding + '    ';
                 } else {
                     var indentation = padding;
