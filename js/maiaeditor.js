@@ -520,6 +520,55 @@ function MaiaEditor(container, language) {
         } else if (((!event.shiftKey && event.ctrlKey) || (!event.shiftKey && event.metaKey)) && ((event.key == 'M') || (event.key == 'm'))) {
             maiaeditor.commentSelection(maiaeditor.editor);
         } else {
+            var openChars = {'{': '}', '[': ']', '(': ')'};
+            if (event.key == 'Enter') {
+                // Gets the cursor position.
+                var sel = window.getSelection();
+                var rangeAtCursor = sel.getRangeAt(0);
+                // Gets the text to the left of the cursor.
+                var rangeLeft = document.createRange();
+                rangeLeft.selectNodeContents(editor);
+                rangeLeft.setEnd(rangeAtCursor.startContainer, rangeAtCursor.startOffset);
+                var textBeforeCursor = rangeLeft.toString();
+                // Gets the text to the right of the cursor.
+                var rangeRight = document.createRange();
+                rangeRight.selectNodeContents(editor);
+                rangeRight.setStart(rangeAtCursor.endContainer, rangeAtCursor.endOffset);
+                var textAfterCursor = rangeRight.toString();
+                // Calculates indentation.
+                // Find beginning of previous line.
+                var i = textBeforeCursor.length - 1;
+                while ((i >= 0) && (textBeforeCursor[i] != '\n')) {
+                    i--;
+                }
+                i++;
+                // Find padding of the line.
+                var j = i;
+                while ((j < textBeforeCursor.length) && (/[ \t]/.test(textBeforeCursor[j]))) {
+                    j++;
+                }
+                var padding = textBeforeCursor.substring(i, j) || "";
+                // Checks whether the line contains open braces.
+                if (/{/.test(textBeforeCursor)) {
+                    var indentation = padding + '    ';
+                } else {
+                    var indentation = padding;
+                }
+                event.preventDefault();
+                document.execCommand('insertHTML', false, '\n' + indentation);
+                // Checks whether the line contains close braces.
+                if ((indentation != padding) && (textAfterCursor[0] == '}')) {
+                    var pos = maiaeditor.getCursorPosition();
+                    document.execCommand('insertHTML', false, '\n' + padding);
+                    maiaeditor.setCursorPosition(pos);
+                }
+            } else if (event.key in openChars) {
+                var pos = maiaeditor.getCursorPosition();
+                event.preventDefault();
+                document.execCommand('insertHTML', false, event.key + openChars[event.key]);
+                pos.start = ++pos.end;
+                maiaeditor.setCursorPosition(pos);
+            }
             maiaeditor.saveEditorContent(maiaeditor.editor);
         }
     }, false);

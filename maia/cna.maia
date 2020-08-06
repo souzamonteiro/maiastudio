@@ -87,8 +87,8 @@ namespace cna {
         fileLines = core.split(fileContents, "\r\n")
         foreach (fileLines; line; content) {
             record = core.split(line.trim(), " ")
-            if ((tolower(record[0]) == "*vertices") || (tolower(record[0]) == "*edges") || (tolower(record[0]) == "*arcs") || (tolower(record[0]) == "*matrix")) {
-                fileSection = tolower(record[0])
+            if ((core.toLowerCase(record[0]) == "*vertices") || (core.toLowerCase(record[0]) == "*edges") || (core.toLowerCase(record[0]) == "*arcs") || (core.toLowerCase(record[0]) == "*matrix")) {
+                fileSection = core.toLowerCase(record[0])
                 if (fileSection == "*vertices") {
                     n = core.toNumber(record[1]) + 1
                     adj = core.matrix(0, n, n)
