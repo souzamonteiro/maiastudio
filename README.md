@@ -1,8 +1,6 @@
 # MaiaStudio (The MaiaScript IDE)
 
-*Copyright (C) 2020 Roberto Luiz Souza Monteiro,*
-                    *Renata Souza Barreto,*
-                    *Hernane Borges de Barros Pereira.*
+Copyright (C) 2020 Roberto Luiz Souza Monteiro, Renata Souza Barreto, Hernane Borges de Barros Pereira.
 
 This software is distributed under the terms of several open sources licenses.
 
@@ -28,22 +26,21 @@ abstraction layer between the MaiaScript interpreter and the underlying Operatin
 
 The complete documentation, including the EBNF grammar file and the compiler's
 syntax diagrams (railroad diagrams) can be found in the grammar directory.
-For more information send mail to: support@maiascript.com
+For more information send mail to: [mailto:support@maiascript.com](mailto:support@maiascript.com)
 
-You can get the last MaiaStudio version at
-http://www.maiascript.com
+You can get the last MaiaStudio version at [http://www.maiascript.com](http://www.maiascript.com)
 
-**COMPUTER ALGEBRA SYSTEM (CAS):**
+## COMPUTER ALGEBRA SYSTEM (CAS):
 
 MaiaScript uses the Algebrite CAS to solve complex expressions involving linear algebra,
 systems of equations and differential and integral calculus. For complete reference,
-see the Algebrite documentation at http://algebrite.org
+see the Algebrite documentation at [http://algebrite.org](http://algebrite.org)
 
 To invoke CAS use the method:
 
 `cas.eval("expression")`
 
-**INSTRUCTIONS FOR USE:**
+## INSTRUCTIONS FOR USE:
 
 To use the MaiaScript language in HTML documents, just include the
 file "js/maiascript.js" in the document and insert the MaiaScript code
@@ -65,7 +62,7 @@ Or, if you installed the MaiaScript compiler using npm:
 
 `maiascript "script name".maia`
 
-**INSTALL COMMAND LINE INTERFACE (CLI):**
+## INSTALL COMMAND LINE INTERFACE (CLI):
 
 To install the MaiaScript compiler command line tool and MaiaStudio use the command:
 
@@ -83,7 +80,7 @@ Or, download the latest zipped version:
 
 `npm install -g .`
 
-**USING THE COMMAND LINE INTERFACE (CLI) AND MAIASTUDIO:**
+## USING THE COMMAND LINE INTERFACE (CLI) AND MAIASTUDIO:
 
 To run the command line tool, use the command:
 
@@ -95,9 +92,9 @@ To see the command line tool options run the command:
 
 To launch MaiaStudio open the file `index.html`, in the main directory of the package, in a browser.
 
-To try MaiaStudio on-line go to http://www.maiastudio.com.br
+To try MaiaStudio on-line go to [http://www.maiastudio.com.br](http://www.maiastudio.com.br)
 
-Lauro de Freitas, July 2020.
+Lauro de Freitas, August 2020.
 
 Roberto Luiz Souza Monteiro
 

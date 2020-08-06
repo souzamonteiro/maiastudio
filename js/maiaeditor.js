@@ -114,12 +114,30 @@ function MaiaEditor(container, language) {
     }
 
     /**
+     * Replaces text in the editor, based on a regular expression.
+     * @param {string}   pattern - Search pattern (regular expression).
+     * @param {string}   text - Substitute text.
+     * @param {boolear}  flags - Regular expression flags (g, i, m, u, y).
+     * @return           Pattern occurrences replaced.
+     */
+    this.regSub = function(pattern, text, flags) {
+        this.saveEditorContent(editor);
+        if (typeof flags == 'undefined') {
+            var flags = 'i';
+        }
+        var oldText = this.getText();
+        var regex = core.regExp(pattern, flags);
+        var newText = oldText.replace(regex, text);
+        this.setText(newText);
+    }
+
+    /**
      * Visits each of the text nodes in an object.
      * @param {object}  editor - Editor object.
      * @param {object}  visitor - Visiting object.
      * @return {number}  The current position of the cursor.
      */
-    function visit(editor, visitor) {
+    function visitElement(editor, visitor) {
         var queue = [];
         if (editor.firstChild) {
             queue.push(editor.firstChild);
@@ -146,7 +164,7 @@ function MaiaEditor(container, language) {
     this.getCursorPosition = function() {
         var sel = window.getSelection();
         var position = {'start': 0, 'end': 0, 'dir': 'undefined'};
-        visit(editor, element => {
+        visitElement(editor, element => {
             if (element === sel.anchorNode && element === sel.focusNode) {
                 position.start += sel.anchorOffset;
                 position.end += sel.focusOffset;
@@ -207,7 +225,7 @@ function MaiaEditor(container, language) {
             position.end = start;
         }
         var current = 0;
-        visit(editor, element => {
+        visitElement(editor, element => {
             if (element.nodeType !== Node.TEXT_NODE) {
                 return;
             }
@@ -360,6 +378,7 @@ function MaiaEditor(container, language) {
         }
         var text = this.getSelectedText();
         if (typeof text == 'string') {
+            this.saveEditorContent(editor);
             var textLines = text.split(/\r\n|\r|\n/);
             var newText = '';
             if (Array.isArray(textLines)) {
@@ -386,6 +405,7 @@ function MaiaEditor(container, language) {
             var textLines = text.split(/\r\n|\r|\n/);
             var newText = '';
             if (Array.isArray(textLines)) {
+                this.saveEditorContent(editor);
                 for (var i = 0; i < textLines.length; i++) {
                     newText += textLines[i].replace('    ', '') + (i < textLines.length - 1 ? '\r\n' : '');
                 }
@@ -406,6 +426,7 @@ function MaiaEditor(container, language) {
         }
         var text = this.getSelectedText();
         if (typeof text == 'string') {
+            this.saveEditorContent(editor);
             var textLines = text.split(/\r\n|\r|\n/);
             var newText = '';
             if (Array.isArray(textLines)) {
@@ -429,6 +450,7 @@ function MaiaEditor(container, language) {
         }
         var text = this.getSelectedText();
         if (typeof text == 'string') {
+            this.saveEditorContent(editor);
             var textLines = text.split(/\r\n|\r|\n/);
             var newText = '';
             if (Array.isArray(textLines)) {
@@ -447,6 +469,7 @@ function MaiaEditor(container, language) {
      */
     this.copySelection = function() {
         try {
+            this.saveEditorContent(editor);
             document.execCommand('copy')
             this.highlightCode(editor);
         } catch (e) {
@@ -460,6 +483,7 @@ function MaiaEditor(container, language) {
      */
     this.cutSelection = function() {
         try {
+            this.saveEditorContent(editor);
             document.execCommand('cut')
             this.highlightCode(editor);
         } catch (e) {
