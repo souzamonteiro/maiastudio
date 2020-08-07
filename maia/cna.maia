@@ -36,13 +36,11 @@ namespace cna {
         
         // Each line in a Pajek files must terminate with CR+LF.
         newLine = "\r\n"
-
         // Save vertices.
         FileContents = "*Vertices " + (dimI - 1) + newLine
         for (i = 1; i < dimI; i = i + 1) {
             FileContents = FileContents + i + " \"" + adj[i, 0] + "\"" + newLine
         }
-
         // Save edges.
         if (type == "edges") {
             fileContents = fileContents + "*Edges" + newLine
@@ -96,7 +94,6 @@ namespace cna {
                 i = 0
                 continue
             }
-    
             if (fileSection == "*vertices") {
                 adj[0, i + 1] = core.toNumber(record[1])
                 adj[i + 1, 0] = core.toNumber(record[1])
@@ -134,32 +131,62 @@ namespace cna {
     
     /**
      * Transitive closing between two matrices (A and B).
-     * @method transitiveClosure
+     * @method getTransitiveClosure
      * @param {object}   a - Matrix A.
      * @param {object}   b - Matrix B.
-     * @return {string}  Transitive closing between two matrices.
+     * @return {object}  Transitive closing between two matrices.
      */
-    function transitiveClosure(a, b) {
-        for (i = 0; i < 2; i = i + 1) {
-            for (j = 0; j < 2; j = j + 1) {
-                s = 0
-                for (k = 0; k < 2; k = k + 1) {
-                    s = s || (a[i,k] && b[k,j])
+    function getTransitiveClosure(a, b) {
+        dimA = core.dim(A)
+        dimB = core.dim(B)
+        if (dimA[1] == dimB[0]) {
+            c = core.matrix(0, dimA[1], dimB[0])
+            for (i = 0; i < dimA[0]; i = i + 1) {
+                for (j = 0; j < dimB[1]; j = j + 1) {
+                    s = 0
+                    for (k = 0; k < dimB[0]; k = k + 1) {
+                        s = s || (a[i,k] && b[k,j])
+                    }
+                    c[i,j] = s
                 }
-                c[i,j] = s
             }
+            return(c)
+        } else {
+            throw(Error("The number of columns in matrix A must equal the number of rows in matrix B"))
         }
-        return(c)
+    }
+    
+    /**
+     * Boolean OR between two matrices (A and B).
+     * @method getBooleanOr
+     * @param {object}   a - Matrix A.
+     * @param {object}   b - Matrix B.
+     * @return {object}  Boolean OR between two matrices.
+     */
+    function getBooleanOr(a, b) {
+        dimA = core.dim(A)
+        dimB = core.dim(B)
+        if (dimA == dimB) {
+            c = core.matrix(0, dimA[0], dimA[1])
+            for (i = 0; i < dimA[0]; i = i + 1) {
+                for (j = 0; j < dimA[1]; j = j + 1) {    
+                    c[i,j] = a[i, j] || b[i, j]
+                }
+            }
+            return(c)
+        } else {
+            throw(Error("The dimensions of matrix A must be the same as that of matrix B"))
+        }
     }
     
     /**
      * Calculates the network density.
-     * @method density
+     * @method getDensity
      * @param {object}   adj - Adjascence matrix.
      * @param {boolean}  directed - True if the network is directed.
      * @return {number}  The network density.
      */
-    function density(adj, directed) {
+    function getDensity(adj, directed) {
         dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         n = dimI - 1
@@ -179,12 +206,12 @@ namespace cna {
     
     /**
      * Calculates the degrees of the vertices.
-     * @method degrees
+     * @method getDegrees
      * @param {object}   adj - Adjascence matrix.
      * @param {boolean}  directed - True if the network is directed.
      * @return {object}  Returns a array containing the degrees of the vertices.
      */
-    function degrees(adj, directed) {
+    function getDegrees(adj, directed) {
         dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
@@ -207,11 +234,11 @@ namespace cna {
     
     /**
      * Calculates the degrees distribution in the network.
-     * @method degreeDistribution
+     * @method getDegreeDistribution
      * @param {object}   degrees - Array containing degrees of the vertices
      * @return {object}  Returns an array containing the degrees distribution in the network.
      */
-    function degreeDistribution(degrees) {
+    function getDegreeDistribution(degrees) {
         dimDegrees = core.dim(degrees)
         dimI = dimDegrees[0]
         for (i = 1; i < dimI; i = i + 1) {
@@ -261,11 +288,11 @@ namespace cna {
     
     /**
      * Calculates average degree of the network.
-     * @method averageDegree
+     * @method getAverageDegree
      * @param {object}   degrees - Array containing degrees of the vertices
      * @return {number}  Returns the average degree of the network.
      */
-    function averageDegree(degrees) {
+    function getAverageDegree(degrees) {
         dimDegrees = core.dim(degrees)
         dimI = dimDegrees[0]
         avgdeg = avg(degrees, 1, 2, (dimI - 1), 2)
@@ -274,12 +301,12 @@ namespace cna {
     
     /**
      * Calculates the clustering coefficient of the vertices.
-     * @method clustering
+     * @method getClustering
      * @param {object}   adj - Adjascence matrix.
      * @param {boolean}  directed - True if the network is directed.
-     * @return {object}  Returns a array containing the clustering coefficient of the vertices.
+     * @return {object}  Returns an array containing the clustering coefficient of the vertices.
      */
-    function clustering(adj, directed) {
+    function getClustering(adj, directed) {
         dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
@@ -342,56 +369,54 @@ namespace cna {
     
     /**
      * Calculates average clustering coefficient of the network.
-     * @method averageClustering
-     * @param {object}   degrees - Array clustering coefficients of the vertices
+     * @method getAverageClustering
+     * @param {object}   degrees - Array containing the clustering coefficients of the vertices
      * @return {number}  Returns the average clustering coefficient of the network.
      */
-    function averageClustering(clustering) {
+    function getAverageClustering(clustering) {
         dimClustering = core.dim(clustering)
         n = dimClustering[0] - 1
         avgClustering = (1.0 / n) * matrix.sum(clustering)
-        
         return(avgClustering)
     }
     
-    function ShortestPath(adj) {
-        dimAdj = dim(adj)
+    /**
+     * Calculates the shortest parh between each two vetices in the matrix.
+     * @method getShortestPath
+     * @param {object}   adj - Adjascence matrix.
+     * @return {object}  Returns an array containing the shortest parh between each two vetice in the matrix.
+     */
+    function getShortestPath(adj) {
+        dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
-    
         matrixOne = matrix.one(dimI, dimJ)
-        matrixZero = matrix.zero(dimI, dimJ)
-        
+        matrixZero = matrix.zero(dimI, dimJ)   
         // Remove vertex data from the matrix.
         for (i = 0; i < dimI; i = i + 1) {
             adj[0, i] = 0
             adj[i, 0] = 0
             matrixOne[0, i] = 0
             matrixOne[i, 0] = 0
-        }
-        
+        } 
         geodesic = adj
-        
         if ((adj == matrixZero) || (adj == matrixOne)) {
             return(geodesic)
         }
-        
-        old = prod = adj
+        old = core.new(adj)
+        prod = core.new(adj)
         order = 1
-        
         while (TRUE) {
-            prod = adj &| old
-            path = old || prod
-            order = order + 1
-            
+            prod = getTransitiveClosure(adj, old)
+            path = getBooleanOr(old, prod)
+            order = order + 1      
             for (i = 1; i < dimI; i = i + 1) {
                 for (j = 1; j < dimJ; j = j + 1) {
                     if ((prod[i, j] == 1) && (geodesic[i, j] == 0) && (i != j)) {
                         geodesic[i, j] = order
                     }
                 }
-            }
-            
+            } 
             if (path == matrixOne) {
                 break
             } elseif (path == old) {
@@ -399,46 +424,55 @@ namespace cna {
             } elseif (order == dimI) {
                 break
             }
-            
             old = prod
         }
-    
         return(geodesic)
     }
     
-    function AverageShortestPath(geodesic) {
-        dimGeodesic = dim(geodesic)
+    /**
+     * Calculates average shortest path of the network.
+     * @method getAverageShortestPath
+     * @param {object}   geodesic - Array the shortest parh between each two vetices in the matrix.
+     * @return {number}  Returns the average shortest path of the network.
+     */
+    function getAverageShortestPath(geodesic) {
+        dimGeodesic = core.dim(geodesic)
         dimI = dimGeodesic[0]
         dimJ = dimGeodesic[1]
-        
         n = count(geodesic, 1, 1, dimI - 1, dimJ - 1)
-        
         if (n > 0) {
             avgshortestpath = sum(geodesic, 1, 1, dimI - 1, dimJ - 1) / n
         } else {
             avgshortestpath = 0
         }
-        
         return(avgshortestpath)
     }
     
-    function Diameter(geodesic) {
-        diameter = max(geodesic)
-        
+    /**
+     * Calculates the network diameter.
+     * @method getDiameter
+     * @param {object}   geodesic - Array the shortest parh between each two vetices in the matrix.
+     * @return {number}  Returns the network diameter.
+     */
+    function getDiameter(geodesic) {
+        diameter = matrix.max(geodesic)
         return(diameter)
     }
     
-    function FloydWarshallShortestPath(adj, path = "") {
-        dimAdj = dim(adj)
+    /**
+     * Calculates the shortest parh between each two vetices in the matrix using Floyd Warshall method.
+     * @method getFloydWarshallShortestPath
+     * @param {object}   adj - Adjascence matrix.
+     * @return {object}  Returns an array containing the shortest parh between each two vetice in the matrix.
+     */
+    function getFloydWarshallShortestPath(adj, path = "") {
+        dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
-        
         geodesic = adj
-        
         if (path != "") {
             path = core.matrix(-1, dimI, dimJ)
         }
-        
         for (i = 1; i < dimI; i = i + 1) {
             for (j = 1; j < dimJ; j = j + 1) {
                 for (k = 1; k < dimI; k = k + 1) {
@@ -453,7 +487,6 @@ namespace cna {
                     }
                     if ((geodesic[j, i] + geodesic[i, k]) < geodesic[j, k]) {
                         geodesic[j, k] = geodesic[j, i] + geodesic[i, k]
-                        
                         if (path != "") {
                             path[j, k] = i
                         }
@@ -461,14 +494,12 @@ namespace cna {
                 }
             }
         }
-        
         for (i = 0; i < dimI; i = i + 1) {
             geodesic[0, i] = 0
             geodesic[i, 0] = 0
             geodesic[i, i] = 0
         }
-        
-        // Fix geodesics...
+        // Fix geodesics.
         for (i = 0; i < dimI; i = i + 1) {
             for (j = 0; j < dimJ; j = j + 1) {
                 if (geodesic[i, j] == 999999999) {
@@ -476,60 +507,60 @@ namespace cna {
                 }
             }
         }
-        
         return(geodesic)
     }
     
-    function ShortestPathWalk(geodesic, path, j, k) {
+    /**
+     * Do a shortest parh walk in the network and returns the path.
+     * @method doShortestPathWalk
+     * @param {object}   adj - Adjascence matrix.
+     * @return {object}  Returns an array containing the shortest parh walk between each two vetice in the matrix.
+     */
+    function doShortestPathWalk(geodesic, path, j, k) {
         if (geodesic[j, k] == 0) {
             return("")
         }
-        
         i = path[j, k]
-        
         if (i == -1) {
             return("")
         } else {
-            pji = ShortestPathWalk(geodesic, path, j, i)
-            pik = ShortestPathWalk(geodesic, path, i, k)
-            
+            pji = doShortestPathWalk(geodesic, path, j, i)
+            pik = doShortestPathWalk(geodesic, path, i, k)
             pjk = ""
-            
             if (pji != "") {
                 pjk = pjk + pji + ", "
             }
-            
             pjk = pjk + i
-            
             if (pik != "") {
                 pjk = pjk + ", " + pik
             }
-            
             return(pjk)
         }
-        
         return(path)
     }
     
-    function CountGeodesic(adj, geodesic, directed = FALSE) {
-        dimGeodesic = dim(geodesic)
+    /**
+     * Return the number os geodesics in the network.
+     * @method getNumberOfGeodesics
+     * @param {object}   adj - Adjascence matrix.
+     * @param {object}   geodesic - Vector including the geodesics of the network.
+     * @param {boolean}  directed - True if the network is directed. False otherwise.
+     * @return {number}  Returns the number os geodesics in the network.
+     */
+    function getNumberOfGeodesics(adj, geodesic, directed) {
+        dimGeodesic = core.dim(geodesic)
         dimI = dimGeodesic[0]
         dimJ = dimGeodesic[1]
-        
         gjk = adj
-        
         for (i = 0; i < dimI; i = i + 1) {
             gjk[0, i] = 0
             gjk[i, 0] = 0
             gjk[i, i] = 1
         }
-        
-        diameter = Diameter(geodesic)
-        
-        // Count how many geodesics are there between vertices i and j...
+        diameter = getDiameter(geodesic)
+        // Count how many geodesics are there between vertices i and j.
         for (p = 2; p <= diameter; p = p + 1) {
             npaths = adj ** p
-            
             for (i = 1; i < dimI; i = i + 1) {
                 for (j = 1; j < dimJ; j = j + 1) {
                     if (i != j) {
@@ -539,68 +570,70 @@ namespace cna {
                     }
                 }
             }
-        }
-        
         return(gjk)
     }
     
-    function Centrality(adj, geodesic, directed = FALSE) {
-        dimGeodesic = dim(geodesic)
+    /**
+     * Returns an array containing the centralities of each pair of the network's vertices.
+     * @method getCentrality
+     * @param {object}   adj - Adjascence matrix.
+     * @param {object}   geodesic - Vector including the geodesics of the network.
+     * @param {boolean}  directed - True if the network is directed. False otherwise.
+     * @return {object}  Returns an array containing the centralities of each pair of the network's vertices
+     */
+    function getCentrality(adj, geodesic, directed) {
+        dimGeodesic = core.dim(geodesic)
         dimI = dimGeodesic[0]
         dimJ = dimGeodesic[1]
-        
         // Column 0 contains the closeness centrality,
         // Column 1 contains the betweenness centrality.
         // Column 2 contains the normalized closeness centrality,
         // Column 3 contains the normalized betweenness centrality.
         centrality = core.matrix(0, dimI, 5)
-        
         n = dimI - 1
-        
-        // Calculate the closeness centrality for each vertex...
+        // Calculate the closeness centrality for each vertex.
         for (i = 1; i < dimI; i = i + 1) {
-            s = sum(geodesic, i, 1, i, dimJ - 1)
-            
+            s = matrix.sum(geodesic, i, 1, i, dimJ - 1)
             if (s > 0) {
                 centrality[i, 0] = 1.0 / s
                 centrality[i, 2] = (n - 1.0) / s
                 centrality[i, 4] = s
             }
         }
-        
-        // Calculate the betweenness centrality for each vertex...
-        gjk = CountGeodesic(adj, geodesic, directed)
-        
+        // Calculate the betweenness centrality for each vertex.
+        gjk = getNumberOfGeodesics(adj, geodesic, directed)
         for (i = 1; i < dimI; i = i + 1) {
             bc = 0
-            
             for (j = 1; j < dimI; j = j + 1) {
                 for (k = 1; k < dimJ; k = k + 1) {
                     // Must insert an if to test if it is a directed graph.
                     if ((j < k) && (j != i) && (i != k)) {
                         spjk = geodesic[j, k]
-                        
                         if ((geodesic[j, i] + geodesic[i, k]) == spjk) {
-                            bc = bc + (fmax(gjk[j, i], gjk[i, k]) / (gjk[j, k]))
+                            bc = bc + (Math.max(gjk[j, i], gjk[i, k]) / (gjk[j, k]))
                         }
                     }
                 }
             }
-            
             centrality[i, 1] = bc
             centrality[i, 3] = (2.0 * bc) / (n ** 2 - 3 * n + 2)
         }
-        
         return(centrality)
     }
     
-    function VertexEfficiency(geodesic) {
-        dimGeodesic = dim(geodesic)
+    /**
+     * Returns an array containing the vertex efficiency of each pair of the network's vertices.
+     * @method getVertexEfficiency
+     * @param {object}   adj - Adjascence matrix.
+     * @param {object}   geodesic - Vector including the geodesics of the network.
+     * @param {boolean}  directed - True if the network is directed. False otherwise.
+     * @return {object}  Returns an array containing the vertex efficiency of each pair of the network's vertices
+     */
+    function getVertexEfficiency(geodesic) {
+        dimGeodesic = core.dim(geodesic)
         dimI = dimGeodesic[0]
         dimJ = dimGeodesic[1]
-    
         efficiency = core.matrix(0, dimI, dimJ)
-    
         for (i = 1; i < dimI; i = i + 1) {
             for (j = 1; j < dimJ; j = j + 1) {
                 if (geodesic[i , j] != 0) {
@@ -608,32 +641,38 @@ namespace cna {
                 }
             }
         }
-    
         return(efficiency)
     }
     
-    function GlobalEfficiency(efficiency) {
-        dimEfficiency = dim(efficiency)
-        
+    /**
+     * Returns the network's global efficiency.
+     * @method getGlobalEfficiency
+     * @param {object}   efficiency - Array containing the vertex efficiency of each vertex of the network.
+     * @return {number}  Returns the network's global efficiency.
+     */
+    function getGlobalEfficiency(efficiency) {
+        dimEfficiency = core.dim(efficiency)
         n = dimEfficiency[0] - 1
-        
-        avgeff = (1.0 / (n * (n - 1))) * sum(efficiency)
-        
+        avgeff = (1.0 / (n * (n - 1))) * matrix.sum(efficiency)
         return(avgeff)
     }
     
-    function SubgraphEfficiency(adj, efficiency) {
-        dimAdj = dim(adj)
-        dimEfficiency = dim(efficiency)
-    
+    /**
+     * Returns the network's subgraphs efficiencies.
+     * @method getSubgraphEfficiency
+     * @param {object}   adj - Adjascence matrix.
+     * @param {object}   efficiency - Array containing the vertex efficiency of each vertex of the network.
+     * @return {object}  Returns the network's subgraphs efficiencies.
+     */
+    function getSubgraphEfficiency(adj, efficiency) {
+        dimAdj = core.dim(adj)
+        dimEfficiency = core.dim(efficiency)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
-    
         subgraphEfficiency = core.matrix(0, dimI, 1)
-    
-        // Calculate the local efficiency for each vertex...
+        // Calculate the local efficiency for each vertex.
         for (i = 1; i < dimI; i = i + 1) {
-            // Get all neighbor indexes...
+            // Get all neighbor indexes.
             n = 0
             for (j = 1; j < dimJ; j = j + 1) {
                 if (adj[i, j] == 1) {
@@ -641,29 +680,26 @@ namespace cna {
                     n = n + 1
                 }
             }
-            if (exists("neighbor")) {
+            if (core.type(neighbor) != "undefined") {
                 for (j = 1; j < dimJ; j = j + 1) {
                     if (adj[j, i] == 1) {
-                        if (search(neighbor, j) == NULL) {
+                        if (!neighbor.includes(j)) {
                             neighbor[n] = j
                             n = n + 1
                         }
                     }
                 }
             }
-            // Sum all neighbors efficiency...
-            if (exists("neighbor")) {
+            // Sum all neighbors efficiency.
+            if (core.type(neighbor) != "undefined") {
                 s = 0.0
                 foreach(neighbor; n1; i1) {
                     foreach(neighbor; n2; j2) {
                         s = s + efficiency[i1, j2]
                     }
                 }
-                
-                n = length(neighbor)
-                
-                neighbor = NULL
-                
+                n = core.length(neighbor)
+                neighbor = null
                 // Calculate the local efficiency to this vertex...
                 if ((n == 0) || (n == 1)) {
                     subgraphEfficiency[i, 0] = 0.0
@@ -672,21 +708,23 @@ namespace cna {
                 }
             }
         }
-        
         return(subgraphEfficiency)
     }
     
-    function LatoraSubgraphEfficiency(adj) {
-        dimAdj = dim(adj)
-        
+    /**
+     * Returns the network's subgraphs efficiencies using Latora and Marchiori method.
+     * @method getLatoraSubgraphEfficiency
+     * @param {object}   adj - Adjascence matrix.
+     * @return {object}  Returns the network's subgraphs efficiencies.
+     */
+    function getLatoraSubgraphEfficiency(adj) {
+        dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
-        
         subgraphEfficiency = core.matrix(0, dimI, 1)
-        
-        // Calculate the local efficiency for each vertex...
+        // Calculate the local efficiency for each vertex.
         for (i = 1; i < dimI; i = i + 1) {
-            // Get all neighbor indexes...
+            // Get all neighbor indexes.
             n = 0
             for (j = 1; j < dimJ; j = j + 1) {
                 if (adj[i, j] == 1) {
@@ -694,25 +732,25 @@ namespace cna {
                     n = n + 1
                 }
             }
-            if (exists("neighbor")) {
+            if (core.type(neighbor) != "undefined") {
                 for (j = 1; j < dimJ; j = j + 1) {
                     if (adj[j, i] == 1) {
-                        if (search(neighbor, j) == NULL) {
+                        if (!neighbor.includes(j)) {
                             neighbor[n] = j
                             n = n + 1
                         }
                     }
                 }
             }
-            // Calculate the vertex efficiency...
-            temp = adj
+            // Calculate the vertex efficiency.
+            temp = core.new(adj)
             for (k = 1; k < dimI; k = k + 1) {
                 temp[i, k] = 0
                 temp[k, i] = 0
             }
-            if (exists("neighbor")) {
+            if (core.type(neighbor) != "undefined") {
                 for (k = 1; k < dimI; k = k + 1) {
-                    if (search(neighbor, k) == NULL) {
+                    if (!neighbor.includes(k)) {
                         for (j = 1; j < dimJ; j = j + 1) {
                             temp[j, k] = 0
                             temp[k, j] = 0
@@ -720,22 +758,19 @@ namespace cna {
                     }
                 }
             }
-            geodesic = ShortestPath(temp)
-            efficiency = VertexEfficiency(geodesic)
-            // Sum all neighbors efficiency...
-            if (exists("neighbor")) {
+            geodesic = getShortestPath(temp)
+            efficiency = getVertexEfficiency(geodesic)
+            // Sum all neighbors efficiency.
+            if (core.type(neighbor) != "undefined") {
                 s = 0.0
                 foreach(neighbor; n1; i1) {
                     foreach(neighbor; n2; j2) {
                         s = s + efficiency[i1, j2]
                     }
                 }
-                
-                n = length(neighbor)
-                
-                neighbor = NULL
-                
-                // Calculate the local efficiency to this vertex...
+                n = core.length(neighbor)
+                neighbor = null
+                // Calculate the local efficiency to this vertex.
                 if ((n == 0) || (n == 1)) {
                     subgraphEfficiency[i, 0] = 0.0
                 } else {
@@ -743,21 +778,23 @@ namespace cna {
                 }
             }
         }
-        
         return(subgraphEfficiency)
     }
     
-    function LatoraSubgraphEfficiencyFW(adj) {
-        dimAdj = dim(adj)
-        
+    /**
+     * Returns the network's subgraphs efficiencies using Latora and Marchiori method and Floyd Warshall algorithm.
+     * @method getLatoraSubgraphEfficiency
+     * @param {object}   adj - Adjascence matrix.
+     * @return {object}  Returns the network's subgraphs efficiencies.
+     */
+    function getLatoraSubgraphEfficiencyFW(adj) {
+        dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
-        
         subgraphEfficiency = core.matrix(0, dimI, 1)
-        
-        // Calculate the local efficiency for each vertex...
+        // Calculate the local efficiency for each vertex.
         for (i = 1; i < dimI; i = i + 1) {
-            // Get all neighbor indexes...
+            // Get all neighbor indexes.
             n = 0
             for (j = 1; j < dimJ; j = j + 1) {
                 if (adj[i, j] == 1) {
@@ -765,7 +802,7 @@ namespace cna {
                     n = n + 1
                 }
             }
-            if (exists("neighbor")) {
+            if (core.type(neighbor) != "undefined") {
                 for (j = 1; j < dimJ; j = j + 1) {
                     if (adj[j, i] == 1) {
                         if (search(neighbor, j) == NULL) {
@@ -776,14 +813,14 @@ namespace cna {
                 }
             }
             // Calculate the vertex efficiency...
-            temp = adj
+            temp = core.new(adj)
             for (k = 1; k < dimI; k = k + 1) {
                 temp[i, k] = 0
                 temp[k, i] = 0
             }
-            if (exists("neighbor")) {
+            if (core.type(neighbor) != "undefined") {
                 for (k = 1; k < dimI; k = k + 1) {
-                    if (search(neighbor, k) == NULL) {
+                    if (!neighbor.includes(k)) {
                         for (j = 1; j < dimJ; j = j + 1) {
                             temp[j, k] = 0
                             temp[k, j] = 0
@@ -791,22 +828,19 @@ namespace cna {
                     }
                 }
             }
-            geodesic = FloydWarshallShortestPath(temp)
-            efficiency = VertexEfficiency(geodesic)
+            geodesic = getFloydWarshallShortestPath(temp)
+            efficiency = getVertexEfficiency(geodesic)
             // Sum all neighbors efficiency...
-            if (exists("neighbor")) {
+            if (core.type(neighbor) != "undefined") {
                 s = 0.0
                 foreach(neighbor; n1; i1) {
                     foreach(neighbor; n2; j2) {
                         s = s + efficiency[i1, j2]
                     }
                 }
-                
-                n = length(neighbor)
-                
-                neighbor = NULL
-                
-                // Calculate the local efficiency to this vertex...
+                n = core.length(neighbor)
+                neighbor = null
+                // Calculate the local efficiency to this vertex.
                 if ((n == 0) || (n == 1)) {
                     subgraphEfficiency[i, 0] = 0.0
                 } else {
@@ -814,21 +848,23 @@ namespace cna {
                 }
             }
         }
-        
         return(subgraphEfficiency)
     }
     
-    function PlasticitySubgraphEfficiency(adj) {
-        dimAdj = dim(adj)
-        
+    /**
+     * Returns the network's subgraphs plasticity efficiencies.
+     * @method getPlasticitySubgraphEfficiency
+     * @param {object}   adj - Adjascence matrix.
+     * @return {object}  Returns the network's subgraphs plasticity efficiencies.
+     */
+    function getPlasticitySubgraphEfficiency(adj) {
+        dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
-        
         subgraphEfficiency = core.matrix(0, dimI, 1)
-        
-        // Calculate the local efficiency for each vertex...
+        // Calculate the local efficiency for each vertex.
         for (i = 1; i < dimI; i = i + 1) {
-            // Get all neighbor indexes...
+            // Get all neighbor indexes.
             n = 0
             for (j = 1; j < dimJ; j = j + 1) {
                 if (adj[i, j] == 1) {
@@ -836,38 +872,35 @@ namespace cna {
                     n = n + 1
                 }
             }
-            if (exists("neighbor")) {
+            if (core.type(neighbor) != "undefined") {
                 for (j = 1; j < dimJ; j = j + 1) {
                     if (adj[j, i] == 1) {
-                        if (search(neighbor, j) == NULL) {
+                        if (!neighbor.includes(j)) {
                             neighbor[n] = j
                             n = n + 1
                         }
                     }
                 }
             }
-            // Calculate the vertex efficiency...
-            temp = adj
+            // Calculate the vertex efficiency.
+            temp = core.new(adj)
             for (k = 1; k < dimI; k = k + 1) {
                 temp[i, k] = 0
                 temp[k, i] = 0
             }
             geodesic = ShortestPath(temp)
             efficiency = VertexEfficiency(geodesic)
-            // Sum all neighbors efficiency...
-            if (exists("neighbor")) {
+            // Sum all neighbors efficiency.
+            if (core.type(neighbor) != "undefine") {
                 s = 0.0
                 foreach(neighbor; n1; i1) {
                     foreach(neighbor; n2; j2) {
                         s = s + efficiency[i1, j2]
                     }
                 }
-                
-                n = length(neighbor)
-                
-                neighbor = NULL
-                
-                // Calculate the local efficiency to this vertex...
+                n = core.length(neighbor)
+                neighbor = null
+                // Calculate the local efficiency to this vertex.
                 if ((n == 0) || (n == 1)) {
                     subgraphEfficiency[i, 0] = 0.0
                 } else {
@@ -875,21 +908,23 @@ namespace cna {
                 }
             }
         }
-        
         return(subgraphEfficiency)
     }
     
-    function PlasticitySubgraphEfficiencyFW(adj) {
-        dimAdj = dim(adj)
-        
+    /**
+     * Returns the network's subgraphs plasticity efficiencies using Floyd Warshall algorithm.
+     * @method getLatoraSubgraphEfficiency
+     * @param {object}   adj - Adjascence matrix.
+     * @return {object}  Returns the network's subgraphs plasticity efficiencies.
+     */
+    function getPlasticitySubgraphEfficiencyFW(adj) {
+        dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
-        
         subgraphEfficiency = core.matrix(0, dimI, 1)
-        
-        // Calculate the local efficiency for each vertex...
+        // Calculate the local efficiency for each vertex.
         for (i = 1; i < dimI; i = i + 1) {
-            // Get all neighbor indexes...
+            // Get all neighbor indexes.
             n = 0
             for (j = 1; j < dimJ; j = j + 1) {
                 if (adj[i, j] == 1) {
@@ -897,38 +932,35 @@ namespace cna {
                     n = n + 1
                 }
             }
-            if (exists("neighbor")) {
+            if (core.type(neighbor) != "undefined") {
                 for (j = 1; j < dimJ; j = j + 1) {
                     if (adj[j, i] == 1) {
-                        if (search(neighbor, j) == NULL) {
+                        if (!neighbor.includes(j)) {
                             neighbor[n] = j
                             n = n + 1
                         }
                     }
                 }
             }
-            // Calculate the vertex efficiency...
-            temp = adj
+            // Calculate the vertex efficiency.
+            temp = core.new(adj)
             for (k = 1; k < dimI; k = k + 1) {
                 temp[i, k] = 0
                 temp[k, i] = 0
             }
-            geodesic = FloydWarshallShortestPath(temp)
-            efficiency = VertexEfficiency(geodesic)
-            // Sum all neighbors efficiency...
-            if (exists("neighbor")) {
+            geodesic = floydWarshallShortestPath(temp)
+            efficiency = vertexEfficiency(geodesic)
+            // Sum all neighbors efficiency.
+            if (core.type(neighbor) != "undefined") {
                 s = 0.0
                 foreach(neighbor; n1; i1) {
                     foreach(neighbor; n2; j2) {
                         s = s + efficiency[i1, j2]
                     }
                 }
-                
-                n = length(neighbor)
-                
-                neighbor = NULL
-                
-                // Calculate the local efficiency to this vertex...
+                n = core.length(neighbor)
+                neighbor = null
+                // Calculate the local efficiency to this vertex.
                 if ((n == 0) || (n == 1)) {
                     subgraphEfficiency[i, 0] = 0.0
                 } else {
@@ -936,21 +968,23 @@ namespace cna {
                 }
             }
         }
-        
         return(subgraphEfficiency)
     }
     
-    function GetSubgraphs(adj) {
-        dimAdj = dim(adj)
-        
+    /**
+     * Returns the network's subgraphs.
+     * @method getSubgraphs
+     * @param {object}   adj - Adjascence matrix.
+     * @return {object}  Returns the network's subgraphs.
+     */
+    function getSubgraphs(adj) {
+        dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
-    
         subgraph = core.matrix("", dimI, 1)
-        
-        // Find all subgraphs...
+        // Find all subgraphs.
         for (i = 1; i < dimI; i = i + 1) {
-            // Get all neighbor indexes...
+            // Get all neighbor indexes.
             n = 0
             for (j = 1; j < dimJ; j = j + 1) {
                 if (adj[i, j] == 1) {
@@ -958,44 +992,49 @@ namespace cna {
                     n = n + 1
                 }
             }
-            if (exists("neighbor")) {
+            if (core.type(neighbor) != "undefined") {
                 for (j = 1; j < dimJ; j = j + 1) {
                     if (adj[j, i] == 1) {
-                        if (search(neighbor, j) == NULL) {
+                        if (!neighbor.includes(j)) {
                             neighbor[n] = j
                             n = n + 1
                         }
                     }
                 }
-                
-                // Store this subgraph...
-                subgraph[i, 0] = trim(toString(neighbor), "{}")
-                
-                neighbor = NULL
+                // Store this subgraph.
+                subgraph[i, 0] = core.replace(core.replace(core.toString(neighbor), "{", ""), "}", "")
+                neighbor = null
             }
         }
-        
         return(subgraph)
     }
     
-    function LocalEfficiency(subgraphEfficiency) {
-        dimSubgraphEfficiency = dim(subgraphEfficiency)
-        
+    /**
+     * Returns the network's local efficiency.
+     * @method getLocalEfficiency
+     * @param {object}   subgraphEfficiency - An array containing network subgraphs efficiencies.
+     * @return {number}  Returns the network's local efficiency.
+     */
+    function getLocalEfficiency(subgraphEfficiency) {
+        dimSubgraphEfficiency = core.dim(subgraphEfficiency)
         n = dimSubgraphEfficiency[0] - 1
-        
-        localEfficiency = (1.0 / n) * sum(subgraphEfficiency)
-        
+        localEfficiency = (1.0 / n) * matrix.sum(subgraphEfficiency)
         return(localEfficiency)
     }
     
-    function Labels(adj) {
-        dimAdj = dim(adj)
+    /**
+     * Returns the network vertices labels.
+     * @method getLabels
+     * @param {object}   adj - Adjascence matrix.
+     * @return {number}  Returns the network vertices labels.
+     */
+    function getLabels(adj) {
+        dimAdj = core.dim(adj)
         dimI = dimAdj[0]
-        
+        labels = []
         for (i = 1; i < dimI; i = i + 1) {
             labels[i] = adj[i, 0]
         }
-        
         return(labels)
     }
 }

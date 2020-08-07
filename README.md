@@ -28,6 +28,35 @@ The complete documentation, including the EBNF grammar file and the compiler's
 syntax diagrams (railroad diagrams) can be found in the grammar directory.
 For more information send mail to: [mailto:support@maiascript.com](mailto:support@maiascript.com)
 
+MaiaStudio currently implements the following features:
+- Syntax highlighting;
+- Line number display;
+- Auto-indentation;
+- Automatic closing of structures;
+- Indent and unindent method;
+- Comment and uncomment method;
+- Undo and redo;
+- Search and replace text based on regular expressions;
+- Support for any language supported by the Prism syntax highlighter;
+- Lightweight and easily extensible editor;
+- Simplified API, although powerful;
+- Free software.
+
+In addition to being accessible via the API, some commands are available as shortcut keys:
+- [CTRL] + i: indent;
+- [SHIFT] + [CTRL] + i: unindent;
+- [CTRL] + m: comment;
+- [SHIFT] + [CTRL] + m: uncomment;
+- [CTRL] + z: undo;
+- [SHIFT] + [CTRL] + z: redo,
+or on macOS:
+- [CMD] + i: indent;
+- [SHIFT] + [CMD] + i: unindent;
+- [CMD] + m: comment;
+- [SHIFT] + [CMD] + m: uncomment;
+- [CMD] + z: undo;
+- [SHIFT] + [CMD] + z: redo.
+
 You can get the last MaiaStudio version at [http://www.maiascript.com](http://www.maiascript.com)
 
 ## COMPUTER ALGEBRA SYSTEM (CAS):
