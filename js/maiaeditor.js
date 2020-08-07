@@ -132,6 +132,59 @@ function MaiaEditor(container, language) {
     }
 
     /**
+     * Gets the indexes of all occurrences of a pattern in text.
+     * @param {string}   pattern - Search pattern.
+     * @param {string}   text - Text where to look for the pattern.
+     * @param {boolear}  caseSensitive - True if case sensitive. False, otherwise.
+     * @return {object}  All occurrences of a pattern in text. 
+     */
+    this.getIndicesOf = function(pattern, text, caseSensitive) {
+        if (typeof caseSensitive == 'undefined') {
+            var caseSensitive = false;
+        }
+        var patternLen = pattern.length;
+        if (patternLen == 0) {
+            return [];
+        }
+        var startIndex = 0;
+        var index;
+        var indices = [];
+        if (!caseSensitive) {
+            text = text.toLowerCase();
+            pattern = pattern.toLowerCase();
+        }
+        while ((index = text.indexOf(pattern, startIndex)) > -1) {
+            indices.push(index);
+            startIndex = index + patternLen;
+        }
+        return indices;
+    }
+
+    /**
+     * Search and highlight text in the editor.
+     * @param {string}   text - Search pattern.
+     * @param {boolear}  caseSensitive - True if case sensitive. False, otherwise.
+     * @return           Pattern occurrence highlighted.
+     */
+    this.search = function(text, caseSensitive) {
+        if (typeof caseSensitive == 'undefined') {
+            var caseSensitive = false;
+        }
+        var innerHTML = editor.innerHTML;
+        var highlightedHTML = '';
+        var indices = this.getIndicesOf(text, innerHTML, caseSensitive);
+        if (indices.length > 0) { 
+            var firstIndex = 0;
+            for (var i = 0; i < indices.length; i++) {
+                highlightedHTML += innerHTML.substring(firstIndex, indices[i]) + '<span style="background-color: yellow;">' + innerHTML.substring(indices[i], indices[i] + text.length) + '</span>';
+                firstIndex = indices[i] + text.length;
+            }
+            highlightedHTML += innerHTML.substring(indices[i] + text.length)
+            editor.innerHTML = highlightedHTML;
+        }
+    }
+
+    /**
      * Visits each of the text nodes in an object.
      * @param {object}  editor - Editor object.
      * @param {object}  visitor - Visiting object.
