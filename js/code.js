@@ -22,9 +22,10 @@ var lang = 'pt-BR';
 var editorMode = 'maia';
 var terminalMode = 'block';
 var editor = {};
-var storedCode;
+var fullFileName;
 var fileName;
 var fileExtension;
+var fileData;
 
 compiledCode = {
     'xml': '',
@@ -40,24 +41,15 @@ $( document ).ready(function() {
 });
 
 /**
- * Convert Unicode caracters to Latin1.
- * @param {string}   str - Unicode string.
- * @return {string}  The Unicode string converted do Latin1.
- */
-function base64EncodeUnicode(str) {
-    // First we escape the string using encodeURIComponent to get the UTF-8 encoding of the characters, 
-    // then we convert the percent encodings into raw bytes, and finally feed it to btoa() function.
-    utf8Bytes = encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-        return String.fromCharCode('0x' + p1);
-    });
-
-    return btoa(utf8Bytes);
-}
-
-/**
  * Creates a new document.
  */
 function newWorkspace() {
+    editorMode = 'maia';
+    fileName = 'untitled';
+    fileExtension = 'maia';
+    fullFileName = fileName + "." + fileExtension;
+    fileData = '';
+    saveWorkspace();
     var win = window.open('index.html', '', '');
 }
 
@@ -70,7 +62,12 @@ function clearWorkspace() {
     var res = confirm(msg);
 
     if (res == true) {
-        editor.setText('');;
+        editorMode = 'maia';
+        fileName = 'untitled';
+        fileExtension = 'maia';
+        fullFileName = fileName + "." + fileExtension;
+        editor.setText('');
+        saveWorkspace();
     }
 }
 
@@ -79,47 +76,40 @@ function clearWorkspace() {
  */
 function downloadCode() {
     var code = editor.getText();
-    var uri = 'data:text/plain;charset=utf-8;base64,' + base64EncodeUnicode(code);
-    var downloadLink = document.createElement('a');
-
-    downloadLink.href = uri;
-    downloadLink.download = 'untitled.' + editorMode;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    system.downloadFile(fileName + '.' + fileExtension, code, 'text/' + editorMode)
 }
 
 /**
  * Upload a file for editing and set the editor mode.
  */
 function uploadCode() {
-    var input = document.createElement('input');
-    input.type = 'file';
+    var fileObject = {
+        'fullFileName': '',
+        'fileName': '',
+        'fileExtension': '',
+        'fileData': ''
+    }
 
-    input.onchange = e => { 
-        var file = e.target.files[0]; 
-        fileName = file.name;
-        var fileExtension = fileName.split('.').pop();
-        
-        var reader = new FileReader();
-        reader.readAsText(file,'UTF-8');
-        reader.onload = readerEvent => {
-            var code = readerEvent.target.result;
-            editor.setText(code);
-
-            editorMode = fileExtension;
-
-            if (!['maia', 'mil', 'js', 'json', 'xml', 'html', 'css', 'md'].includes(fileExtension)) {
-                editorMode = 'maia';
-            }
-
-            if (editorMode) {
-                $('#editorMode').val(editorMode);
-                $('#editorMode').trigger('change');
-            }
+    function callBack(fileObject) {
+        editor.setText(fileObject.fileData);
+        if (['maia', 'mil', 'js', 'json', 'xml', 'html', 'css', 'md'].includes(fileObject.fileExtension)) {
+            editorMode = fileObject.fileExtension;
+            fileName = fileObject.fileName;
+            fileExtension = fileObject.fileExtension;
+        } else {
+            editorMode = 'maia';
+            fileName = 'untitled';
+            fileExtension = 'maia';
+        }
+        fullFileName = fileName + '.' + fileExtension;
+        fileData = fileObject.fileData;
+        if (editorMode) {
+            $('#editorMode').val(editorMode);
+            $('#editorMode').trigger('change');
         }
     }
-    input.click();
+
+    system.uploadFile(fileObject, callBack);
 }
 
 /**
@@ -150,14 +140,7 @@ function downloadMil() {
     var compiler = new MaiaCompiler();
     compiledCode.mil = compiler.xmlToMil(xml);
          
-    var uri = 'data:text/json;charset=utf-8;base64,' + base64EncodeUnicode(JSON.stringify(compiledCode.mil, null, 4));
-    var downloadLink = document.createElement('a');
-    
-    downloadLink.href = uri;
-    downloadLink.download = 'untitled.mil';
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    system.downloadFile(fileName + '.mil', JSON.stringify(compiledCode.mil, null, 4), 'text/json');
 }
 
 /**
@@ -188,14 +171,7 @@ function downloadJs() {
     var compiler = new MaiaCompiler();
     compiledCode.js = compiler.compile(xml);
     
-    var uri = 'data:text/js;charset=utf-8;base64,' + base64EncodeUnicode(compiledCode.js);
-    var downloadLink = document.createElement('a');
-    
-    downloadLink.href = uri;
-    downloadLink.download = 'untitled.js';
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    system.downloadFile(fileName + '.js', compiledCode.js, 'text/js');
 }
 
 /**
@@ -216,15 +192,7 @@ function downloadHtml() {
     } else {
         var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet"/></head><body><pre>' + newLineToBr(editor.getHtml()) + '</pre></body></html>';
     }
-
-    var uri = 'data:text/html;charset=utf-8;base64,' + base64EncodeUnicode(html);
-    var downloadLink = document.createElement('a');
-    
-    downloadLink.href = uri;
-    downloadLink.download = 'untitled.html';
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    system.downloadFile(fileName + '.html', html, 'text/html');
 }
 
 /**
@@ -291,11 +259,13 @@ function compileAndRun() {
 function saveWorkspace() {
     var code = editor.getText();
 
-    localStorage.setItem('maiascript.maia', code);
     localStorage.setItem('language', $('#language').val());
     localStorage.setItem('editorMode', $('#editorMode').val());
     localStorage.setItem('terminalMode', $('#terminal').css("display"));
+    localStorage.setItem('fullFileName', fullFileName);
     localStorage.setItem('fileName', fileName);
+    localStorage.setItem('fileExtension', fileExtension);
+    localStorage.setItem('fileData', code);
 }
 
 /**
@@ -305,8 +275,17 @@ function loadWorkspace() {
     $('#language').val(lang);
     $('#editorMode').val(editorMode);
 
-    if (typeof localStorage.getItem('maiascript.maia') != 'undefined') {
-        storedCode = localStorage.getItem('maiascript.maia');
+    if (typeof localStorage.getItem('fullFileName') != 'undefined') {
+        fullFileName = localStorage.getItem('fullFileName');
+    }
+    if (typeof localStorage.getItem('fileName') != 'undefined') {
+        fileName = localStorage.getItem('fileName');
+    }
+    if (typeof localStorage.getItem('fileExtension') != 'undefined') {
+        fileExtension = localStorage.getItem('fileExtension');
+    }
+    if (typeof localStorage.getItem('fileData') != 'undefined') {
+        fileData = localStorage.getItem('fileData');
     }
 
     if (typeof localStorage.getItem('language') != 'undefined') {
@@ -333,10 +312,6 @@ function loadWorkspace() {
     } else {
         editorMode = 'maia';
         $('#editorMode').val(editorMode);
-    }
-
-    if (typeof localStorage.getItem('fileName') != 'undefined') {
-        fileName = localStorage.getItem('fileName');
     }
 
     if (typeof localStorage.getItem("terminalMode") != 'undefined') {
@@ -404,8 +379,8 @@ function initApp() {
         editor = new MaiaEditor('editor', editorMode);
     }
     
-    if (storedCode) {
-        editor.setText(storedCode);
+    if (fileData) {
+        editor.setText(fileData);
     }
 
     jQuery(function($, undefined) {
