@@ -29,7 +29,7 @@ namespace cna {
      * @param {string}   type - File type.
      * @return {string}  A Pajek file.
      */
-    function createPajekFile = dim(adj, type) {
+    function createPajekFile(adj, type) {
         dimAdj = core.dim(adj)
         dimI = dimAdj[0]
         dimJ = dimAdj[1]
@@ -1040,3 +1040,4 @@ namespace cna {
         return(labels)
     }
 }
+

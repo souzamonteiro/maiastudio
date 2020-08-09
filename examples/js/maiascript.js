@@ -4653,7 +4653,7 @@ function MaiaCompiler() {
                         };
                         var body = this.parse(nodeExpression, nodeInfo);
                     }
-                    js = 'function ' + name + '_' + '() {' + body + '}; var ' + name + ' = new ' + name + '_()' ;
+                    js = 'function ' + name + '_' + '() {' + body + '};' + name + ' = new ' + name + '_()' ;
                 }
             }
         } else if ('function' in mil) {
