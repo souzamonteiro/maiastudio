@@ -615,7 +615,7 @@ function MaiaEditor(container, language) {
                 if ((indentation != padding) && (textAfterCursor[0] == '}')) {
                     var pos = maiaeditor.getCursorPosition();
                     if (padding.length == 0) {
-                        document.execCommand('insertHTML', false, '\r\n\r\n' + padding);
+                        document.execCommand('insertHTML', false, '\r\n\r\n');
                     } else {
                         document.execCommand('insertHTML', false, '\r\n' + padding);
                     }
