@@ -607,14 +607,18 @@ function MaiaEditor(container, language) {
                 } else {
                     var indentation = padding;
                 }
-                if (padding.length > 0) {
+                if (indentation.length > 0) {
                     event.preventDefault();
                     document.execCommand('insertHTML', false, '\r\n' + indentation);
                 }
                 // Checks whether the line contains close braces.
                 if ((indentation != padding) && (textAfterCursor[0] == '}')) {
                     var pos = maiaeditor.getCursorPosition();
-                    document.execCommand('insertHTML', false, '\r\n' + padding);
+                    if (padding.length == 0) {
+                        document.execCommand('insertHTML', false, '\r\n\r\n' + padding);
+                    } else {
+                        document.execCommand('insertHTML', false, '\r\n' + padding);
+                    }
                     maiaeditor.setCursorPosition(pos);
                 }
             } else if (event.key in openChars) {
