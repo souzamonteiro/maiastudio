@@ -1,59 +1,401 @@
-// This file was generated on Sun Aug 9, 2020 15:23 (UTC-03) by REx v5.52 which is Copyright (c) 1979-2020 by Gunther Rademacher <grd@gmx.net>
-// REx command line: MaiaScript.ebnf -backtrack -javascript -tree
+// This file was generated on Sun Aug 9, 2020 15:12 (UTC-03) by REx v5.52 which is Copyright (c) 1979-2020 by Gunther Rademacher <grd@gmx.net>
+// REx command line: MaiaScript.ebnf -backtrack -tree -main -cpp
 
-function MaiaScript(string, parsingEventHandler)
+#include <string.h>
+#include <stdlib.h>
+#ifdef _WIN32
+  #include <fcntl.h>
+#endif
+#include <vector>
+#include <map>
+#include <stdio.h>
+#include <string>
+
+class MaiaScript
 {
-  init(string, parsingEventHandler);
+public:
+  class EventHandler;
 
-  var thisParser = this;
-
-  this.ParseException = function(b, e, s, o, x)
+  MaiaScript(const wchar_t *string, EventHandler *t)
   {
-    var begin = b;
-    var end = e;
-    var state = s;
-    var offending = o;
-    var expected = x;
+    initialize(string, t);
+  }
 
-    this.getBegin = function() {return begin;};
-    this.getEnd = function() {return end;};
-    this.getState = function() {return state;};
-    this.getExpected = function() {return expected;};
-    this.getOffending = function() {return offending;};
-    this.isAmbiguousInput = function() {return false;};
+  virtual ~MaiaScript()
+  {
+  }
 
-    this.getMessage = function()
-    {
-      return offending < 0
-           ? "lexical analysis failed"
-           : "syntax error";
-    };
+  class EventHandler
+  {
+  public:
+    virtual ~EventHandler() {}
+
+    virtual void reset(const wchar_t *string) = 0;
+    virtual void startNonterminal(const wchar_t *name, int begin) = 0;
+    virtual void endNonterminal(const wchar_t *name, int end) = 0;
+    virtual void terminal(const wchar_t *name, int begin, int end) = 0;
+    virtual void whitespace(int begin, int end) = 0;
   };
 
-  function init(source, parsingEventHandler)
+  class XmlSerializer : public EventHandler
+  {
+  public:
+    XmlSerializer(bool indent)
+    : input(0)
+    , delayedTag(0)
+    , indent(indent)
+    , hasChildElement(false)
+    , depth(0)
+    {
+    }
+
+    void reset(const wchar_t *input)
+    {
+      fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", stdout);
+
+      this->input = input;
+      delayedTag = 0;
+      hasChildElement = false;
+      depth = 0;
+    }
+
+    void startNonterminal(const wchar_t *tag, int b)
+    {
+      if (delayedTag != 0)
+      {
+        fputc('<', stdout);
+        fputs(Utf8Encoder::encode(delayedTag).c_str(), stdout);
+        fputc('>', stdout);
+      }
+      delayedTag = tag;
+      if (indent)
+      {
+        fputc('\n', stdout);
+        for (int i = 0; i < depth; ++i)
+        {
+          fputs("  ", stdout);
+        }
+      }
+      hasChildElement = false;
+      ++depth;
+    }
+
+    void endNonterminal(const wchar_t *tag, int e)
+    {
+      --depth;
+      if (delayedTag != 0)
+      {
+        delayedTag = 0;
+        fputc('<', stdout);
+        fputs(Utf8Encoder::encode(tag).c_str(), stdout);
+        fputs("/>", stdout);
+      }
+      else
+      {
+        if (indent)
+        {
+          if (hasChildElement)
+          {
+            fputc('\n', stdout);
+            for (int i = 0; i < depth; ++i)
+            {
+              fputs("  ", stdout);
+            }
+          }
+        }
+        fputs("</", stdout);
+        fputs(Utf8Encoder::encode(tag).c_str(), stdout);
+        fputc('>', stdout);
+      }
+      hasChildElement = true;
+    }
+
+    void whitespace(int b, int e)
+    {
+      characters(b, e);
+    }
+
+    void characters(int b, int e)
+    {
+      if (b < e)
+      {
+        if (delayedTag != 0)
+        {
+          fputc('<', stdout);
+          fputs(Utf8Encoder::encode(delayedTag).c_str(), stdout);
+          fputc('>', stdout);
+          delayedTag = 0;
+        }
+        std::string encoded = Utf8Encoder::encode(input + b, e - b);
+        int size = encoded.size();
+        for (int i = 0; i < size; ++i)
+        {
+          char c = encoded[i];
+          switch (c)
+          {
+          case 0: break;
+          case L'&': fputs("&amp;", stdout); break;
+          case L'<': fputs("&lt;", stdout); break;
+          case L'>': fputs("&gt;", stdout); break;
+          default: fputc(c, stdout);
+          }
+        }
+      }
+    }
+
+    void terminal(const wchar_t *tag, int b, int e)
+    {
+      if (tag[0] == L'\'') tag = L"TOKEN";
+      startNonterminal(tag, b);
+      characters(b, e);
+      endNonterminal(tag, e);
+    }
+
+  private:
+    const wchar_t *input;
+    const wchar_t *delayedTag;
+    bool indent;
+    bool hasChildElement;
+    int depth;
+  };
+
+  class Symbol
+  {
+  public:
+    virtual ~Symbol() {}
+
+    const wchar_t *name;
+    int begin;
+    int end;
+
+    virtual void send(EventHandler *e) = 0;
+
+  protected:
+    Symbol(const wchar_t *name, int begin, int end)
+    {
+      this->name = name;
+      this->begin = begin;
+      this->end = end;
+    }
+  };
+
+  class Terminal : public Symbol
+  {
+  public:
+    Terminal(const wchar_t *name, int begin, int end)
+    : Symbol(name, begin, end)
+    {}
+
+    void send(EventHandler *e)
+    {
+      e->terminal(name, begin, end);
+    }
+  };
+
+  class Nonterminal : public Symbol
+  {
+  public:
+    std::vector<Symbol *> *children;
+
+    Nonterminal(const wchar_t *name, int begin, int end, std::vector<Symbol *> *children)
+    : Symbol(name, begin, end)
+    {
+      this->children = children;
+    }
+
+    ~Nonterminal()
+    {
+      for (std::vector<Symbol *>::iterator child = children->begin(); child != children->end(); ++child)
+        delete *child;
+      delete children;
+    }
+
+    void send(EventHandler *e)
+    {
+      e->startNonterminal(name, begin);
+      int pos = begin;
+      for (std::vector<Symbol *>::iterator i = children->begin(); i != children->end(); ++i)
+      {
+        Symbol *c = *i;
+        if (pos < c->begin) e->whitespace(pos, c->begin);
+        c->send(e);
+        pos = c->end;
+      }
+      if (pos < end) e->whitespace(pos, end);
+      e->endNonterminal(name, end);
+    }
+  };
+
+  class TopDownTreeBuilder : public EventHandler
+  {
+  public:
+    TopDownTreeBuilder()
+    {
+      input = 0;
+      stack.clear();
+      top = -1;
+    }
+
+    void reset(const wchar_t *input)
+    {
+      this->input = input;
+      top = -1;
+    }
+
+    void startNonterminal(const wchar_t *name, int begin)
+    {
+      Nonterminal *nonterminal = new Nonterminal(name, begin, begin, new std::vector<Symbol *>());
+      if (top++ >= 0) addChild(nonterminal);
+      if ((size_t) top >= stack.size())
+        stack.resize(stack.size() == 0 ? 64 : stack.size() << 1);
+      stack[top] = nonterminal;
+    }
+
+    void endNonterminal(const wchar_t *name, int end)
+    {
+      stack[top]->end = end;
+      if (top > 0) --top;
+    }
+
+    void terminal(const wchar_t *name, int begin, int end)
+    {
+      addChild(new Terminal(name, begin, end));
+    }
+
+    void whitespace(int begin, int end)
+    {
+    }
+
+    void serialize(EventHandler *e)
+    {
+      e->reset(input);
+      stack[0]->send(e);
+    }
+
+  private:
+    void addChild(Symbol *s)
+    {
+      Nonterminal *current = stack[top];
+      current->children->push_back(s);
+    }
+
+    const wchar_t *input;
+    std::vector<Nonterminal *> stack;
+    int top;
+  };
+
+  static int main(int argc, char **argv)
+  {
+    int returnCode = 0;
+
+    if (argc < 2)
+    {
+      fprintf(stderr, "Usage: %s [-i] INPUT...\n", argv[0]);
+      fprintf(stderr, "\n");
+      fprintf(stderr, "  parse INPUT, which is either a filename or literal text enclosed in curly braces\n");
+      fprintf(stderr, "\n");
+      fprintf(stderr, "  Option:\n");
+      fprintf(stderr, "    -i     indented parse tree\n");
+    }
+    else
+    {
+#ifdef _WIN32
+      setmode(fileno(stdout), O_BINARY);
+#endif
+
+      bool indent = false;
+      for (int i = 1; i < argc; ++i)
+      {
+        if (strcmp(argv[i], "-i") == 0)
+        {
+          indent = true;
+          continue;
+        }
+        try
+        {
+          XmlSerializer s(indent);
+          std::wstring input = read(argv[i]);
+          MaiaScript parser(input.c_str(), &s);
+          try
+          {
+            parser.parse_maiascript();
+          }
+          catch (ParseException &pe)
+          {
+            fprintf(stderr, "\n");
+            fprintf(stderr, "%s\n", Utf8Encoder::encode(parser.getErrorMessage(pe).c_str()).c_str());
+            returnCode = 1;
+            break;
+          }
+        }
+        catch (FileNotFound &fnf)
+        {
+          fprintf(stderr, "error: file not found: %s\n", fnf.getFilename().c_str());
+          returnCode = 1;
+          break;
+        }
+        catch (MalformedInputException &mie)
+        {
+          fprintf(stderr, "error: UTF-8 decoding error in %s at offset %d\n",
+            argv[i], static_cast<int>(mie.getOffset()));
+          returnCode = 1;
+          break;
+        }
+      }
+    }
+    return returnCode;
+  }
+
+  class ParseException
+  {
+  private:
+    int begin, end, offending, expected, state;
+    friend class MaiaScript;
+
+  protected:
+    ParseException(int b, int e, int s, int o, int x)
+    : begin(b), end(e), offending(o), expected(x), state(s)
+    {
+    }
+
+  public:
+    const wchar_t *getMessage() const
+    {
+      return offending < 0
+           ? L"lexical analysis failed"
+           : L"syntax error";
+    }
+
+    int getBegin() const {return begin;}
+    int getEnd() const {return end;}
+    int getState() const {return state;}
+    int getOffending() const {return offending;}
+    int getExpected() const {return expected;}
+  };
+
+  void initialize(const wchar_t *source, EventHandler *parsingEventHandler)
   {
     eventHandler = parsingEventHandler;
     input = source;
-    size = source.length;
     reset(0, 0, 0);
   }
 
-  this.getInput = function()
+  const wchar_t *getInput() const
   {
     return input;
-  };
+  }
 
-  this.getTokenOffset = function()
+  int getTokenOffset() const
   {
     return b0;
-  };
+  }
 
-  this.getTokenEnd = function()
+  int getTokenEnd() const
   {
     return e0;
-  };
+  }
 
-  function reset(l, b, e)
+  void reset(int l, int b, int e)
   {
             b0 = b; e0 = b;
     l1 = l; b1 = b; e1 = e;
@@ -61,59 +403,99 @@ function MaiaScript(string, parsingEventHandler)
     l3 = 0; b3 = 0; e3 = 0;
     end = e;
     ex = -1;
-    memo = {};
-    eventHandler.reset(input);
+    memo.clear();
+    eventHandler->reset(input);
   }
 
-  this.reset = function(l, b, e)
+  void reset()
   {
-    reset(l, b, e);
-  };
+    reset(0, 0, 0);
+  }
 
-  this.getOffendingToken = function(e)
+  static const wchar_t *getOffendingToken(ParseException e)
   {
-    var o = e.getOffending();
-    return o >= 0 ? MaiaScript.TOKEN[o] : null;
-  };
+    return e.getOffending() < 0 ? 0 : TOKEN[e.getOffending()];
+  }
 
-  this.getExpectedTokenSet = function(e)
+  static void getExpectedTokenSet(const ParseException &e, const wchar_t **set, int size)
   {
-    var expected;
-    if (e.getExpected() < 0)
+    if (e.expected < 0)
     {
-      expected = MaiaScript.getTokenSet(- e.getState());
+      getTokenSet(- e.state, set, size);
     }
-    else
+    else if (size == 1)
     {
-      expected = [MaiaScript.TOKEN[e.getExpected()]];
+      set[0] = 0;
     }
-    return expected;
-  };
+    else if (size > 1)
+    {
+      set[0] = TOKEN[e.expected];
+      set[1] = 0;
+    }
+  }
 
-  this.getErrorMessage = function(e)
+  std::wstring getErrorMessage(const ParseException &e)
   {
-    var message = e.getMessage();
-    var found = this.getOffendingToken(e);
-    var tokenSet = this.getExpectedTokenSet(e);
-    var size = e.getEnd() - e.getBegin();
-    message += (found == null ? "" : ", found " + found)
-            + "\nwhile expecting "
-            + (tokenSet.length == 1 ? tokenSet[0] : ("[" + tokenSet.join(", ") + "]"))
-            + "\n"
-            + (size == 0 || found != null ? "" : "after successfully scanning " + size + " characters beginning ");
-    var prefix = input.substring(0, e.getBegin());
-    var lines = prefix.split("\n");
-    var line = lines.length;
-    var column = lines[line - 1].length + 1;
-    return message
-         + "at line " + line + ", column " + column + ":\n..."
-         + input.substring(e.getBegin(), Math.min(input.length, e.getBegin() + 64))
-         + "...";
-  };
+    std::wstring message(e.getMessage());
+    wchar_t buffer[11];
+    const wchar_t *found = getOffendingToken(e);
+    if (found != 0)
+    {
+      message += L", found ";
+      message += found;
+    }
+    const wchar_t *expected[64];
+    getExpectedTokenSet(e, expected, sizeof expected / sizeof *expected);
+    message += L"\nwhile expecting ";
+    const wchar_t *delimiter(expected[1] ? L"[" : L"");
+    for (const wchar_t **x = expected; *x; ++x)
+    {
+      message += delimiter;
+      message += *x;
+      delimiter = L", ";
+    }
+    message += expected[1] ? L"]\n" : L"\n";
+    int size = e.getEnd() - e.getBegin();
+    if (size != 0 && found == 0)
+    {
+      message += L"after successfully scanning ";
+      swprintf(buffer, L"%d", size);
+      message += buffer;
+      message += L" characters beginning ";
+    }
+    int line = 1;
+    int column = 1;
+    for (int i = 0; i < e.getBegin(); ++i)
+    {
+      if (input[i] == L'\n')
+      {
+        ++line;
+        column = 1;
+      }
+      else
+      {
+        ++column;
+      }
+    }
+    message += L"at line ";
+    swprintf(buffer, L"%d", line);
+    message += buffer;
+    message += L", column ";
+    swprintf(buffer, L"%d", column);
+    message += buffer;
+    message += L":\n...";
+    const wchar_t *w = input + e.getBegin();
+    for (int i = 0; i < 64 && *w; ++i)
+    {
+      message += *w++;
+    }
+    message += L"...";
+    return message;
+  }
 
-  this.parse_maiascript = function()
+  void parse_maiascript()
   {
-    eventHandler.startNonterminal("maiascript", e0);
+    eventHandler->startNonterminal(L"maiascript", e0);
     lookahead1W(21);                // END | eof | identifier | null | true | false | string | complex | real |
                                     // comment | whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' |
                                     // 'for' | 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' |
@@ -137,25 +519,28 @@ function MaiaScript(string, parsingEventHandler)
         whitespace();
         parse_expression();
       }
+      break;
     }
-    eventHandler.endNonterminal("maiascript", e0);
-  };
-
-  function parse_operation()
-  {
-    eventHandler.startNonterminal("operation", e0);
-    parse_variableAssignment();
-    eventHandler.endNonterminal("operation", e0);
+    eventHandler->endNonterminal(L"maiascript", e0);
   }
 
-  function try_operation()
+private:
+
+  void parse_operation()
+  {
+    eventHandler->startNonterminal(L"operation", e0);
+    parse_variableAssignment();
+    eventHandler->endNonterminal(L"operation", e0);
+  }
+
+  void try_operation()
   {
     try_variableAssignment();
   }
 
-  function parse_variableAssignment()
+  void parse_variableAssignment()
   {
-    eventHandler.startNonterminal("variableAssignment", e0);
+    eventHandler->startNonterminal(L"variableAssignment", e0);
     parse_logicalORExpression();
     for (;;)
     {
@@ -169,10 +554,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_logicalORExpression();
     }
-    eventHandler.endNonterminal("variableAssignment", e0);
+    eventHandler->endNonterminal(L"variableAssignment", e0);
   }
 
-  function try_variableAssignment()
+  void try_variableAssignment()
   {
     try_logicalORExpression();
     for (;;)
@@ -188,9 +573,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_logicalORExpression()
+  void parse_logicalORExpression()
   {
-    eventHandler.startNonterminal("logicalORExpression", e0);
+    eventHandler->startNonterminal(L"logicalORExpression", e0);
     parse_logicalANDExpression();
     for (;;)
     {
@@ -204,10 +589,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_logicalANDExpression();
     }
-    eventHandler.endNonterminal("logicalORExpression", e0);
+    eventHandler->endNonterminal(L"logicalORExpression", e0);
   }
 
-  function try_logicalORExpression()
+  void try_logicalORExpression()
   {
     try_logicalANDExpression();
     for (;;)
@@ -223,9 +608,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_logicalANDExpression()
+  void parse_logicalANDExpression()
   {
-    eventHandler.startNonterminal("logicalANDExpression", e0);
+    eventHandler->startNonterminal(L"logicalANDExpression", e0);
     parse_bitwiseORExpression();
     for (;;)
     {
@@ -239,10 +624,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_bitwiseORExpression();
     }
-    eventHandler.endNonterminal("logicalANDExpression", e0);
+    eventHandler->endNonterminal(L"logicalANDExpression", e0);
   }
 
-  function try_logicalANDExpression()
+  void try_logicalANDExpression()
   {
     try_bitwiseORExpression();
     for (;;)
@@ -258,9 +643,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_bitwiseORExpression()
+  void parse_bitwiseORExpression()
   {
-    eventHandler.startNonterminal("bitwiseORExpression", e0);
+    eventHandler->startNonterminal(L"bitwiseORExpression", e0);
     parse_bitwiseXORExpression();
     for (;;)
     {
@@ -274,10 +659,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_bitwiseXORExpression();
     }
-    eventHandler.endNonterminal("bitwiseORExpression", e0);
+    eventHandler->endNonterminal(L"bitwiseORExpression", e0);
   }
 
-  function try_bitwiseORExpression()
+  void try_bitwiseORExpression()
   {
     try_bitwiseXORExpression();
     for (;;)
@@ -293,9 +678,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_bitwiseXORExpression()
+  void parse_bitwiseXORExpression()
   {
-    eventHandler.startNonterminal("bitwiseXORExpression", e0);
+    eventHandler->startNonterminal(L"bitwiseXORExpression", e0);
     parse_bitwiseANDExpression();
     for (;;)
     {
@@ -309,10 +694,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_bitwiseANDExpression();
     }
-    eventHandler.endNonterminal("bitwiseXORExpression", e0);
+    eventHandler->endNonterminal(L"bitwiseXORExpression", e0);
   }
 
-  function try_bitwiseXORExpression()
+  void try_bitwiseXORExpression()
   {
     try_bitwiseANDExpression();
     for (;;)
@@ -328,9 +713,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_bitwiseANDExpression()
+  void parse_bitwiseANDExpression()
   {
-    eventHandler.startNonterminal("bitwiseANDExpression", e0);
+    eventHandler->startNonterminal(L"bitwiseANDExpression", e0);
     parse_equalityExpression();
     for (;;)
     {
@@ -344,10 +729,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_equalityExpression();
     }
-    eventHandler.endNonterminal("bitwiseANDExpression", e0);
+    eventHandler->endNonterminal(L"bitwiseANDExpression", e0);
   }
 
-  function try_bitwiseANDExpression()
+  void try_bitwiseANDExpression()
   {
     try_equalityExpression();
     for (;;)
@@ -363,9 +748,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_equalityExpression()
+  void parse_equalityExpression()
   {
-    eventHandler.startNonterminal("equalityExpression", e0);
+    eventHandler->startNonterminal(L"equalityExpression", e0);
     parse_relationalExpression();
     for (;;)
     {
@@ -381,16 +766,17 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consume(13);                // '!='
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       whitespace();
       parse_relationalExpression();
     }
-    eventHandler.endNonterminal("equalityExpression", e0);
+    eventHandler->endNonterminal(L"equalityExpression", e0);
   }
 
-  function try_equalityExpression()
+  void try_equalityExpression()
   {
     try_relationalExpression();
     for (;;)
@@ -407,6 +793,7 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consumeT(13);               // '!='
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
@@ -414,9 +801,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_relationalExpression()
+  void parse_relationalExpression()
   {
-    eventHandler.startNonterminal("relationalExpression", e0);
+    eventHandler->startNonterminal(L"relationalExpression", e0);
     parse_shiftExpression();
     for (;;)
     {
@@ -440,16 +827,17 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consume(33);                // '>='
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       whitespace();
       parse_shiftExpression();
     }
-    eventHandler.endNonterminal("relationalExpression", e0);
+    eventHandler->endNonterminal(L"relationalExpression", e0);
   }
 
-  function try_relationalExpression()
+  void try_relationalExpression()
   {
     try_shiftExpression();
     for (;;)
@@ -474,6 +862,7 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consumeT(33);               // '>='
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
@@ -481,9 +870,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_shiftExpression()
+  void parse_shiftExpression()
   {
-    eventHandler.startNonterminal("shiftExpression", e0);
+    eventHandler->startNonterminal(L"shiftExpression", e0);
     parse_additiveExpression();
     for (;;)
     {
@@ -499,16 +888,17 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consume(34);                // '>>'
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       whitespace();
       parse_additiveExpression();
     }
-    eventHandler.endNonterminal("shiftExpression", e0);
+    eventHandler->endNonterminal(L"shiftExpression", e0);
   }
 
-  function try_shiftExpression()
+  void try_shiftExpression()
   {
     try_additiveExpression();
     for (;;)
@@ -525,6 +915,7 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consumeT(34);               // '>>'
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
@@ -532,9 +923,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_additiveExpression()
+  void parse_additiveExpression()
   {
-    eventHandler.startNonterminal("additiveExpression", e0);
+    eventHandler->startNonterminal(L"additiveExpression", e0);
     parse_powerExpression();
     for (;;)
     {
@@ -550,16 +941,17 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consume(22);                // '-'
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       whitespace();
       parse_powerExpression();
     }
-    eventHandler.endNonterminal("additiveExpression", e0);
+    eventHandler->endNonterminal(L"additiveExpression", e0);
   }
 
-  function try_additiveExpression()
+  void try_additiveExpression()
   {
     try_powerExpression();
     for (;;)
@@ -576,6 +968,7 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consumeT(22);               // '-'
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
@@ -583,9 +976,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_powerExpression()
+  void parse_powerExpression()
   {
-    eventHandler.startNonterminal("powerExpression", e0);
+    eventHandler->startNonterminal(L"powerExpression", e0);
     parse_multiplicativeExpression();
     for (;;)
     {
@@ -599,10 +992,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_multiplicativeExpression();
     }
-    eventHandler.endNonterminal("powerExpression", e0);
+    eventHandler->endNonterminal(L"powerExpression", e0);
   }
 
-  function try_powerExpression()
+  void try_powerExpression()
   {
     try_multiplicativeExpression();
     for (;;)
@@ -618,9 +1011,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_multiplicativeExpression()
+  void parse_multiplicativeExpression()
   {
-    eventHandler.startNonterminal("multiplicativeExpression", e0);
+    eventHandler->startNonterminal(L"multiplicativeExpression", e0);
     parse_unaryExpression();
     for (;;)
     {
@@ -646,16 +1039,17 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consume(14);                // '%'
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       whitespace();
       parse_unaryExpression();
     }
-    eventHandler.endNonterminal("multiplicativeExpression", e0);
+    eventHandler->endNonterminal(L"multiplicativeExpression", e0);
   }
 
-  function try_multiplicativeExpression()
+  void try_multiplicativeExpression()
   {
     try_unaryExpression();
     for (;;)
@@ -682,6 +1076,7 @@ function MaiaScript(string, parsingEventHandler)
         break;
       default:
         consumeT(14);               // '%'
+        break;
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
@@ -689,9 +1084,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_unaryExpression()
+  void parse_unaryExpression()
   {
-    eventHandler.startNonterminal("unaryExpression", e0);
+    eventHandler->startNonterminal(L"unaryExpression", e0);
     switch (l1)
     {
     case 59:                        // '~'
@@ -710,11 +1105,12 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       parse_primary();
+      break;
     }
-    eventHandler.endNonterminal("unaryExpression", e0);
+    eventHandler->endNonterminal(L"unaryExpression", e0);
   }
 
-  function try_unaryExpression()
+  void try_unaryExpression()
   {
     switch (l1)
     {
@@ -732,12 +1128,13 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       try_primary();
+      break;
     }
   }
 
-  function parse_primary()
+  void parse_primary()
   {
-    eventHandler.startNonterminal("primary", e0);
+    eventHandler->startNonterminal(L"primary", e0);
     switch (l1)
     {
     case 3:                         // identifier
@@ -748,11 +1145,12 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       parse_value();
+      break;
     }
-    eventHandler.endNonterminal("primary", e0);
+    eventHandler->endNonterminal(L"primary", e0);
   }
 
-  function try_primary()
+  void try_primary()
   {
     switch (l1)
     {
@@ -764,12 +1162,13 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       try_value();
+      break;
     }
   }
 
-  function parse_statement()
+  void parse_statement()
   {
-    eventHandler.startNonterminal("statement", e0);
+    eventHandler->startNonterminal(L"statement", e0);
     switch (l1)
     {
     case 49:                        // 'namespace'
@@ -810,11 +1209,12 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       parse_throw();
+      break;
     }
-    eventHandler.endNonterminal("statement", e0);
+    eventHandler->endNonterminal(L"statement", e0);
   }
 
-  function try_statement()
+  void try_statement()
   {
     switch (l1)
     {
@@ -856,12 +1256,13 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       try_throw();
+      break;
     }
   }
 
-  function parse_namespace()
+  void parse_namespace()
   {
-    eventHandler.startNonterminal("namespace", e0);
+    eventHandler->startNonterminal(L"namespace", e0);
     consume(49);                    // 'namespace'
     lookahead1W(0);                 // identifier | whitespace^token
     consume(3);                     // identifier
@@ -881,10 +1282,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_expression();
     }
     consume(58);                    // '}'
-    eventHandler.endNonterminal("namespace", e0);
+    eventHandler->endNonterminal(L"namespace", e0);
   }
 
-  function try_namespace()
+  void try_namespace()
   {
     consumeT(49);                   // 'namespace'
     lookahead1W(0);                 // identifier | whitespace^token
@@ -906,9 +1307,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(58);                   // '}'
   }
 
-  function parse_function()
+  void parse_function()
   {
-    eventHandler.startNonterminal("function", e0);
+    eventHandler->startNonterminal(L"function", e0);
     consume(47);                    // 'function'
     lookahead1W(0);                 // identifier | whitespace^token
     consume(3);                     // identifier
@@ -940,10 +1341,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_expression();
     }
     consume(58);                    // '}'
-    eventHandler.endNonterminal("function", e0);
+    eventHandler->endNonterminal(L"function", e0);
   }
 
-  function try_function()
+  void try_function()
   {
     consumeT(47);                   // 'function'
     lookahead1W(0);                 // identifier | whitespace^token
@@ -976,9 +1377,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(58);                   // '}'
   }
 
-  function parse_if()
+  void parse_if()
   {
-    eventHandler.startNonterminal("if", e0);
+    eventHandler->startNonterminal(L"if", e0);
     consume(48);                    // 'if'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1024,10 +1425,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_else();
     }
-    eventHandler.endNonterminal("if", e0);
+    eventHandler->endNonterminal(L"if", e0);
   }
 
-  function try_if()
+  void try_if()
   {
     consumeT(48);                   // 'if'
     lookahead1W(1);                 // whitespace^token | '('
@@ -1072,9 +1473,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_elseif()
+  void parse_elseif()
   {
-    eventHandler.startNonterminal("elseif", e0);
+    eventHandler->startNonterminal(L"elseif", e0);
     consume(44);                    // 'elseif'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1102,10 +1503,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_expression();
     }
     consume(58);                    // '}'
-    eventHandler.endNonterminal("elseif", e0);
+    eventHandler->endNonterminal(L"elseif", e0);
   }
 
-  function try_elseif()
+  void try_elseif()
   {
     consumeT(44);                   // 'elseif'
     lookahead1W(1);                 // whitespace^token | '('
@@ -1134,9 +1535,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(58);                   // '}'
   }
 
-  function parse_else()
+  void parse_else()
   {
-    eventHandler.startNonterminal("else", e0);
+    eventHandler->startNonterminal(L"else", e0);
     consume(43);                    // 'else'
     lookahead1W(6);                 // whitespace^token | '{'
     consume(55);                    // '{'
@@ -1154,10 +1555,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_expression();
     }
     consume(58);                    // '}'
-    eventHandler.endNonterminal("else", e0);
+    eventHandler->endNonterminal(L"else", e0);
   }
 
-  function try_else()
+  void try_else()
   {
     consumeT(43);                   // 'else'
     lookahead1W(6);                 // whitespace^token | '{'
@@ -1177,9 +1578,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(58);                   // '}'
   }
 
-  function parse_do()
+  void parse_do()
   {
-    eventHandler.startNonterminal("do", e0);
+    eventHandler->startNonterminal(L"do", e0);
     consume(42);                    // 'do'
     lookahead1W(6);                 // whitespace^token | '{'
     consume(55);                    // '{'
@@ -1209,10 +1610,10 @@ function MaiaScript(string, parsingEventHandler)
     parse_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
-    eventHandler.endNonterminal("do", e0);
+    eventHandler->endNonterminal(L"do", e0);
   }
 
-  function try_do()
+  void try_do()
   {
     consumeT(42);                   // 'do'
     lookahead1W(6);                 // whitespace^token | '{'
@@ -1243,9 +1644,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(18);                   // ')'
   }
 
-  function parse_while()
+  void parse_while()
   {
-    eventHandler.startNonterminal("while", e0);
+    eventHandler->startNonterminal(L"while", e0);
     consume(54);                    // 'while'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1273,10 +1674,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_expression();
     }
     consume(58);                    // '}'
-    eventHandler.endNonterminal("while", e0);
+    eventHandler->endNonterminal(L"while", e0);
   }
 
-  function try_while()
+  void try_while()
   {
     consumeT(54);                   // 'while'
     lookahead1W(1);                 // whitespace^token | '('
@@ -1305,9 +1706,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(58);                   // '}'
   }
 
-  function parse_for()
+  void parse_for()
   {
-    eventHandler.startNonterminal("for", e0);
+    eventHandler->startNonterminal(L"for", e0);
     consume(45);                    // 'for'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1360,10 +1761,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_expression();
     }
     consume(58);                    // '}'
-    eventHandler.endNonterminal("for", e0);
+    eventHandler->endNonterminal(L"for", e0);
   }
 
-  function try_for()
+  void try_for()
   {
     consumeT(45);                   // 'for'
     lookahead1W(1);                 // whitespace^token | '('
@@ -1415,9 +1816,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(58);                   // '}'
   }
 
-  function parse_foreach()
+  void parse_foreach()
   {
-    eventHandler.startNonterminal("foreach", e0);
+    eventHandler->startNonterminal(L"foreach", e0);
     consume(46);                    // 'foreach'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1470,10 +1871,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_expression();
     }
     consume(58);                    // '}'
-    eventHandler.endNonterminal("foreach", e0);
+    eventHandler->endNonterminal(L"foreach", e0);
   }
 
-  function try_foreach()
+  void try_foreach()
   {
     consumeT(46);                   // 'foreach'
     lookahead1W(1);                 // whitespace^token | '('
@@ -1525,9 +1926,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(58);                   // '}'
   }
 
-  function parse_try()
+  void parse_try()
   {
-    eventHandler.startNonterminal("try", e0);
+    eventHandler->startNonterminal(L"try", e0);
     consume(53);                    // 'try'
     lookahead1W(6);                 // whitespace^token | '{'
     consume(55);                    // '{'
@@ -1554,10 +1955,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_catch();
     }
-    eventHandler.endNonterminal("try", e0);
+    eventHandler->endNonterminal(L"try", e0);
   }
 
-  function try_try()
+  void try_try()
   {
     consumeT(53);                   // 'try'
     lookahead1W(6);                 // whitespace^token | '{'
@@ -1585,9 +1986,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_test()
+  void parse_test()
   {
-    eventHandler.startNonterminal("test", e0);
+    eventHandler->startNonterminal(L"test", e0);
     consume(51);                    // 'test'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1657,10 +2058,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_catch();
     }
-    eventHandler.endNonterminal("test", e0);
+    eventHandler->endNonterminal(L"test", e0);
   }
 
-  function try_test()
+  void try_test()
   {
     consumeT(51);                   // 'test'
     lookahead1W(1);                 // whitespace^token | '('
@@ -1728,9 +2129,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_catch()
+  void parse_catch()
   {
-    eventHandler.startNonterminal("catch", e0);
+    eventHandler->startNonterminal(L"catch", e0);
     consume(40);                    // 'catch'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1758,10 +2159,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_expression();
     }
     consume(58);                    // '}'
-    eventHandler.endNonterminal("catch", e0);
+    eventHandler->endNonterminal(L"catch", e0);
   }
 
-  function try_catch()
+  void try_catch()
   {
     consumeT(40);                   // 'catch'
     lookahead1W(1);                 // whitespace^token | '('
@@ -1790,33 +2191,33 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(58);                   // '}'
   }
 
-  function parse_break()
+  void parse_break()
   {
-    eventHandler.startNonterminal("break", e0);
+    eventHandler->startNonterminal(L"break", e0);
     consume(39);                    // 'break'
-    eventHandler.endNonterminal("break", e0);
+    eventHandler->endNonterminal(L"break", e0);
   }
 
-  function try_break()
+  void try_break()
   {
     consumeT(39);                   // 'break'
   }
 
-  function parse_continue()
+  void parse_continue()
   {
-    eventHandler.startNonterminal("continue", e0);
+    eventHandler->startNonterminal(L"continue", e0);
     consume(41);                    // 'continue'
-    eventHandler.endNonterminal("continue", e0);
+    eventHandler->endNonterminal(L"continue", e0);
   }
 
-  function try_continue()
+  void try_continue()
   {
     consumeT(41);                   // 'continue'
   }
 
-  function parse_return()
+  void parse_return()
   {
-    eventHandler.startNonterminal("return", e0);
+    eventHandler->startNonterminal(L"return", e0);
     consume(50);                    // 'return'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1831,10 +2232,10 @@ function MaiaScript(string, parsingEventHandler)
     }
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
-    eventHandler.endNonterminal("return", e0);
+    eventHandler->endNonterminal(L"return", e0);
   }
 
-  function try_return()
+  void try_return()
   {
     consumeT(50);                   // 'return'
     lookahead1W(1);                 // whitespace^token | '('
@@ -1851,9 +2252,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(18);                   // ')'
   }
 
-  function parse_throw()
+  void parse_throw()
   {
-    eventHandler.startNonterminal("throw", e0);
+    eventHandler->startNonterminal(L"throw", e0);
     consume(52);                    // 'throw'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1868,10 +2269,10 @@ function MaiaScript(string, parsingEventHandler)
     }
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
-    eventHandler.endNonterminal("throw", e0);
+    eventHandler->endNonterminal(L"throw", e0);
   }
 
-  function try_throw()
+  void try_throw()
   {
     consumeT(52);                   // 'throw'
     lookahead1W(1);                 // whitespace^token | '('
@@ -1888,9 +2289,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(18);                   // ')'
   }
 
-  function parse_expression()
+  void parse_expression()
   {
-    eventHandler.startNonterminal("expression", e0);
+    eventHandler->startNonterminal(L"expression", e0);
     switch (l1)
     {
     case 3:                         // identifier
@@ -1912,11 +2313,12 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       parse_statement();
+      break;
     }
-    eventHandler.endNonterminal("expression", e0);
+    eventHandler->endNonterminal(L"expression", e0);
   }
 
-  function try_expression()
+  void try_expression()
   {
     switch (l1)
     {
@@ -1939,12 +2341,13 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       try_statement();
+      break;
     }
   }
 
-  function parse_arguments()
+  void parse_arguments()
   {
-    eventHandler.startNonterminal("arguments", e0);
+    eventHandler->startNonterminal(L"arguments", e0);
     parse_expression();
     for (;;)
     {
@@ -1964,10 +2367,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_expression();
     }
-    eventHandler.endNonterminal("arguments", e0);
+    eventHandler->endNonterminal(L"arguments", e0);
   }
 
-  function try_arguments()
+  void try_arguments()
   {
     try_expression();
     for (;;)
@@ -1989,9 +2392,9 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_member()
+  void parse_member()
   {
-    eventHandler.startNonterminal("member", e0);
+    eventHandler->startNonterminal(L"member", e0);
     switch (l1)
     {
     case 3:                         // identifier
@@ -2016,6 +2419,7 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       lk = l1;
+      break;
     }
     if (lk == 13379                 // identifier '(' identifier
      || lk == 13763                 // identifier '.' identifier
@@ -2048,10 +2452,10 @@ function MaiaScript(string, parsingEventHandler)
       lk = memoized(0, e0);
       if (lk == 0)
       {
-        var b0A = b0; var e0A = e0; var l1A = l1;
-        var b1A = b1; var e1A = e1; var l2A = l2;
-        var b2A = b2; var e2A = e2; var l3A = l3;
-        var b3A = b3; var e3A = e3;
+        int b0A = b0; int e0A = e0; int l1A = l1;
+        int b1A = b1; int e1A = e1; int l2A = l2;
+        int b2A = b2; int e2A = e2; int l3A = l3;
+        int b3A = b3; int e3A = e3;
         try
         {
           consumeT(3);              // identifier
@@ -2082,7 +2486,7 @@ function MaiaScript(string, parsingEventHandler)
           consumeT(18);             // ')'
           lk = -1;
         }
-        catch (p1A)
+        catch (ParseException &)
         {
           lk = -2;
         }
@@ -2218,6 +2622,7 @@ function MaiaScript(string, parsingEventHandler)
           break;
         default:
           lk = l1;
+          break;
         }
         if (lk != 1                 // END
          && lk != 3                 // identifier
@@ -2286,10 +2691,10 @@ function MaiaScript(string, parsingEventHandler)
           lk = memoized(1, e0);
           if (lk == 0)
           {
-            var b0B = b0; var e0B = e0; var l1B = l1;
-            var b1B = b1; var e1B = e1; var l2B = l2;
-            var b2B = b2; var e2B = e2; var l3B = l3;
-            var b3B = b3; var e3B = e3;
+            int b0B = b0; int e0B = e0; int l1B = l1;
+            int b1B = b1; int e1B = e1; int l2B = l2;
+            int b2B = b2; int e2B = e2; int l3B = l3;
+            int b3B = b3; int e3B = e3;
             try
             {
               consumeT(35);         // '['
@@ -2301,7 +2706,7 @@ function MaiaScript(string, parsingEventHandler)
               consumeT(36);         // ']'
               lk = -1;
             }
-            catch (p1B)
+            catch (ParseException &)
             {
               lk = -2;
             }
@@ -2325,11 +2730,12 @@ function MaiaScript(string, parsingEventHandler)
         parse_arguments();
         consume(36);                // ']'
       }
+      break;
     }
-    eventHandler.endNonterminal("member", e0);
+    eventHandler->endNonterminal(L"member", e0);
   }
 
-  function try_member()
+  void try_member()
   {
     switch (l1)
     {
@@ -2355,6 +2761,7 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       lk = l1;
+      break;
     }
     if (lk == 13379                 // identifier '(' identifier
      || lk == 13763                 // identifier '.' identifier
@@ -2387,10 +2794,10 @@ function MaiaScript(string, parsingEventHandler)
       lk = memoized(0, e0);
       if (lk == 0)
       {
-        var b0A = b0; var e0A = e0; var l1A = l1;
-        var b1A = b1; var e1A = e1; var l2A = l2;
-        var b2A = b2; var e2A = e2; var l3A = l3;
-        var b3A = b3; var e3A = e3;
+        int b0A = b0; int e0A = e0; int l1A = l1;
+        int b1A = b1; int e1A = e1; int l2A = l2;
+        int b2A = b2; int e2A = e2; int l3A = l3;
+        int b3A = b3; int e3A = e3;
         try
         {
           consumeT(3);              // identifier
@@ -2422,7 +2829,7 @@ function MaiaScript(string, parsingEventHandler)
           memoize(0, e0A, -1);
           lk = -3;
         }
-        catch (p1A)
+        catch (ParseException &)
         {
           lk = -2;
           b0 = b0A; e0 = e0A; l1 = l1A; if (l1 == 0) {end = e0A;} else {
@@ -2559,6 +2966,7 @@ function MaiaScript(string, parsingEventHandler)
           break;
         default:
           lk = l1;
+          break;
         }
         if (lk != 1                 // END
          && lk != 3                 // identifier
@@ -2627,10 +3035,10 @@ function MaiaScript(string, parsingEventHandler)
           lk = memoized(1, e0);
           if (lk == 0)
           {
-            var b0B = b0; var e0B = e0; var l1B = l1;
-            var b1B = b1; var e1B = e1; var l2B = l2;
-            var b2B = b2; var e2B = e2; var l3B = l3;
-            var b3B = b3; var e3B = e3;
+            int b0B = b0; int e0B = e0; int l1B = l1;
+            int b1B = b1; int e1B = e1; int l2B = l2;
+            int b2B = b2; int e2B = e2; int l3B = l3;
+            int b3B = b3; int e3B = e3;
             try
             {
               consumeT(35);         // '['
@@ -2643,7 +3051,7 @@ function MaiaScript(string, parsingEventHandler)
               memoize(1, e0B, -1);
               continue;
             }
-            catch (p1B)
+            catch (ParseException &)
             {
               b0 = b0B; e0 = e0B; l1 = l1B; if (l1 == 0) {end = e0B;} else {
               b1 = b1B; e1 = e1B; l2 = l2B; if (l2 == 0) {end = e1B;} else {
@@ -2666,12 +3074,13 @@ function MaiaScript(string, parsingEventHandler)
         try_arguments();
         consumeT(36);               // ']'
       }
+      break;
     }
   }
 
-  function parse_array()
+  void parse_array()
   {
-    eventHandler.startNonterminal("array", e0);
+    eventHandler->startNonterminal(L"array", e0);
     consume(55);                    // '{'
     lookahead1W(15);                // identifier | null | true | false | string | complex | real | comment |
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
@@ -2695,10 +3104,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_element();
     }
     consume(58);                    // '}'
-    eventHandler.endNonterminal("array", e0);
+    eventHandler->endNonterminal(L"array", e0);
   }
 
-  function try_array()
+  void try_array()
   {
     consumeT(55);                   // '{'
     lookahead1W(15);                // identifier | null | true | false | string | complex | real | comment |
@@ -2723,9 +3132,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(58);                   // '}'
   }
 
-  function parse_matrix()
+  void parse_matrix()
   {
-    eventHandler.startNonterminal("matrix", e0);
+    eventHandler->startNonterminal(L"matrix", e0);
     consume(35);                    // '['
     lookahead1W(23);                // identifier | null | true | false | string | complex | real | comment |
                                     // whitespace^token | '!' | '(' | ';' | '[' | ']' | 'break' | 'continue' | 'do' |
@@ -2752,10 +3161,10 @@ function MaiaScript(string, parsingEventHandler)
       parse_row();
     }
     consume(36);                    // ']'
-    eventHandler.endNonterminal("matrix", e0);
+    eventHandler->endNonterminal(L"matrix", e0);
   }
 
-  function try_matrix()
+  void try_matrix()
   {
     consumeT(35);                   // '['
     lookahead1W(23);                // identifier | null | true | false | string | complex | real | comment |
@@ -2783,9 +3192,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(36);                   // ']'
   }
 
-  function parse_element()
+  void parse_element()
   {
-    eventHandler.startNonterminal("element", e0);
+    eventHandler->startNonterminal(L"element", e0);
     switch (l1)
     {
     case 7:                         // string
@@ -2794,6 +3203,7 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       lk = l1;
+      break;
     }
     if (lk == 1607)                 // string ':'
     {
@@ -2807,10 +3217,10 @@ function MaiaScript(string, parsingEventHandler)
                                     // 'try' | 'while' | '{' | '~'
     whitespace();
     parse_expression();
-    eventHandler.endNonterminal("element", e0);
+    eventHandler->endNonterminal(L"element", e0);
   }
 
-  function try_element()
+  void try_element()
   {
     switch (l1)
     {
@@ -2820,6 +3230,7 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       lk = l1;
+      break;
     }
     if (lk == 1607)                 // string ':'
     {
@@ -2834,21 +3245,21 @@ function MaiaScript(string, parsingEventHandler)
     try_expression();
   }
 
-  function parse_key()
+  void parse_key()
   {
-    eventHandler.startNonterminal("key", e0);
+    eventHandler->startNonterminal(L"key", e0);
     consume(7);                     // string
-    eventHandler.endNonterminal("key", e0);
+    eventHandler->endNonterminal(L"key", e0);
   }
 
-  function try_key()
+  void try_key()
   {
     consumeT(7);                    // string
   }
 
-  function parse_row()
+  void parse_row()
   {
-    eventHandler.startNonterminal("row", e0);
+    eventHandler->startNonterminal(L"row", e0);
     parse_column();
     for (;;)
     {
@@ -2865,10 +3276,10 @@ function MaiaScript(string, parsingEventHandler)
       whitespace();
       parse_column();
     }
-    eventHandler.endNonterminal("row", e0);
+    eventHandler->endNonterminal(L"row", e0);
   }
 
-  function try_row()
+  void try_row()
   {
     try_column();
     for (;;)
@@ -2887,21 +3298,21 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function parse_column()
+  void parse_column()
   {
-    eventHandler.startNonterminal("column", e0);
+    eventHandler->startNonterminal(L"column", e0);
     parse_expression();
-    eventHandler.endNonterminal("column", e0);
+    eventHandler->endNonterminal(L"column", e0);
   }
 
-  function try_column()
+  void try_column()
   {
     try_expression();
   }
 
-  function parse_parenthesizedExpression()
+  void parse_parenthesizedExpression()
   {
-    eventHandler.startNonterminal("parenthesizedExpression", e0);
+    eventHandler->startNonterminal(L"parenthesizedExpression", e0);
     consume(17);                    // '('
     lookahead1W(15);                // identifier | null | true | false | string | complex | real | comment |
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
@@ -2911,10 +3322,10 @@ function MaiaScript(string, parsingEventHandler)
     parse_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
-    eventHandler.endNonterminal("parenthesizedExpression", e0);
+    eventHandler->endNonterminal(L"parenthesizedExpression", e0);
   }
 
-  function try_parenthesizedExpression()
+  void try_parenthesizedExpression()
   {
     consumeT(17);                   // '('
     lookahead1W(15);                // identifier | null | true | false | string | complex | real | comment |
@@ -2926,9 +3337,9 @@ function MaiaScript(string, parsingEventHandler)
     consumeT(18);                   // ')'
   }
 
-  function parse_value()
+  void parse_value()
   {
-    eventHandler.startNonterminal("value", e0);
+    eventHandler->startNonterminal(L"value", e0);
     switch (l1)
     {
     case 9:                         // real
@@ -2954,11 +3365,12 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       consume(6);                   // false
+      break;
     }
-    eventHandler.endNonterminal("value", e0);
+    eventHandler->endNonterminal(L"value", e0);
   }
 
-  function try_value()
+  void try_value()
   {
     switch (l1)
     {
@@ -2985,15 +3397,16 @@ function MaiaScript(string, parsingEventHandler)
       break;
     default:
       consumeT(6);                  // false
+      break;
     }
   }
 
-  function consume(t)
+  void consume(int t)
   {
     if (l1 == t)
     {
       whitespace();
-      eventHandler.terminal(MaiaScript.TOKEN[l1], b1, e1);
+      eventHandler->terminal(TOKEN[l1], b1, e1);
       b0 = b1; e0 = e1; l1 = l2; if (l1 != 0) {
       b1 = b2; e1 = e2; l2 = l3; if (l2 != 0) {
       b2 = b3; e2 = e3; l3 = 0; }}
@@ -3004,7 +3417,7 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function consumeT(t)
+  void consumeT(int t)
   {
     if (l1 == t)
     {
@@ -3018,18 +3431,18 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function whitespace()
+  void whitespace()
   {
     if (e0 != b1)
     {
-      eventHandler.whitespace(e0, b1);
+      eventHandler->whitespace(e0, b1);
       e0 = b1;
     }
   }
 
-  function matchW(tokenSetId)
+  int matchW(int tokenSetId)
   {
-    var code;
+    int code;
     for (;;)
     {
       code = match(tokenSetId);
@@ -3041,7 +3454,7 @@ function MaiaScript(string, parsingEventHandler)
     return code;
   }
 
-  function lookahead1W(tokenSetId)
+  void lookahead1W(int tokenSetId)
   {
     if (l1 == 0)
     {
@@ -3051,7 +3464,7 @@ function MaiaScript(string, parsingEventHandler)
     }
   }
 
-  function lookahead2W(tokenSetId)
+  void lookahead2W(int tokenSetId)
   {
     if (l2 == 0)
     {
@@ -3062,7 +3475,7 @@ function MaiaScript(string, parsingEventHandler)
     lk = (l2 << 6) | l1;
   }
 
-  function lookahead3W(tokenSetId)
+  void lookahead3W(int tokenSetId)
   {
     if (l3 == 0)
     {
@@ -3073,7 +3486,7 @@ function MaiaScript(string, parsingEventHandler)
     lk |= l3 << 12;
   }
 
-  function error(b, e, s, l, t)
+  int error(int b, int e, int s, int l, int t)
   {
     if (e >= ex)
     {
@@ -3083,81 +3496,77 @@ function MaiaScript(string, parsingEventHandler)
       lx = l;
       tx = t;
     }
-    throw new thisParser.ParseException(bx, ex, sx, lx, tx);
+    throw ParseException(bx, ex, sx, lx, tx);
   }
 
-  var lk, b0, e0;
-  var l1, b1, e1;
-  var l2, b2, e2;
-  var l3, b3, e3;
-  var bx, ex, sx, lx, tx;
-  var eventHandler;
-  var memo;
+  int lk, b0, e0;
+  int l1, b1, e1;
+  int l2, b2, e2;
+  int l3, b3, e3;
+  int bx, ex, sx, lx, tx;
+  EventHandler *eventHandler;
+  std::map<int, int> memo;
 
-  function memoize(i, e, v)
+  void memoize(int i, int e, int v)
   {
     memo[(e << 1) + i] = v;
   }
 
-  function memoized(i, e)
+  int memoized(int i, int e)
   {
-    var v = memo[(e << 1) + i];
-    return typeof v != "undefined" ? v : 0;
+    std::map<int, int>::iterator v = memo.find((e << 1) + i);
+    return v != memo.end() ? v->second : 0;
   }
 
-  var input;
-  var size;
+  const wchar_t *input;
+  int begin;
+  int end;
 
-  var begin;
-  var end;
-
-  function match(tokenSetId)
+  int match(int tokenSetId)
   {
     begin = end;
-    var current = end;
-    var result = MaiaScript.INITIAL[tokenSetId];
-    var state = 0;
+    int current = end;
+    int result = INITIAL[tokenSetId];
+    int state = 0;
 
-    for (var code = result & 255; code != 0; )
+    for (int code = result & 255; code != 0; )
     {
-      var charclass;
-      var c0 = current < size ? input.charCodeAt(current) : 0;
+      int charclass;
+      int c0 = input[current];
       ++current;
       if (c0 < 0x80)
       {
-        charclass = MaiaScript.MAP0[c0];
+        charclass = MAP0[c0];
       }
       else if (c0 < 0xd800)
       {
-        var c1 = c0 >> 5;
-        charclass = MaiaScript.MAP1[(c0 & 31) + MaiaScript.MAP1[(c1 & 31) + MaiaScript.MAP1[c1 >> 5]]];
+        int c1 = c0 >> 5;
+        charclass = MAP1[(c0 & 31) + MAP1[(c1 & 31) + MAP1[c1 >> 5]]];
       }
       else
       {
         if (c0 < 0xdc00)
         {
-          var c1 = current < size ? input.charCodeAt(current) : 0;
+          int c1 = input[current];
           if (c1 >= 0xdc00 && c1 < 0xe000)
           {
             ++current;
             c0 = ((c0 & 0x3ff) << 10) + (c1 & 0x3ff) + 0x10000;
           }
         }
-
-        var lo = 0, hi = 1;
-        for (var m = 1; ; m = (hi + lo) >> 1)
+        int lo = 0, hi = 1;
+        for (int m = 1; ; m = (hi + lo) >> 1)
         {
-          if (MaiaScript.MAP2[m] > c0) hi = m - 1;
-          else if (MaiaScript.MAP2[2 + m] < c0) lo = m + 1;
-          else {charclass = MaiaScript.MAP2[4 + m]; break;}
+          if (MAP2[m] > c0) hi = m - 1;
+          else if (MAP2[2 + m] < c0) lo = m + 1;
+          else {charclass = MAP2[4 + m]; break;}
           if (lo > hi) {charclass = 0; break;}
         }
       }
 
       state = code;
-      var i0 = (charclass << 8) + code - 1;
-      code = MaiaScript.TRANSITION[(i0 & 7) + MaiaScript.TRANSITION[i0 >> 3]];
-
+      int i0 = (charclass << 8) + code - 1;
+      code = TRANSITION[(i0 & 7) + TRANSITION[i0 >> 3]];
       if (code > 255)
       {
         result = code;
@@ -3170,508 +3579,567 @@ function MaiaScript(string, parsingEventHandler)
     if (result == 0)
     {
       end = current - 1;
-      var c1 = end < size ? input.charCodeAt(end) : 0;
+      int c1 = input[end];
       if (c1 >= 0xdc00 && c1 < 0xe000) --end;
       return error(begin, end, state, -1, -1);
     }
 
-    if (end > size) end = size;
+    if (input[begin] == 0) end = begin;
     return (result & 63) - 1;
   }
 
-}
-
-MaiaScript.XmlSerializer = function(log, indent)
-{
-  var input = null;
-  var delayedTag = null;
-  var hasChildElement = false;
-  var depth = 0;
-
-  this.reset = function(string)
+  class FileNotFound
   {
-    log("<?xml version=\"1.0\" encoding=\"UTF-8\"?" + ">");
-    input = string;
-    delayedTag = null;
-    hasChildElement = false;
-    depth = 0;
+  public:
+    FileNotFound(std::string name) : filename(name) {}
+    const std::string &getFilename() const {return filename;}
+
+  private:
+    std::string filename;
   };
 
-  this.startNonterminal = function(tag, begin)
+  class MalformedInputException
   {
-    if (delayedTag != null)
+  public:
+    MalformedInputException(size_t offset) : offset(offset) {}
+    size_t getOffset() const {return offset;}
+
+  private:
+    size_t offset;
+  };
+
+  class Utf8Encoder
+  {
+  public:
+    static std::string encode(const wchar_t *unencoded)
     {
-      log("<");
-      log(delayedTag);
-      log(">");
+      return encode(unencoded, wcslen(unencoded));
     }
-    delayedTag = tag;
-    if (indent)
+
+    static std::string encode(const wchar_t *unencoded, size_t size)
     {
-      log("\n");
-      for (var i = 0; i < depth; ++i)
+      std::string encoded;
+      encoded.reserve(size + 3);
+
+      for (size_t i = 0; i < size; ++i)
       {
-        log("  ");
+        if (encoded.size() + 4 >= encoded.capacity()) encoded.reserve(encoded.capacity() * 2);
+
+        int w = unencoded[i];
+        if (w < 0x80)
+        {
+          encoded += w;
+        }
+        else if (w < 0x800)
+        {
+          encoded += 0xc0 | (w >> 6);
+          encoded += 0x80 | (w & 0x3f);
+        }
+        else if (w < 0xd800)
+        {
+          encoded += 0xe0 | ( w          >> 12);
+          encoded += 0x80 | ((w & 0xfff) >>  6);
+          encoded += 0x80 | ( w &  0x3f       );
+        }
+        else if (w < 0xe000)
+        {
+          if (++i >= size)
+          {
+            throw MalformedInputException(i - 1);
+          }
+          int w2 = unencoded[i];
+          if (w2 < 0xdc00 || w2 > 0xdfff)
+          {
+            throw MalformedInputException(i - 1);
+          }
+          w = (((w  & 0x3ff) << 10) | (w2 & 0x3ff)) + 0x10000;
+          encoded += 0xf0 | ( w            >> 18);
+          encoded += 0x80 | ((w & 0x3ffff) >> 12);
+          encoded += 0x80 | ((w &   0xfff) >>  6);
+          encoded += 0x80 | ( w &    0x3f       );
+        }
+        else if (w < 0x10000)
+        {
+          encoded += 0xe0 | ( w          >> 12);
+          encoded += 0x80 | ((w & 0xfff) >>  6);
+          encoded += 0x80 | ( w &  0x3f       );
+        }
+        else if (w < 0x110000)
+        {
+          encoded += 0xf0 | ( w            >> 18);
+          encoded += 0x80 | ((w & 0x3ffff) >> 12);
+          encoded += 0x80 | ((w &   0xfff) >>  6);
+          encoded += 0x80 | ( w &    0x3f       );
+        }
+        else
+        {
+          throw MalformedInputException(i);
+        }
       }
+      return encoded;
     }
-    hasChildElement = false;
-    ++depth;
   };
 
-  this.endNonterminal = function(tag, end)
+  class Utf8Decoder
   {
-    --depth;
-    if (delayedTag != null)
+  public:
+    static std::wstring decode(const char *string)
     {
-      delayedTag = null;
-      log("<");
-      log(tag);
-      log("/>");
+      return decode(string, strlen(string));
+    }
+
+    static std::wstring decode(const char *string, size_t size)
+    {
+      std::wstring decoded;
+      decoded.reserve(size + 1);
+
+      for (size_t consumed = 0; consumed < size; )
+      {
+        if (decoded.size() + 2 >= decoded.capacity()) decoded.reserve(decoded.capacity() * 2);
+
+        size_t bytes;
+        int codepoint = decodeChar(string + consumed, &bytes);
+
+        if (bytes == 0)
+        {
+          throw MalformedInputException(consumed);
+        }
+
+        consumed += bytes;
+
+        if (codepoint < 0x10000)
+        {
+          decoded += codepoint;
+        }
+        else
+        {
+          codepoint -= 0x10000;
+          decoded += 0x0d800 | (codepoint >> 10);
+          decoded += 0x0dc00 | (codepoint & 0x3ff);
+        }
+      }
+
+      return decoded;
+    }
+
+  private:
+    static int decodeChar(const char *input, size_t *size)
+    {
+      int codepoint = input[0];
+      if ((codepoint & 0x80) == 0)
+      {
+        *size = 1;
+      }
+      else if (   (codepoint & 0x60) == 0x40
+               && (input[1]  & 0xc0) == 0x80)
+      {
+        codepoint = ((codepoint & 0x1f) << 6)
+                  |  (input[1]  & 0x3f);
+        *size = codepoint < 0x80 ? 0 : 2;
+      }
+      else if (   (codepoint & 0x70) == 0x60
+               && (input[1]  & 0xc0) == 0x80
+               && (input[2]  & 0xc0) == 0x80)
+      {
+        codepoint = ((codepoint &  0xf) << 12)
+                  | ((input[1]  & 0x3f) <<  6)
+                  |  (input[2]  & 0x3f);
+        *size = codepoint < 0x800 ? 0 : 3;
+      }
+      else if (   (codepoint & 0x78) == 0x70
+               && (input[1]  & 0xc0) == 0x80
+               && (input[2]  & 0xc0) == 0x80
+               && (input[3]  & 0xc0) == 0x80)
+      {
+        codepoint  = ((codepoint &  0x7) << 18)
+                   | ((input[1]  & 0x3f) << 12)
+                   | ((input[2]  & 0x3f) <<  6)
+                   | ( input[3]  & 0x3f       );
+        *size = codepoint < 0x10000 || codepoint > 0x10ffff ? 0 : 4;
+      }
+      else
+      {
+        *size = 0;
+      }
+      return codepoint;
+    }
+  };
+
+  static std::wstring read(const char *input)
+  {
+    size_t l = strlen(input);
+    if (l > 0 && input[0] == '{' && input[l - 1] == '}')
+    {
+      return Utf8Decoder::decode(input + 1, l - 2);
     }
     else
     {
-      if (indent)
+      FILE *file = fopen(input, "rb");
+      if (file == 0)
       {
-        if (hasChildElement)
+        throw FileNotFound(std::string(input));
+      }
+
+      std::string content;
+      content.reserve(4096);
+
+      for (int c = getc(file); c != EOF; c = getc(file))
+      {
+        if (content.size() + 1 >= content.capacity()) content.reserve(content.capacity() * 2);
+        content += c;
+      }
+
+      fclose(file);
+
+      if (content.size() >= 3
+       && (unsigned char) content[0] == 0xef
+       && (unsigned char) content[1] == 0xbb
+       && (unsigned char) content[2] == 0xbf)
+      {
+        content.erase(0, 3);
+      }
+
+      return Utf8Decoder::decode(content.c_str());
+    }
+  }
+
+  static void getTokenSet(int tokenSetId, const wchar_t **set, int size)
+  {
+    int s = tokenSetId < 0 ? - tokenSetId : INITIAL[tokenSetId] & 255;
+    for (int i = 0; i < 60; i += 32)
+    {
+      int j = i;
+      for (unsigned int f = ec(i >> 5, s); f != 0; f >>= 1, ++j)
+      {
+        if ((f & 1) != 0)
         {
-          log("\n");
-          for (var i = 0; i < depth; ++i)
+          if (size > 1)
           {
-            log("  ");
+            set[0] = TOKEN[j];
+            ++set;
+            --size;
           }
         }
       }
-      log("</");
-      log(tag);
-      log(">");
     }
-    hasChildElement = true;
-  };
-
-  this.terminal = function(tag, begin, end)
-  {
-    if (tag.charAt(0) == '\'') tag = "TOKEN";
-    this.startNonterminal(tag, begin);
-    characters(begin, end);
-    this.endNonterminal(tag, end);
-  };
-
-  this.whitespace = function(begin, end)
-  {
-    characters(begin, end);
-  };
-
-  function characters(begin, end)
-  {
-    if (begin < end)
+    if (size > 0)
     {
-      if (delayedTag != null)
-      {
-        log("<");
-        log(delayedTag);
-        log(">");
-        delayedTag = null;
-      }
-      log(input.substring(begin, end)
-               .replace(/&/g, "&amp;")
-               .replace(/</g, "&lt;")
-               .replace(/>/g, "&gt;"));
+      set[0] = 0;
     }
   }
-};
 
-MaiaScript.getTokenSet = function(tokenSetId)
-{
-  var set = [];
-  var s = tokenSetId < 0 ? - tokenSetId : MaiaScript.INITIAL[tokenSetId] & 255;
-  for (var i = 0; i < 60; i += 32)
+  static int ec(int t, int s)
   {
-    var j = i;
-    var i0 = (i >> 5) * 190 + s - 1;
-    var f = MaiaScript.EXPECTED[(i0 & 3) + MaiaScript.EXPECTED[i0 >> 2]];
-    for ( ; f != 0; f >>>= 1, ++j)
-    {
-      if ((f & 1) != 0)
-      {
-        set.push(MaiaScript.TOKEN[j]);
-      }
-    }
-  }
-  return set;
-};
-
-MaiaScript.TopDownTreeBuilder = function()
-{
-  var input = null;
-  var stack = null;
-
-  this.reset = function(i)
-  {
-    input = i;
-    stack = [];
-  };
-
-  this.startNonterminal = function(name, begin)
-  {
-    var nonterminal = new MaiaScript.Nonterminal(name, begin, begin, []);
-    if (stack.length > 0) addChild(nonterminal);
-    stack.push(nonterminal);
-  };
-
-  this.endNonterminal = function(name, end)
-  {
-    stack[stack.length - 1].end = end;
-    if (stack.length > 1) stack.pop();
-  };
-
-  this.terminal = function(name, begin, end)
-  {
-    addChild(new MaiaScript.Terminal(name, begin, end));
-  };
-
-  this.whitespace = function(begin, end)
-  {
-  };
-
-  function addChild(s)
-  {
-    var current = stack[stack.length - 1];
-    current.children.push(s);
+    int i0 = t * 192 + s - 1;
+    return EXPECTED[(i0 & 3) + EXPECTED[i0 >> 2]];
   }
 
-  this.serialize = function(e)
-  {
-    e.reset(input);
-    stack[0].send(e);
-  };
+  static const int MAP0[];
+  static const int MAP1[];
+  static const int MAP2[];
+  static const int INITIAL[];
+  static const int TRANSITION[];
+  static const int EXPECTED[];
+  static const wchar_t *TOKEN[];
 };
 
-MaiaScript.Terminal = function(name, begin, end)
+const int MaiaScript::MAP0[] =
 {
-  this.begin = begin;
-  this.end = end;
-
-  this.send = function(e)
-  {
-    e.terminal(name, begin, end);
-  };
+/*   0 */ 55, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 4, 5,
+/*  36 */ 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 24, 9, 9,
+/*  65 */ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 25, 26, 27, 28, 6, 29, 30, 31,
+/*  99 */ 32, 33, 34, 35, 6, 36, 37, 6, 38, 39, 40, 41, 42, 43, 6, 44, 45, 46, 47, 6, 48, 6, 49, 6, 50, 51, 52, 53, 9
 };
 
-MaiaScript.Nonterminal = function(name, begin, end, children)
+const int MaiaScript::MAP1[] =
 {
-  this.begin = begin;
-  this.end = end;
-
-  this.send = function(e)
-  {
-    e.startNonterminal(name, begin);
-    var pos = begin;
-    children.forEach
-    (
-      function(c)
-      {
-        if (pos < c.begin) e.whitespace(pos, c.begin);
-        c.send(e);
-        pos = c.end;
-      }
-    );
-    if (pos < end) e.whitespace(pos, end);
-    e.endNonterminal(name, end);
-  };
+/*   0 */ 54, 87, 87, 87, 87, 87, 87, 87, 85, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87,
+/*  27 */ 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87,
+/*  54 */ 119, 151, 182, 214, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+/*  76 */ 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 245, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+/*  98 */ 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 55,
+/* 120 */ 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 4, 5, 6, 7,
+/* 157 */ 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 24, 9, 6, 6, 6,
+/* 186 */ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 25, 26, 27, 28, 6, 29, 30, 31, 32, 33,
+/* 219 */ 34, 35, 6, 36, 37, 6, 38, 39, 40, 41, 42, 43, 6, 44, 45, 46, 47, 6, 48, 6, 49, 6, 50, 51, 52, 53, 9, 9, 9, 9,
+/* 249 */ 9, 9, 9, 9, 54, 54, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+/* 285 */ 9, 9
 };
 
-MaiaScript.MAP0 =
-[
-  /*   0 */ 55, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 4, 5,
-  /*  36 */ 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 24, 9,
-  /*  64 */ 9, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 25, 26, 27, 28, 6, 29, 30,
-  /*  98 */ 31, 32, 33, 34, 35, 6, 36, 37, 6, 38, 39, 40, 41, 42, 43, 6, 44, 45, 46, 47, 6, 48, 6, 49, 6, 50, 51, 52,
-  /* 126 */ 53, 9
-];
+const int MaiaScript::MAP2[] =
+{
+/* 0 */ 57344, 65536, 65533, 1114111, 9, 9
+};
 
-MaiaScript.MAP1 =
-[
-  /*   0 */ 54, 87, 87, 87, 87, 87, 87, 87, 85, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87,
-  /*  27 */ 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87,
-  /*  54 */ 119, 151, 182, 214, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  /*  75 */ 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 245, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  /*  96 */ 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  /* 117 */ 255, 255, 55, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  /* 151 */ 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22,
-  /* 180 */ 23, 24, 9, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 25, 26, 27, 28, 6,
-  /* 214 */ 29, 30, 31, 32, 33, 34, 35, 6, 36, 37, 6, 38, 39, 40, 41, 42, 43, 6, 44, 45, 46, 47, 6, 48, 6, 49, 6, 50,
-  /* 242 */ 51, 52, 53, 9, 9, 9, 9, 9, 9, 9, 9, 54, 54, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
-  /* 276 */ 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9
-];
+const int MaiaScript::INITIAL[] =
+{
+/*  0 */ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 528, 18, 19, 20, 533, 22, 23, 24, 537, 538, 539,
+/* 28 */ 540
+};
 
-MaiaScript.MAP2 =
-[
-  /* 0 */ 57344, 65536, 65533, 1114111, 9, 9
-];
+const int MaiaScript::TRANSITION[] =
+{
+/*    0 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*   18 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 1792, 1792, 1792, 1795,
+/*   36 */ 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739,
+/*   54 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 1792, 1792, 1792, 1795, 2739, 1976, 2739, 2739,
+/*   72 */ 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*   90 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 1957, 1803, 1809, 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813,
+/*  108 */ 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  126 */ 2739, 2739, 2739, 1970, 1823, 1827, 2739, 1839, 1938, 2739, 2739, 2739, 1975, 1813, 2739, 2739, 2739, 2739,
+/*  144 */ 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 1937,
+/*  162 */ 1849, 1853, 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739,
+/*  180 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2738, 2752, 2663, 2887, 2809, 1867,
+/*  198 */ 1938, 2809, 2809, 2809, 2738, 1871, 2809, 2809, 2664, 2646, 1873, 2809, 2664, 2647, 2809, 2886, 2809, 2809,
+/*  216 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2639, 2645, 2642, 2739, 1976, 1938, 2739, 2739, 2739,
+/*  234 */ 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  252 */ 2739, 2739, 2739, 2739, 2739, 2405, 2411, 2408, 2739, 1976, 1881, 2739, 2739, 2739, 2739, 1813, 2739, 2739,
+/*  270 */ 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  288 */ 2739, 2739, 2739, 2739, 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739,
+/*  306 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 1906, 1910, 1918, 1922,
+/*  324 */ 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739,
+/*  342 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 1934, 1936, 1946, 1953, 2739, 1976, 1938, 2739,
+/*  360 */ 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  378 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2691, 2697, 2694, 2739, 1965, 2166, 2739, 2739, 2739, 2431, 1857,
+/*  396 */ 2739, 2739, 2739, 1984, 1859, 2739, 2739, 1990, 2739, 2430, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  414 */ 2739, 2739, 2739, 2037, 2014, 2020, 2739, 2032, 1938, 2739, 2739, 2739, 2740, 2045, 2739, 2739, 2739, 2058,
+/*  432 */ 1815, 2739, 2739, 2050, 2739, 2591, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2083,
+/*  450 */ 2115, 2112, 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739,
+/*  468 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2146, 2123, 2129, 2739, 2141,
+/*  486 */ 1938, 2739, 2739, 2739, 2740, 2045, 2739, 2739, 2739, 2154, 1815, 2739, 2739, 2050, 2739, 2591, 2739, 2739,
+/*  504 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2698, 2739, 2164, 2161, 2739, 2174, 1938, 2739, 2739, 2739,
+/*  522 */ 1831, 1813, 2739, 2739, 2739, 2187, 1815, 2739, 2739, 2179, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  540 */ 2739, 2739, 2739, 2739, 2739, 2780, 2197, 2203, 2739, 1976, 2189, 2739, 2739, 2739, 1975, 1813, 2739, 2739,
+/*  558 */ 2739, 2739, 2427, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  576 */ 2739, 2090, 2096, 2100, 2809, 2215, 1938, 2809, 2809, 2809, 2245, 2228, 2809, 2809, 2664, 2238, 1873, 2809,
+/*  594 */ 2664, 2253, 2809, 2986, 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2090, 2096, 2100,
+/*  612 */ 2809, 2276, 1938, 2809, 2809, 2809, 2298, 2228, 2809, 2809, 2664, 2291, 1873, 2809, 2664, 2306, 2809, 3058,
+/*  630 */ 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2555, 2553, 2739, 2739, 2739, 1976, 1938, 2739,
+/*  648 */ 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  666 */ 2739, 2739, 2739, 2739, 2739, 2739, 2024, 2324, 2330, 2338, 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813,
+/*  684 */ 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  702 */ 2739, 2739, 2739, 2473, 2479, 2476, 2739, 1976, 2351, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739,
+/*  720 */ 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2582,
+/*  738 */ 2588, 2585, 2739, 1976, 2377, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739,
+/*  756 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2630, 2636, 2633, 2739, 1976,
+/*  774 */ 2133, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  792 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2358, 2365, 2369, 2739, 1976, 1938, 2739, 2739, 2739,
+/*  810 */ 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  828 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2402, 1938, 2739, 2739, 2739, 1975, 1813, 2739, 2739,
+/*  846 */ 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  864 */ 2739, 2420, 2442, 2439, 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739,
+/*  882 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2682, 2688, 2685,
+/*  900 */ 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739,
+/*  918 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2771, 2777, 2774, 2739, 1976, 1938, 2739,
+/*  936 */ 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  954 */ 2739, 2739, 2739, 2739, 2739, 2739, 2738, 2752, 2663, 3312, 2450, 2463, 1938, 2489, 2509, 2809, 2738, 1871,
+/*  972 */ 2809, 2519, 2664, 2646, 2312, 2809, 2501, 2647, 2529, 2886, 3109, 2539, 2739, 2739, 2739, 2739, 2739, 2739,
+/*  990 */ 2739, 2739, 2550, 2343, 2563, 2567, 2809, 1867, 1938, 2809, 2809, 2809, 2470, 1871, 2809, 2809, 2664, 2646,
+/* 1008 */ 1873, 2809, 2664, 2647, 2809, 2886, 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2579, 3009,
+/* 1026 */ 2599, 2607, 2809, 1867, 1938, 2809, 2809, 2809, 2738, 1871, 2809, 2619, 2664, 2646, 2230, 2711, 2664, 2647,
+/* 1044 */ 2809, 2542, 2809, 3282, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2627, 3176, 2655, 2659, 2809, 1867,
+/* 1062 */ 1938, 2809, 2809, 2809, 2738, 1871, 2809, 2809, 2664, 2646, 1873, 2809, 2664, 2647, 2809, 2886, 2809, 2809,
+/* 1080 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2679, 3239, 2672, 2706, 3069, 2724, 1938, 2943, 3148, 2809,
+/* 1098 */ 3213, 2611, 2809, 3152, 2732, 2748, 2760, 2792, 3028, 3217, 3130, 2975, 2809, 2924, 2739, 2739, 2739, 2739,
+/* 1116 */ 2739, 2739, 2739, 2739, 2768, 3337, 3343, 3347, 2281, 1867, 1938, 2914, 2809, 2809, 2470, 1871, 2809, 2809,
+/* 1134 */ 2664, 2646, 1873, 2809, 2664, 2647, 2809, 2886, 2788, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/* 1152 */ 2738, 2752, 2663, 2887, 2521, 2800, 1938, 2820, 2808, 2809, 2738, 1871, 2809, 2809, 2664, 2646, 1873, 2810,
+/* 1170 */ 2664, 2647, 2933, 2886, 2809, 2819, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2828, 3370, 2848, 2852,
+/* 1188 */ 2809, 1867, 1938, 2809, 2809, 2809, 2860, 1871, 3019, 2809, 2664, 2646, 1873, 2809, 2884, 2647, 2895, 2904,
+/* 1206 */ 2932, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2738, 2752, 2663, 2887, 2809, 1867, 1938, 2809,
+/* 1224 */ 2809, 2809, 2738, 1871, 2809, 2809, 2664, 2646, 1873, 2511, 2664, 1841, 2809, 2886, 2809, 2809, 2739, 2739,
+/* 1242 */ 2739, 2739, 2739, 2739, 2739, 2739, 2738, 2752, 2663, 2887, 2941, 1867, 1938, 2809, 2951, 2264, 2738, 2959,
+/* 1260 */ 2809, 2809, 2283, 2646, 2972, 3043, 2664, 2647, 2809, 2886, 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739,
+/* 1278 */ 2739, 2739, 2738, 2752, 2663, 2887, 2809, 1867, 1938, 2809, 2809, 2983, 2738, 1871, 2994, 2809, 2664, 2646,
+/* 1296 */ 1873, 2809, 2664, 2647, 2809, 2886, 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 3004, 1888,
+/* 1314 */ 1894, 1898, 2809, 1867, 1938, 2809, 3120, 3017, 2470, 2571, 3027, 2809, 2664, 2646, 1873, 2809, 2664, 2647,
+/* 1332 */ 2809, 3036, 3055, 2268, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2738, 2752, 2663, 2316, 3066, 3077,
+/* 1350 */ 1938, 3095, 3107, 2809, 2738, 1871, 2809, 2809, 2455, 2646, 1873, 3117, 2664, 2647, 2809, 2886, 3323, 3128,
+/* 1368 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2738, 2752, 2663, 2887, 2809, 1867, 1938, 2809, 2809, 2809,
+/* 1386 */ 2738, 1871, 2809, 2809, 2664, 2646, 1873, 2809, 2664, 2647, 2809, 3138, 3160, 2809, 2739, 2739, 2739, 2739,
+/* 1404 */ 2739, 2739, 2739, 2739, 3171, 1996, 2002, 2006, 2531, 3184, 1938, 3192, 2809, 3200, 2470, 2104, 3087, 2809,
+/* 1422 */ 2664, 2646, 1873, 2809, 3269, 2647, 2919, 2886, 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/* 1440 */ 2738, 2752, 2663, 2887, 2809, 1867, 1938, 2809, 2996, 3163, 2738, 1871, 2495, 3225, 2664, 2412, 1873, 2809,
+/* 1458 */ 2716, 2647, 3297, 2886, 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 3234, 2065, 2071, 2075,
+/* 1476 */ 2809, 1867, 1938, 2809, 2499, 3301, 2470, 1871, 3247, 3083, 2220, 2646, 2259, 3255, 3207, 2647, 3266, 2886,
+/* 1494 */ 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2738, 2752, 2663, 2887, 3277, 3290, 1938, 2964,
+/* 1512 */ 2809, 2896, 2738, 3143, 3258, 2809, 3309, 2646, 1873, 3320, 2664, 2647, 2809, 2886, 3226, 2809, 2739, 2739,
+/* 1530 */ 2739, 2739, 2739, 2739, 2739, 2739, 3331, 2866, 2872, 2876, 2809, 1867, 1938, 2809, 2809, 2809, 2738, 1871,
+/* 1548 */ 2809, 2809, 2664, 2646, 1873, 2809, 2811, 2647, 3047, 2886, 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739,
+/* 1566 */ 2739, 2739, 2738, 2752, 2663, 2887, 2809, 1867, 1938, 2809, 2809, 2810, 2738, 2909, 3099, 2809, 2664, 2646,
+/* 1584 */ 1873, 2809, 2664, 2647, 2809, 2886, 2809, 2809, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2481, 2384,
+/* 1602 */ 2390, 2394, 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739,
+/* 1620 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2831, 2837, 2834, 2739, 1976,
+/* 1638 */ 2840, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/* 1656 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 3355, 3357, 3365, 2739, 1976, 1938, 2739, 2739, 2739,
+/* 1674 */ 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/* 1692 */ 2739, 2739, 2739, 2739, 2739, 2207, 3378, 3382, 2739, 1976, 1938, 2739, 2739, 2739, 2739, 1813, 2739, 2739,
+/* 1710 */ 2739, 2739, 1815, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/* 1728 */ 2739, 2739, 2739, 2739, 2739, 1976, 2739, 2739, 2739, 2739, 2739, 1813, 2739, 2739, 2739, 2739, 1815, 2739,
+/* 1746 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 1926, 2739,
+/* 1764 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739,
+/* 1782 */ 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 2739, 3101, 3101, 3101, 3101, 3101, 3101, 3101, 3101,
+/* 1800 */ 0, 0, 0, 49, 3328, 3328, 3328, 3328, 3328, 3328, 3328, 3377, 3377, 0, 0, 0, 0, 93, 0, 0, 0, 0, 0, 0, 42, 42,
+/* 1826 */ 42, 42, 42, 42, 42, 0, 0, 0, 0, 121, 0, 0, 87, 0, 2048, 0, 0, 0, 0, 0, 0, 1054, 10270, 0, 2871, 2871, 2871,
+/* 1853 */ 2871, 2871, 2871, 2871, 0, 0, 0, 0, 131, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 1054, 1054, 1054, 93, 1054, 1054,
+/* 1878 */ 1054, 1054, 1054, 0, 4352, 0, 0, 0, 0, 2871, 0, 0, 0, 1071, 1071, 0, 0, 1086, 1086, 1086, 1086, 1086, 1086,
+/* 1901 */ 1086, 0, 1054, 1054, 1054, 0, 4608, 0, 0, 0, 0, 0, 4608, 4608, 0, 0, 4608, 4608, 4608, 4608, 4608, 4608,
+/* 1923 */ 4608, 4608, 4608, 0, 0, 0, 0, 768, 0, 0, 0, 0, 0, 4864, 0, 0, 0, 0, 0, 0, 0, 2871, 0, 0, 4864, 0, 0, 0, 4864,
+/* 1952 */ 0, 4864, 4864, 4864, 4864, 0, 0, 0, 0, 3328, 49, 49, 3328, 0, 42, 0, 0, 86, 0, 0, 0, 42, 42, 0, 0, 42, 0, 0,
+/* 1980 */ 0, 0, 0, 0, 0, 86, 0, 86, 0, 0, 86, 0, 86, 86, 86, 86, 0, 0, 0, 1062, 1062, 0, 0, 1087, 1087, 1087, 1087,
+/* 2007 */ 1087, 1087, 1087, 0, 1054, 1092, 1054, 5376, 43, 43, 43, 43, 43, 43, 43, 5419, 5419, 0, 0, 0, 0, 6912, 0, 0,
+/* 2031 */ 0, 0, 42, 0, 0, 43, 0, 0, 0, 43, 43, 5376, 5376, 43, 126, 0, 0, 0, 93, 0, 0, 0, 43, 125, 43, 0, 0, 0, 154,
+/* 2060 */ 154, 43, 0, 0, 43, 0, 0, 0, 1072, 1072, 0, 0, 1088, 1088, 1088, 1088, 1088, 1088, 1088, 0, 1054, 1054, 1054,
+/* 2083 */ 0, 5632, 5632, 0, 0, 5632, 5632, 0, 0, 0, 2605, 2605, 0, 0, 2605, 2605, 2605, 2605, 2605, 2605, 2605, 0,
+/* 2105 */ 1054, 1054, 1054, 93, 1054, 1054, 11910, 5632, 5632, 5632, 5632, 0, 0, 0, 0, 0, 0, 5632, 5888, 44, 44, 44,
+/* 2127 */ 44, 44, 44, 44, 5932, 5932, 0, 0, 0, 0, 8960, 0, 2871, 0, 0, 42, 84, 84, 43, 0, 0, 0, 44, 44, 5888, 5888, 44,
+/* 2154 */ 0, 154, 154, 43, 84, 0, 43, 0, 0, 0, 6144, 0, 0, 0, 0, 0, 0, 0, 2871, 93, 0, 42, 0, 0, 87, 0, 0, 0, 121, 121,
+/* 2184 */ 121, 0, 0, 0, 121, 0, 0, 0, 0, 0, 0, 2871, 2871, 6400, 56, 56, 56, 56, 56, 56, 56, 6456, 6456, 0, 0, 0, 0,
+/* 2211 */ 15360, 0, 0, 15360, 0, 42, 85, 2605, 2605, 1054, 1054, 1054, 30, 1054, 1054, 1054, 0, 2687, 1054, 1054, 1054,
+/* 2232 */ 93, 1054, 1054, 1054, 1187, 1054, 153, 85, 155, 2716, 2718, 2687, 2718, 1054, 0, 0, 85, 85, 0, 2684, 2605,
+/* 2253 */ 153, 155, 155, 2716, 2716, 2718, 1054, 1054, 93, 1054, 1185, 1054, 1054, 1054, 1138, 1054, 1054, 1054, 1054,
+/* 2272 */ 1054, 12318, 1054, 1054, 0, 42, 85, 2605, 2648, 1054, 1054, 1054, 30, 1054, 1054, 1054, 1054, 1142, 152, 153,
+/* 2292 */ 122, 155, 2717, 2718, 2687, 2718, 1054, 0, 0, 85, 122, 0, 2684, 2648, 174, 155, 155, 2717, 2717, 2718, 1054,
+/* 2313 */ 1054, 93, 1184, 1054, 1054, 1054, 1054, 0, 1054, 1054, 1094, 6912, 0, 6912, 0, 0, 0, 6912, 0, 6912, 0, 0,
+/* 2335 */ 6912, 6912, 0, 6912, 6912, 6912, 6912, 0, 0, 0, 0, 1055, 1055, 0, 0, 1081, 0, 0, 7424, 0, 0, 0, 2871, 0, 0,
+/* 2360 */ 0, 9216, 9216, 0, 0, 9216, 9216, 9216, 9216, 9216, 9216, 9216, 9216, 0, 0, 0, 0, 3584, 0, 7680, 8192, 8704,
+/* 2382 */ 0, 2871, 0, 0, 0, 14336, 14336, 0, 0, 14336, 14336, 14336, 14336, 14336, 14336, 14336, 0, 0, 0, 0, 0, 83, 0,
+/* 2405 */ 0, 0, 0, 0, 0, 4146, 4146, 0, 0, 0, 0, 0, 0, 0, 1183, 0, 0, 9472, 0, 0, 0, 9472, 0, 0, 2909, 0, 0, 0, 0, 0,
+/* 2435 */ 86, 0, 0, 86, 9472, 9472, 9472, 9472, 0, 0, 0, 0, 0, 9472, 9472, 1054, 1054, 1096, 1054, 1099, 1054, 1054,
+/* 2457 */ 1054, 1054, 1175, 1054, 1054, 0, 0, 42, 0, 0, 0, 1114, 1099, 1054, 0, 42, 0, 0, 0, 0, 0, 7219, 7219, 0, 0, 0,
+/* 2483 */ 0, 0, 0, 0, 14336, 0, 1054, 1093, 1054, 1114, 1054, 1122, 1054, 1054, 1054, 1162, 1054, 1054, 1054, 1054,
+/* 2503 */ 1131, 1054, 1054, 1054, 1054, 0, 1054, 1128, 1054, 1054, 1054, 1054, 1054, 1054, 30, 1054, 1054, 1167, 1054,
+/* 2522 */ 1054, 1054, 1054, 1054, 1054, 1103, 1105, 1054, 1200, 1054, 1054, 1054, 1054, 1054, 1054, 1104, 1054, 1054,
+/* 2540 */ 1054, 1215, 1054, 1054, 1054, 1054, 1054, 0, 1054, 1209, 1055, 0, 0, 0, 0, 0, 0, 0, 6656, 0, 0, 0, 0, 0,
+/* 2564 */ 1081, 1081, 1081, 1081, 1081, 1081, 1081, 0, 1054, 1054, 1054, 93, 1054, 1157, 1054, 1056, 0, 0, 0, 0, 0, 0,
+/* 2586 */ 0, 7988, 7988, 0, 0, 0, 0, 0, 0, 0, 154, 0, 0, 0, 1082, 1082, 1082, 1082, 1082, 1082, 1082, 1090, 1082, 1082,
+/* 2610 */ 1082, 0, 1054, 1054, 1054, 93, 1156, 1054, 1054, 1054, 1054, 1168, 1054, 1054, 1054, 1054, 1172, 1057, 0, 0,
+/* 2630 */ 0, 0, 0, 0, 0, 8501, 8501, 0, 0, 0, 0, 0, 0, 0, 3840, 3840, 0, 0, 0, 0, 0, 0, 0, 1054, 1054, 0, 1083, 1083,
+/* 2658 */ 1083, 1083, 1083, 1083, 1083, 0, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 0, 0, 1058, 1058, 1058, 1058,
+/* 2677 */ 1058, 1058, 1058, 0, 0, 0, 0, 0, 0, 0, 9728, 9728, 0, 0, 0, 0, 0, 0, 0, 5120, 5120, 0, 0, 0, 0, 0, 0, 0,
+/* 2705 */ 6144, 1058, 1091, 1058, 1058, 0, 1054, 1054, 1054, 1054, 1192, 1054, 1054, 1054, 1054, 1196, 1054, 1054, 0,
+/* 2724 */ 0, 42, 0, 0, 89, 1054, 1054, 1102, 1173, 1054, 1054, 1054, 1054, 30, 1054, 0, 0, 0, 0, 0, 0, 0, 0, 125, 0,
+/* 2749 */ 123, 0, 89, 0, 0, 0, 1054, 1054, 0, 0, 1054, 1054, 1566, 93, 1054, 1054, 1186, 1054, 1188, 1059, 0, 0, 0, 0,
+/* 2773 */ 0, 0, 0, 9984, 9984, 0, 0, 0, 0, 0, 0, 0, 6400, 6400, 56, 1054, 1054, 1054, 11550, 1054, 1054, 1054, 1054,
+/* 2796 */ 1054, 11433, 1054, 1054, 82, 42, 0, 0, 0, 1054, 1054, 1103, 1127, 1054, 1054, 1054, 1054, 1054, 1054, 1054,
+/* 2816 */ 1054, 30, 0, 12062, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1125, 1060, 0, 0, 0, 0, 0, 0, 0, 14646, 14646,
+/* 2838 */ 0, 0, 0, 0, 0, 0, 0, 14848, 2871, 0, 0, 1085, 1085, 1085, 1085, 1085, 1085, 1085, 0, 1054, 1054, 1054, 1143,
+/* 2861 */ 120, 0, 0, 0, 2304, 0, 0, 0, 1064, 1064, 0, 0, 1089, 1089, 1089, 1089, 1089, 1089, 1089, 0, 1054, 1054, 1054,
+/* 2884 */ 1194, 1060, 1054, 1054, 1054, 1054, 1054, 0, 1054, 1054, 1054, 1199, 1054, 1054, 1054, 1054, 1054, 1054,
+/* 2902 */ 1054, 1142, 1204, 1054, 1206, 1054, 1054, 0, 1054, 1054, 30, 93, 1054, 1054, 1054, 1054, 12574, 1054, 1054,
+/* 2921 */ 1054, 1054, 1203, 1054, 1054, 1054, 1054, 10782, 1054, 1054, 12830, 1210, 1054, 1054, 1054, 1054, 1054, 1054,
+/* 2939 */ 1054, 10526, 1054, 1095, 1054, 1054, 1054, 1054, 1054, 1054, 1123, 1124, 1054, 1054, 1129, 1054, 1054, 1054,
+/* 2957 */ 1054, 1134, 0, 1152, 1153, 1054, 93, 1054, 1054, 1054, 1121, 1054, 1115, 1054, 1054, 1310, 1054, 93, 1054,
+/* 2976 */ 1054, 1054, 1054, 1054, 123, 1054, 1054, 1054, 1054, 1137, 1054, 1054, 1054, 1054, 1054, 153, 1054, 1054,
+/* 2994 */ 1054, 1160, 1054, 1054, 1054, 1054, 1054, 1054, 1133, 1054, 1061, 0, 0, 0, 0, 0, 0, 0, 1056, 1056, 0, 0,
+/* 3016 */ 1082, 1054, 1136, 1054, 1054, 1054, 1054, 1054, 1054, 1164, 1054, 1159, 1054, 1054, 1054, 1054, 1054, 1054,
+/* 3034 */ 1054, 14080, 1054, 1205, 1054, 1054, 30, 0, 1208, 1054, 1054, 1054, 1191, 1054, 1054, 1054, 1054, 1054,
+/* 3052 */ 13598, 1054, 1054, 1054, 1054, 13086, 1054, 1054, 1054, 1054, 1054, 174, 1054, 1054, 30, 1054, 1097, 1054,
+/* 3070 */ 1054, 1054, 1054, 1054, 1101, 1102, 1054, 0, 42, 0, 0, 0, 1097, 1054, 1054, 1054, 1169, 1054, 1054, 1054,
+/* 3090 */ 1054, 1163, 1054, 1054, 1054, 1054, 1119, 11038, 1120, 1054, 1054, 1054, 1054, 1054, 13854, 1054, 1054, 1054,
+/* 3108 */ 1119, 1054, 1054, 1054, 1054, 1054, 1054, 1212, 1054, 1054, 1054, 1190, 1054, 1054, 1054, 1054, 1054, 1132,
+/* 3126 */ 1054, 1054, 1054, 1214, 1054, 1054, 1054, 1054, 1054, 1054, 14110, 1054, 1054, 1054, 1054, 1207, 1054, 0,
+/* 3144 */ 1054, 1054, 1154, 93, 1054, 1054, 1054, 1130, 1054, 1054, 1054, 1054, 146, 1054, 1171, 1054, 1054, 1211,
+/* 3162 */ 1054, 1054, 1054, 1054, 1054, 1054, 1140, 1054, 1054, 1062, 0, 0, 0, 0, 0, 0, 0, 1057, 1057, 0, 0, 1083, 0,
+/* 3185 */ 42, 0, 0, 0, 1054, 1054, 1116, 1118, 1054, 1054, 1054, 1054, 1054, 1054, 1126, 111, 1054, 1054, 1054, 1054,
+/* 3205 */ 1054, 1141, 1054, 1054, 1054, 1195, 1054, 1054, 1054, 0, 0, 0, 123, 0, 0, 89, 89, 123, 1822, 1054, 1166,
+/* 3226 */ 1054, 1054, 1054, 1054, 1142, 1054, 1054, 1213, 1063, 0, 0, 0, 0, 0, 0, 0, 1058, 1058, 0, 0, 1058, 1054,
+/* 3248 */ 1054, 1161, 1054, 1054, 1054, 1054, 1165, 1054, 13342, 1054, 1054, 1054, 1054, 1054, 1054, 1154, 1054, 1054,
+/* 3266 */ 1054, 1054, 1201, 1054, 1054, 1054, 1054, 1054, 1197, 1054, 0, 1054, 1054, 1098, 1054, 1100, 1054, 1054,
+/* 3284 */ 1054, 1142, 1054, 1054, 1216, 1054, 0, 42, 0, 0, 0, 1098, 1115, 1054, 1054, 1054, 1202, 1054, 1054, 1054,
+/* 3304 */ 1054, 1139, 1054, 1054, 1054, 1054, 1054, 1174, 1054, 1054, 1054, 1054, 0, 1054, 1054, 1093, 1189, 1054,
+/* 3322 */ 1054, 1054, 1054, 1054, 1054, 1054, 1197, 1054, 1054, 1064, 0, 0, 0, 0, 41, 0, 0, 0, 1070, 1070, 0, 0, 1084,
+/* 3345 */ 1084, 1084, 1084, 1084, 1084, 1084, 0, 1054, 1054, 1054, 0, 15104, 0, 0, 0, 15104, 0, 0, 0, 0, 15104, 15104,
+/* 3367 */ 15104, 15104, 0, 0, 0, 0, 1060, 1060, 0, 0, 1085, 0, 15360, 15360, 15360, 15360, 15360, 15360, 15360, 0, 0,
+/* 3388 */ 0, 0
+};
 
-MaiaScript.INITIAL =
-[
-  /*  0 */ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 528, 18, 19, 20, 533, 22, 23, 24, 537, 538, 539,
-  /* 28 */ 540
-];
+const int MaiaScript::EXPECTED[] =
+{
+/*   0 */ 96, 100, 104, 108, 112, 116, 120, 124, 134, 134, 158, 129, 139, 190, 135, 143, 134, 134, 134, 134, 157, 222,
+/*  22 */ 129, 133, 134, 145, 134, 134, 134, 125, 221, 149, 131, 134, 134, 134, 134, 125, 221, 150, 134, 134, 134, 154,
+/*  44 */ 134, 134, 134, 134, 207, 162, 169, 173, 180, 176, 184, 207, 207, 207, 206, 207, 207, 188, 194, 198, 202, 207,
+/*  66 */ 207, 207, 205, 207, 207, 165, 212, 218, 235, 207, 207, 245, 207, 207, 208, 226, 214, 234, 207, 245, 207, 208,
+/*  88 */ 226, 231, 244, 237, 241, 236, 227, 249, 2056, 133120, 264192, 33556480, 67110912, 2048, 2048, 8521728,
+/* 104 */ 67373056, 2099200, 69208064, 134136, 138232, -75896832, -42342400, 139256, -33822720, 401400, 67248120,
+/* 115 */ 139256, 139260, 67510264, 67248120, 2498552, 69607416, 69607416, -41943048, -33554440, 2048, 8, 8, 8, 0, 768,
+/* 130 */ 72, 24, 40, 1024, 8, 8, 8, 8, 72, 8192, 65536, 805306368, (int) 0x80000000, 8, 24, 8, 40, 8, 8, 768, 768, 768,
+/* 152 */ 72, 8, 8, 256, 8, 8, 0, 128, 256, 768, 0, 4194304, 8388608, 0, 128, 512, 24576, 0, 67108864, 16, 8388616,
+/* 173 */ 142606344, 117440615, 50331767, 150988424, 150988424, 150988440, 150988440, 50331775, 150988424, 150988424,
+/* 183 */ 218097288, 218097560, 218103448, 268429055, 268429055, 6, 33554432, 0, 0, 1024, 1024, 128, 512, 1024, 57344,
+/* 198 */ 65536, 131072, 262144, 3670016, 4194304, 768, 6144, 0, 4194304, 0, 0, 0, 0, 128, 32768, 131072, 262144,
+/* 215 */ 524288, 1048576, 4194304, 1048576, 2097152, 4194304, 256, 256, 256, 768, 768, 512, 16384, 32768, 131072, 0,
+/* 231 */ 262144, 1048576, 4194304, 256, 6144, 0, 0, 0, 512, 16384, 32768, 131072, 262144, 4096, 0, 0, 0, 4194304, 512,
+/* 250 */ 32768, 131072, 131072
+};
 
-MaiaScript.TRANSITION =
-[
-  /*    0 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*   18 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 1792, 1792, 1792, 1795,
-  /*   36 */ 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*   54 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 1792, 1792, 1792, 1795, 2848, 1943, 2848, 2848,
-  /*   72 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*   90 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 1974, 1803, 1809, 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848,
-  /*  108 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  126 */ 2848, 2848, 2848, 1937, 1821, 1825, 2848, 1837, 2605, 2848, 2848, 2848, 1942, 2848, 2848, 2848, 2848, 2848,
-  /*  144 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2604,
-  /*  162 */ 1849, 1853, 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  180 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2847, 2680, 1876, 2244, 2202, 1872,
-  /*  198 */ 2605, 2202, 2202, 2202, 2847, 1876, 2202, 2202, 2410, 2286, 2202, 2202, 2411, 2288, 2202, 2245, 2202, 2410,
-  /*  216 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2597, 2603, 2600, 2848, 1943, 2605, 2848, 2848, 2848,
-  /*  234 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  252 */ 2848, 2848, 2848, 2848, 2848, 2464, 2470, 2467, 2848, 1943, 1865, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  270 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  288 */ 2848, 2848, 2848, 2848, 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  306 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 1885, 1889, 1897, 1901,
-  /*  324 */ 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  342 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2282, 2284, 1913, 1920, 2848, 1943, 2605, 2848,
-  /*  360 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  378 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 3267, 3273, 3270, 2848, 1932, 2605, 2848, 2848, 2848, 1841, 2848,
-  /*  396 */ 2848, 2848, 2848, 1951, 2848, 2848, 1839, 1970, 2848, 2073, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  414 */ 2848, 2848, 2848, 3313, 1982, 1988, 2848, 3308, 2605, 2848, 2848, 2848, 2849, 2000, 2848, 2848, 2848, 2010,
-  /*  432 */ 2848, 2848, 2848, 2024, 2848, 2090, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2036,
-  /*  450 */ 2054, 2051, 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  468 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2095, 2062, 2068, 2848, 2085,
-  /*  486 */ 2605, 2848, 2848, 2848, 2849, 2000, 2848, 2848, 2848, 2103, 2848, 2848, 2848, 2024, 2848, 2090, 2848, 2848,
-  /*  504 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2471, 2848, 1960, 1957, 2848, 2127, 2605, 2848, 2848, 2848,
-  /*  522 */ 1813, 2848, 2848, 2848, 2848, 2143, 2848, 2848, 2848, 2140, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  540 */ 2848, 2848, 2848, 2848, 2848, 2371, 2153, 2159, 2848, 1943, 1962, 2848, 2848, 2848, 1942, 2848, 2848, 2848,
-  /*  558 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  576 */ 2848, 3359, 2172, 2176, 2202, 2188, 2605, 2202, 2202, 2202, 2444, 2201, 2202, 2202, 2430, 2211, 2202, 2202,
-  /*  594 */ 2431, 2240, 2202, 2657, 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 3359, 2172, 2176,
-  /*  612 */ 2202, 2253, 2605, 2202, 2202, 2202, 2568, 2201, 2202, 2202, 2430, 2270, 2202, 2202, 2555, 2296, 2202, 2711,
-  /*  630 */ 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2509, 2507, 2848, 2848, 2848, 1943, 2605, 2848,
-  /*  648 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  666 */ 2848, 2848, 2848, 2848, 2848, 2848, 2077, 2308, 2314, 2322, 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848,
-  /*  684 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  702 */ 2848, 2848, 2848, 2588, 2594, 2591, 2848, 1943, 2729, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  720 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2455,
-  /*  738 */ 2461, 2458, 2848, 1943, 2335, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  756 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 3258, 3264, 3261, 2848, 1943,
-  /*  774 */ 1992, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  792 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2016, 2356, 2360, 2848, 1943, 2605, 2848, 2848, 2848,
-  /*  810 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  828 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2368, 2605, 2848, 2848, 2848, 1942, 2848, 2848, 2848,
-  /*  846 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  864 */ 2848, 2820, 2382, 2379, 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  882 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2498, 2504, 2501,
-  /*  900 */ 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  918 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2579, 2585, 2582, 2848, 1943, 2605, 2848,
-  /*  936 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  954 */ 2848, 2848, 2848, 2848, 2848, 2848, 2847, 2680, 1876, 2661, 3156, 3248, 2605, 2390, 2408, 2202, 2847, 1876,
-  /*  972 */ 2202, 2419, 2410, 2286, 2428, 2202, 2843, 1857, 2202, 2245, 3233, 2439, 2848, 2848, 2848, 2848, 2848, 2848,
-  /*  990 */ 2848, 2848, 2452, 2132, 2479, 2483, 2202, 1872, 2605, 2202, 2202, 2202, 3255, 1876, 2202, 2202, 2410, 2286,
-  /* 1008 */ 2202, 2202, 2411, 2288, 2202, 2245, 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2495, 2164,
-  /* 1026 */ 2517, 2525, 2202, 1872, 2605, 2202, 2202, 2202, 2847, 1876, 2202, 2537, 2410, 2286, 2698, 2552, 2411, 2288,
-  /* 1044 */ 2202, 2193, 2202, 2563, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2576, 2327, 2613, 2617, 2202, 1872,
-  /* 1062 */ 2605, 2202, 2202, 2202, 2847, 1876, 2202, 2202, 2410, 2286, 2202, 2202, 2411, 2288, 2202, 2245, 2202, 2410,
-  /* 1080 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2632, 2742, 2625, 2652, 2901, 2669, 2605, 2890, 3217, 2202,
-  /* 1098 */ 3293, 2529, 2202, 3161, 3221, 2677, 2688, 2835, 3204, 2706, 2222, 2258, 2202, 2723, 2848, 2848, 2848, 2848,
-  /* 1116 */ 2848, 2848, 2848, 2848, 2737, 3105, 2750, 2754, 2880, 1872, 2605, 3073, 2202, 2202, 3255, 1876, 2202, 2202,
-  /* 1134 */ 2410, 2286, 2202, 2202, 2411, 2288, 2202, 2245, 2762, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1152 */ 2847, 2680, 1876, 2244, 2764, 2772, 2605, 2203, 2780, 2202, 2847, 1876, 2202, 2202, 2410, 2286, 2202, 2878,
-  /* 1170 */ 2411, 2288, 3172, 2245, 2999, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2789, 2794, 2802, 2806,
-  /* 1188 */ 2202, 1872, 2605, 2202, 2202, 2202, 2814, 1876, 3116, 2202, 2410, 2286, 2202, 2956, 2411, 1905, 2989, 2828,
-  /* 1206 */ 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2847, 2680, 1876, 2244, 2202, 1872, 2605, 2202,
-  /* 1224 */ 2202, 2202, 2847, 1876, 2202, 2202, 2410, 2286, 2202, 2879, 2411, 1924, 2202, 2245, 2202, 2410, 2848, 2848,
-  /* 1242 */ 2848, 2848, 2848, 2848, 2848, 2848, 2847, 2680, 1876, 2244, 2857, 1872, 2605, 2202, 2867, 2396, 2847, 2875,
-  /* 1260 */ 2202, 2202, 3336, 3275, 2202, 2888, 2411, 2288, 2202, 2245, 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1278 */ 2848, 2848, 2847, 2680, 1876, 2244, 2202, 1872, 2605, 2202, 2202, 2898, 2847, 1876, 2909, 2202, 2410, 2286,
-  /* 1296 */ 2202, 2202, 2411, 2288, 2202, 2245, 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2919, 3129,
-  /* 1314 */ 2932, 2936, 2202, 1872, 2605, 2202, 2967, 2944, 3255, 2487, 2202, 2202, 2410, 2286, 2202, 2202, 2411, 2288,
-  /* 1332 */ 2781, 2217, 2954, 3055, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2847, 2680, 1876, 2300, 2964, 2342,
-  /* 1350 */ 2605, 2975, 2987, 2202, 2847, 1876, 2202, 2202, 2348, 2286, 2202, 2997, 2411, 2288, 2202, 2245, 2544, 2410,
-  /* 1368 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2847, 2680, 1876, 2244, 2202, 1872, 2605, 2202, 2202, 2202,
-  /* 1386 */ 2847, 1876, 2202, 2202, 2410, 2286, 2202, 2202, 2411, 2288, 2202, 3007, 2202, 2410, 2848, 2848, 2848, 2848,
-  /* 1404 */ 2848, 2848, 2848, 2848, 3015, 2924, 3028, 3032, 2859, 2043, 2605, 3040, 2202, 3048, 3255, 2180, 2694, 2202,
-  /* 1422 */ 2410, 2286, 2202, 2202, 3289, 2288, 3081, 2245, 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1440 */ 2847, 2680, 1876, 2244, 2202, 1872, 2605, 2202, 2911, 3084, 2847, 1876, 3092, 2400, 2410, 2002, 2202, 2202,
-  /* 1458 */ 3100, 2288, 3113, 2245, 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 3124, 3193, 3137, 3141,
-  /* 1476 */ 2202, 1872, 2605, 2202, 2839, 2262, 3255, 1876, 3149, 3169, 2276, 2286, 3180, 2202, 3188, 2288, 3201, 2245,
-  /* 1494 */ 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2847, 2680, 1876, 2244, 3212, 3062, 2605, 2232,
-  /* 1512 */ 2202, 2420, 2847, 3229, 2979, 2202, 3241, 2286, 2946, 2202, 2411, 2288, 2202, 2245, 3283, 2410, 2848, 2848,
-  /* 1530 */ 2848, 2848, 2848, 2848, 2848, 2848, 3301, 3020, 3321, 3325, 2202, 1872, 2605, 2202, 2202, 2202, 2847, 1876,
-  /* 1548 */ 2202, 2202, 2410, 2286, 2202, 2202, 2715, 2288, 3069, 2245, 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1566 */ 2848, 2848, 2847, 2680, 1876, 2244, 2202, 1872, 2605, 2202, 2202, 1877, 2847, 3333, 2227, 2202, 2410, 2286,
-  /* 1584 */ 2202, 2202, 2411, 2288, 2202, 2245, 2202, 2410, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2145, 2109,
-  /* 1602 */ 2115, 2119, 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1620 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2635, 2641, 2638, 2848, 1943,
-  /* 1638 */ 2644, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1656 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 3344, 3346, 3354, 2848, 1943, 2605, 2848, 2848, 2848,
-  /* 1674 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1692 */ 2848, 2848, 2848, 2848, 2848, 2028, 3367, 3371, 2848, 1943, 2605, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1710 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1728 */ 2848, 2848, 2848, 2848, 2848, 1943, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1746 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 1829, 2848,
-  /* 1764 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848,
-  /* 1782 */ 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 2848, 3101, 3101, 3101, 3101, 3101, 3101, 3101, 3101,
-  /* 1800 */ 0, 0, 0, 49, 3328, 3328, 3328, 3328, 3328, 3328, 3328, 3377, 3377, 0, 0, 0, 0, 120, 0, 0, 87, 0, 42, 42,
-  /* 1824 */ 42, 42, 42, 42, 42, 0, 0, 0, 0, 768, 0, 0, 0, 0, 2048, 0, 0, 0, 0, 0, 0, 86, 0, 0, 86, 0, 2871, 2871, 2871,
-  /* 1853 */ 2871, 2871, 2871, 2871, 0, 0, 0, 0, 1054, 1054, 1054, 1198, 0, 4352, 0, 0, 0, 0, 2871, 0, 42, 0, 0, 0,
-  /* 1877 */ 1054, 1054, 1054, 1054, 1054, 1054, 1054, 30, 0, 4608, 0, 0, 0, 0, 0, 4608, 4608, 0, 0, 4608, 4608, 4608,
-  /* 1899 */ 4608, 4608, 4608, 4608, 4608, 4608, 0, 0, 0, 0, 1054, 1054, 1197, 1054, 0, 4864, 0, 0, 0, 4864, 0, 4864,
-  /* 1921 */ 4864, 4864, 4864, 0, 0, 0, 0, 1054, 10270, 1054, 1054, 0, 42, 0, 0, 86, 0, 0, 0, 42, 42, 0, 0, 42, 0, 0, 0,
-  /* 1948 */ 0, 0, 0, 86, 0, 86, 0, 0, 86, 0, 0, 0, 6144, 0, 0, 0, 0, 0, 0, 0, 2871, 2871, 86, 86, 86, 86, 0, 0, 0, 0,
-  /* 1978 */ 3328, 49, 49, 3328, 5376, 43, 43, 43, 43, 43, 43, 43, 5419, 5419, 0, 0, 0, 0, 8960, 0, 2871, 0, 125, 0, 0,
-  /* 2003 */ 0, 0, 0, 0, 0, 1181, 1054, 152, 152, 43, 0, 0, 43, 0, 0, 0, 9216, 9216, 0, 0, 9216, 0, 43, 124, 43, 0, 0,
-  /* 2030 */ 0, 0, 15360, 0, 0, 15360, 0, 5632, 5632, 0, 0, 5632, 5632, 0, 42, 0, 0, 0, 1054, 1054, 1116, 5632, 5632,
-  /* 2053 */ 5632, 5632, 0, 0, 0, 0, 0, 0, 5632, 5888, 44, 44, 44, 44, 44, 44, 44, 5932, 5932, 0, 0, 0, 0, 86, 0, 0, 0,
-  /* 2080 */ 0, 6912, 0, 0, 0, 0, 42, 84, 84, 43, 0, 0, 0, 152, 0, 0, 0, 0, 44, 44, 5888, 5888, 44, 152, 152, 43, 84, 0,
-  /* 2108 */ 43, 0, 0, 0, 14336, 14336, 0, 0, 14336, 14336, 14336, 14336, 14336, 14336, 14336, 0, 0, 0, 0, 0, 42, 0, 0,
-  /* 2131 */ 87, 0, 0, 0, 1055, 1055, 0, 0, 1081, 0, 120, 120, 120, 0, 0, 0, 0, 0, 0, 0, 14336, 0, 6400, 56, 56, 56, 56,
-  /* 2158 */ 56, 56, 56, 6456, 6456, 0, 0, 0, 0, 1056, 1056, 0, 0, 1082, 0, 2605, 2605, 2605, 2605, 2605, 2605, 2605, 0,
-  /* 2181 */ 1054, 1054, 1054, 1054, 1054, 11908, 1054, 0, 42, 85, 2605, 2605, 1054, 1054, 1054, 0, 1054, 1207, 1054,
-  /* 2200 */ 1054, 2686, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1124, 85, 153, 2714, 2716, 2686, 2716, 1054,
-  /* 2218 */ 1054, 30, 0, 1206, 1054, 1054, 1054, 1054, 14110, 1054, 1054, 1054, 1054, 13854, 1054, 1054, 1054, 1120,
-  /* 2236 */ 1054, 1115, 1054, 1054, 153, 2714, 2714, 2716, 1054, 1054, 1054, 1054, 0, 1054, 1054, 1054, 1054, 0, 42,
-  /* 2255 */ 85, 2605, 2648, 1054, 1054, 1054, 122, 1054, 1054, 1054, 1054, 1138, 1054, 1054, 1054, 121, 153, 2715,
-  /* 2273 */ 2716, 2686, 2716, 1054, 1054, 30, 1054, 1054, 1054, 0, 0, 4864, 0, 0, 0, 0, 0, 0, 0, 1054, 1054, 1054,
-  /* 2295 */ 1054, 153, 2715, 2715, 2716, 1054, 1054, 1054, 1054, 0, 1054, 1054, 1094, 6912, 0, 6912, 0, 0, 0, 6912, 0,
-  /* 2316 */ 6912, 0, 0, 6912, 6912, 0, 6912, 6912, 6912, 6912, 0, 0, 0, 0, 1057, 1057, 0, 0, 1083, 3584, 0, 7680, 8192,
-  /* 2339 */ 8704, 0, 2871, 0, 42, 0, 0, 0, 1097, 1054, 1054, 1054, 1173, 1054, 1054, 0, 0, 9216, 9216, 9216, 9216,
-  /* 2360 */ 9216, 9216, 9216, 9216, 0, 0, 0, 0, 0, 83, 0, 0, 0, 0, 0, 0, 6400, 6400, 56, 9472, 9472, 9472, 9472, 0, 0,
-  /* 2385 */ 0, 0, 0, 9472, 9472, 1054, 1093, 1054, 1114, 1054, 1121, 1054, 1054, 1054, 1137, 1054, 1054, 1054, 1054,
-  /* 2404 */ 1141, 1054, 1054, 1054, 1054, 1127, 1054, 1054, 1054, 1054, 1054, 1054, 0, 0, 0, 1165, 1054, 1054, 1054,
-  /* 2423 */ 1054, 1054, 1054, 1054, 1141, 1054, 1182, 1054, 1054, 1054, 1054, 1054, 1054, 0, 151, 153, 1213, 1054,
-  /* 2441 */ 1054, 1054, 1054, 1054, 0, 0, 85, 85, 0, 2683, 2605, 1055, 0, 0, 0, 0, 0, 0, 0, 7988, 7988, 0, 0, 0, 0, 0,
-  /* 2467 */ 0, 0, 4146, 4146, 0, 0, 0, 0, 0, 0, 0, 6144, 0, 1081, 1081, 1081, 1081, 1081, 1081, 1081, 0, 1054, 1054,
-  /* 2490 */ 1054, 1054, 1155, 1054, 1157, 1056, 0, 0, 0, 0, 0, 0, 0, 9728, 9728, 0, 0, 0, 0, 0, 0, 0, 6656, 0, 0, 0, 0,
-  /* 2517 */ 0, 1082, 1082, 1082, 1082, 1082, 1082, 1082, 1090, 1082, 1082, 1082, 0, 1054, 1054, 1054, 1154, 1054, 1054,
-  /* 2536 */ 1054, 1054, 1166, 1054, 1054, 1054, 1054, 1170, 1054, 1054, 1054, 1195, 1054, 1054, 1054, 1212, 1054, 1054,
-  /* 2554 */ 1190, 1054, 1054, 1054, 1054, 1054, 0, 172, 153, 1054, 1141, 1054, 1054, 1214, 1054, 0, 0, 85, 121, 0,
-  /* 2574 */ 2683, 2648, 1057, 0, 0, 0, 0, 0, 0, 0, 9984, 9984, 0, 0, 0, 0, 0, 0, 0, 7219, 7219, 0, 0, 0, 0, 0, 0, 0,
-  /* 2602 */ 3840, 3840, 0, 0, 0, 0, 0, 0, 0, 2871, 0, 0, 1083, 1083, 1083, 1083, 1083, 1083, 1083, 0, 1054, 1054, 1054,
-  /* 2625 */ 0, 1058, 1058, 1058, 1058, 1058, 1058, 1058, 0, 0, 0, 0, 0, 0, 0, 14646, 14646, 0, 0, 0, 0, 0, 0, 0, 14848,
-  /* 2650 */ 2871, 0, 1058, 1091, 1058, 1058, 0, 1054, 1054, 1054, 151, 1054, 1054, 1054, 1054, 0, 1054, 1054, 1093, 0,
-  /* 2670 */ 42, 0, 0, 89, 1054, 1054, 1102, 122, 0, 89, 0, 0, 0, 1054, 1054, 0, 0, 1054, 1566, 1054, 1054, 1184, 1054,
-  /* 2693 */ 1186, 1054, 1054, 1054, 1161, 1054, 1054, 1054, 1054, 1185, 1054, 1054, 1054, 0, 89, 89, 122, 1822, 1054,
-  /* 2712 */ 1054, 1054, 172, 1054, 1054, 1054, 1054, 30, 0, 0, 0, 1054, 1054, 10782, 1054, 1054, 12830, 0, 0, 7424, 0,
-  /* 2733 */ 0, 0, 2871, 0, 1059, 0, 0, 0, 0, 0, 0, 0, 1058, 1058, 0, 0, 1058, 0, 1084, 1084, 1084, 1084, 1084, 1084,
-  /* 2757 */ 1084, 0, 1054, 1054, 1054, 1054, 11550, 1054, 1054, 1054, 1054, 1054, 1054, 1103, 1105, 82, 42, 0, 0, 0,
-  /* 2777 */ 1054, 1054, 1103, 1126, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1203, 1060, 0, 0, 0, 0, 0, 0, 0, 1060,
-  /* 2798 */ 1060, 0, 0, 1085, 0, 1085, 1085, 1085, 1085, 1085, 1085, 1085, 0, 1054, 1054, 1054, 1142, 119, 0, 0, 0,
-  /* 2819 */ 2304, 0, 0, 9472, 0, 0, 0, 9472, 0, 1204, 1054, 1054, 0, 1054, 1054, 1208, 1054, 1054, 1054, 11431, 1054,
-  /* 2840 */ 1054, 1054, 1054, 1130, 1054, 1054, 1054, 1054, 0, 0, 0, 0, 0, 0, 0, 0, 124, 1054, 1095, 1054, 1054, 1054,
-  /* 2862 */ 1054, 1054, 1054, 1104, 1054, 1054, 1054, 1128, 1054, 1054, 1054, 1054, 1133, 0, 1151, 1152, 1054, 1054,
-  /* 2880 */ 1054, 1054, 1054, 30, 1054, 1054, 1054, 1054, 1054, 1189, 1054, 1054, 1054, 1054, 1054, 1054, 1122, 1123,
-  /* 2898 */ 1054, 1054, 1136, 1054, 1054, 1054, 1054, 1054, 1101, 1102, 1054, 1158, 1054, 1054, 1054, 1054, 1054, 1054,
-  /* 2916 */ 1054, 1132, 1054, 1061, 0, 0, 0, 0, 0, 0, 0, 1062, 1062, 0, 0, 1087, 0, 1086, 1086, 1086, 1086, 1086, 1086,
-  /* 2939 */ 1086, 0, 1054, 1054, 1054, 1054, 1135, 1054, 1054, 1054, 1054, 1054, 1054, 1187, 1054, 13086, 1054, 1054,
-  /* 2957 */ 1054, 1054, 1054, 1054, 1054, 1192, 1060, 30, 1054, 1097, 1054, 1054, 1054, 1054, 1054, 1131, 1054, 1054,
-  /* 2975 */ 1054, 1118, 11038, 1119, 1054, 1054, 1054, 1054, 1153, 1054, 1054, 1054, 1054, 1118, 1054, 1054, 1054,
-  /* 2992 */ 1054, 1054, 1054, 1202, 1054, 1188, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 12062, 1054, 1054, 1205,
-  /* 3009 */ 1054, 0, 1054, 1054, 1054, 1209, 1062, 0, 0, 0, 0, 0, 0, 0, 1064, 1064, 0, 0, 1089, 0, 1087, 1087, 1087,
-  /* 3032 */ 1087, 1087, 1087, 1087, 0, 1054, 1092, 1054, 1117, 1054, 1054, 1054, 1054, 1054, 1054, 1125, 110, 1054,
-  /* 3050 */ 1054, 1054, 1054, 1054, 1140, 1054, 1054, 1054, 12318, 1054, 1054, 0, 0, 42, 0, 0, 0, 1098, 1115, 1054,
-  /* 3070 */ 1054, 1054, 13598, 1054, 1054, 1054, 1054, 12574, 1054, 1054, 1054, 1054, 1054, 1201, 1054, 1054, 1054,
-  /* 3087 */ 1054, 1054, 1139, 1054, 1054, 1054, 1054, 1160, 1054, 1054, 1054, 1054, 1164, 1054, 1054, 1194, 1054, 1054,
-  /* 3105 */ 0, 0, 0, 1070, 1070, 0, 0, 1084, 1054, 1200, 1054, 1054, 1054, 1054, 1054, 1054, 1162, 1054, 1054, 1063, 0,
-  /* 3126 */ 0, 0, 0, 0, 0, 0, 1071, 1071, 0, 0, 1086, 0, 1088, 1088, 1088, 1088, 1088, 1088, 1088, 0, 1054, 1054, 1054,
-  /* 3149 */ 1054, 1159, 1054, 1054, 1054, 1054, 1163, 1054, 1054, 1096, 1054, 1099, 1054, 1054, 1054, 144, 1054, 1169,
-  /* 3167 */ 1054, 1171, 1054, 1054, 1167, 1054, 1054, 1054, 1054, 1054, 10526, 1054, 1054, 1054, 1054, 1183, 1054,
-  /* 3184 */ 1054, 1054, 1054, 13342, 1054, 1193, 1054, 1054, 1054, 0, 0, 0, 1072, 1072, 0, 0, 1088, 1199, 1054, 1054,
-  /* 3204 */ 1054, 1054, 1054, 1054, 1054, 14080, 122, 0, 1054, 1054, 1098, 1054, 1100, 1054, 1054, 1054, 1129, 1054,
-  /* 3222 */ 1054, 1054, 1054, 30, 1054, 0, 0, 0, 1054, 1054, 1153, 1054, 1054, 1054, 1054, 1210, 1054, 1054, 1054,
-  /* 3241 */ 1054, 1172, 1054, 1054, 1054, 1054, 0, 0, 42, 0, 0, 0, 1114, 1099, 1054, 0, 42, 0, 0, 0, 0, 0, 8501, 8501,
-  /* 3265 */ 0, 0, 0, 0, 0, 0, 0, 5120, 5120, 0, 0, 0, 0, 0, 0, 0, 1054, 1310, 1054, 1054, 1141, 1054, 1054, 1211, 1054,
-  /* 3290 */ 1054, 1054, 1195, 1054, 0, 0, 0, 122, 0, 0, 89, 1064, 0, 0, 0, 0, 41, 0, 0, 42, 0, 0, 43, 0, 0, 0, 43, 43,
-  /* 3318 */ 5376, 5376, 43, 0, 1089, 1089, 1089, 1089, 1089, 1089, 1089, 0, 1054, 1054, 1054, 0, 1054, 1054, 30, 1054,
-  /* 3338 */ 1054, 1054, 1054, 1141, 150, 0, 0, 15104, 0, 0, 0, 15104, 0, 0, 0, 0, 15104, 15104, 15104, 15104, 0, 0, 0,
-  /* 3361 */ 0, 2605, 2605, 0, 0, 2605, 0, 15360, 15360, 15360, 15360, 15360, 15360, 15360, 0, 0, 0, 0
-];
+const wchar_t *MaiaScript::TOKEN[] =
+{
+  L"(0)",
+  L"END",
+  L"eof",
+  L"identifier",
+  L"'null'",
+  L"'true'",
+  L"'false'",
+  L"string",
+  L"complex",
+  L"real",
+  L"comment",
+  L"whitespace",
+  L"'!'",
+  L"'!='",
+  L"'%'",
+  L"'&'",
+  L"'&&'",
+  L"'('",
+  L"')'",
+  L"'*'",
+  L"'+'",
+  L"','",
+  L"'-'",
+  L"'.'",
+  L"'/'",
+  L"':'",
+  L"';'",
+  L"'<'",
+  L"'<<'",
+  L"'<='",
+  L"'='",
+  L"'=='",
+  L"'>'",
+  L"'>='",
+  L"'>>'",
+  L"'['",
+  L"']'",
+  L"'^'",
+  L"'`'",
+  L"'break'",
+  L"'catch'",
+  L"'continue'",
+  L"'do'",
+  L"'else'",
+  L"'elseif'",
+  L"'for'",
+  L"'foreach'",
+  L"'function'",
+  L"'if'",
+  L"'namespace'",
+  L"'return'",
+  L"'test'",
+  L"'throw'",
+  L"'try'",
+  L"'while'",
+  L"'{'",
+  L"'|'",
+  L"'||'",
+  L"'}'",
+  L"'~'"
+};
 
-MaiaScript.EXPECTED =
-[
-  /*   0 */ 95, 99, 103, 107, 111, 115, 119, 123, 124, 124, 142, 192, 129, 180, 125, 133, 124, 124, 124, 124, 141, 230,
-  /*  22 */ 192, 124, 124, 136, 124, 124, 124, 146, 230, 191, 136, 124, 124, 124, 124, 147, 231, 151, 124, 124, 137,
-  /*  43 */ 124, 124, 124, 124, 153, 236, 159, 163, 167, 170, 174, 178, 212, 212, 237, 212, 212, 155, 214, 184, 188,
-  /*  64 */ 211, 212, 212, 236, 212, 212, 214, 196, 201, 210, 212, 212, 212, 204, 212, 213, 218, 223, 210, 212, 236,
-  /*  85 */ 212, 213, 218, 227, 235, 206, 197, 205, 219, 241, 2056, 133120, 264192, 33556480, 67110912, 2048, 2048,
-  /* 102 */ 8521728, 67373056, 2099200, 69208064, 134136, 138232, -75896832, -42342400, 139256, -33822720, 401400,
-  /* 113 */ 67248120, 139256, 139260, 67510264, 67248120, 2498552, 69607416, 69607416, -41943048, -33554440, 2048, 8, 8,
-  /* 126 */ 8, 8, 72, 8192, 65536, 805306368, 0x80000000, 8, 24, 8, 40, 8, 8, 8, 256, 8, 0, 128, 256, 768, 8, 8, 0, 256,
-  /* 150 */ 256, 72, 8, 8, 8, 0, 0, 6, 33554432, 8388608, 0, 0, 67108864, 16, 8388616, 142606344, 117440615, 50331767,
-  /* 168 */ 150988424, 50331775, 150988424, 218097288, 150988424, 150988424, 150988440, 150988440, 218097560, 218103448,
-  /* 178 */ 268429055, 268429055, 0, 0, 1024, 1024, 1024, 57344, 65536, 131072, 262144, 3670016, 4194304, 768, 768, 72,
-  /* 194 */ 24, 40, 24576, 32768, 131072, 262144, 4096, 524288, 1048576, 2097152, 4194304, 0, 0, 0, 512, 16384, 256,
-  /* 211 */ 6144, 0, 0, 0, 0, 128, 512, 512, 16384, 32768, 131072, 0, 262144, 524288, 1048576, 4194304, 262144, 1048576,
-  /* 229 */ 4194304, 256, 256, 768, 768, 768, 4096, 0, 0, 0, 4194304, 0, 512, 32768, 131072, 131072
-];
-
-MaiaScript.TOKEN =
-[
-  "(0)",
-  "END",
-  "eof",
-  "identifier",
-  "'null'",
-  "'true'",
-  "'false'",
-  "string",
-  "complex",
-  "real",
-  "comment",
-  "whitespace",
-  "'!'",
-  "'!='",
-  "'%'",
-  "'&'",
-  "'&&'",
-  "'('",
-  "')'",
-  "'*'",
-  "'+'",
-  "','",
-  "'-'",
-  "'.'",
-  "'/'",
-  "':'",
-  "';'",
-  "'<'",
-  "'<<'",
-  "'<='",
-  "'='",
-  "'=='",
-  "'>'",
-  "'>='",
-  "'>>'",
-  "'['",
-  "']'",
-  "'^'",
-  "'`'",
-  "'break'",
-  "'catch'",
-  "'continue'",
-  "'do'",
-  "'else'",
-  "'elseif'",
-  "'for'",
-  "'foreach'",
-  "'function'",
-  "'if'",
-  "'namespace'",
-  "'return'",
-  "'test'",
-  "'throw'",
-  "'try'",
-  "'while'",
-  "'{'",
-  "'|'",
-  "'||'",
-  "'}'",
-  "'~'"
-];
+int main(int argc, char **argv)
+{
+  return MaiaScript::main(argc, argv);
+}
 
 // End

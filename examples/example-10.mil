@@ -5,7 +5,13 @@
                 "comment": "#!/usr/local/bin/maiavm"
             },
             {
-                "comment": "/**\n * This comment is for documentation by JSDoc.\n */"
+                "comment": "##"
+            },
+            {
+                "comment": "# This comment is for documentation by JSDoc."
+            },
+            {
+                "comment": "#"
             },
             {
                 "comment": "// This is a comment."

@@ -1,7 +1,7 @@
 #!/usr/local/bin/maiavm
-/**
- * This comment is for documentation by JSDoc.
- */
+##
+# This comment is for documentation by JSDoc.
+#
 // This is a comment.
 namespace a {
     b = [1, 2; 3, 4]
