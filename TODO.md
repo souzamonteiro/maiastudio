@@ -1,8 +1,5 @@
-- [x] Remove import e require from compiler
-- [x] Add import e require to system library
-- [x] Add version property to core library
-- [x] Implement retractable terminal
-- [x] Replace the editor by MaiaEditor
+- [ ] Fix parse arquments
+- [ ] Fix split function
 - [ ] Implement support for complex network analysis
 - [ ] Prepare binary distributions for macOS, Windows and Linux
 - [ ] Prepare binary distributions for iOS and Android

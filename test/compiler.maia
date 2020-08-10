@@ -341,6 +341,17 @@ test (tries; core.toString(1.7989074399478673+1.1117859405028423*i); 0) {
 
 system.println("Testing matrix support...")
 
+test (tries; 4; 0) {
+    a=[1,2;3,4]
+    i=0
+    j=0
+    b=a[i+1,j+1]
+} catch (v) {
+    system.print("TEST: Fail testing operators inside matrix indexes.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
 test (tries; [6,8;10,12]; 0) {
     a = [1,2;3,4]
     b = [5,6;7,8]

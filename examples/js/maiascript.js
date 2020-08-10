@@ -5004,7 +5004,7 @@ function MaiaCompiler() {
                 'terminalNode' : ''
             };
             parentNodeInfo.childNode = 'operation';
-
+            
             if (typeof node != 'undefined') {
                 if ('op' in node) {
                     js += this.parse(node, nodeInfo);
@@ -5030,7 +5030,6 @@ function MaiaCompiler() {
                 'terminalNode' : ''
             };
             parentNodeInfo.childNode = 'op';
-            
             if (typeof node != 'undefined') {
                 if (Array.isArray(node)) {
                     var nodeInfo = {
@@ -5133,17 +5132,16 @@ function MaiaCompiler() {
                 }
                 if ('arguments' in node) {
                     var nodeArguments = {
-                        'arguments': node['arguments']
+                        'matrixIndexes': node['arguments']
                     };
                     var args = this.parse(nodeArguments, nodeInfo);
                     parentNodeInfo.terminalNode = nodeInfo.terminalNode;
-                    
                     var tokenType = node['TOKEN'];
                     if (typeof tokenType != 'undefined') {
                         if (tokenType.indexOf('(') != -1) {
-                            js += '(' + args + ')';
+                            js += '(' + args.replace(/;/g,',') + ')';
                         } else if (tokenType.indexOf('[') != -1) {
-                            var arrayOfArgs = args.split(',');
+                            var arrayOfArgs = args.split(';');
                             if (Array.isArray(arrayOfArgs)) {
                                 for (var i = 0; i < arrayOfArgs.length; i++) {
                                     js += '[' + arrayOfArgs[i] + ']';
@@ -5203,6 +5201,36 @@ function MaiaCompiler() {
                         for (var i = 0; i < nodeExpression.length; i++) {
                             if (i < (nodeExpression.length - 1)) {
                                 js += this.parse(nodeExpression[i], nodeInfo) + ',';
+                                parentNodeInfo.terminalNode = nodeInfo.terminalNode;
+                            } else {
+                                js += this.parse(nodeExpression[i], nodeInfo);
+                                parentNodeInfo.terminalNode = nodeInfo.terminalNode;
+                            }
+                        }
+                    } else {
+                        js += this.parse(nodeExpression, nodeInfo);
+                        parentNodeInfo.terminalNode = nodeInfo.terminalNode;
+                    }
+                }
+            } else {
+                js = node;
+            }
+        } else if ('matrixIndexes' in mil) {
+            node = mil['matrixIndexes'];
+            var nodeInfo = {
+                'parentNode': 'arguments',
+                'childNode': '',
+                'terminalNode' : ''
+            };
+            parentNodeInfo.childNode = 'arguments';
+
+            if (typeof node != 'undefined') {
+                if ('expression' in node) {
+                    var nodeExpression = node['expression'];
+                    if (Array.isArray(nodeExpression)) {
+                        for (var i = 0; i < nodeExpression.length; i++) {
+                            if (i < (nodeExpression.length - 1)) {
+                                js += this.parse(nodeExpression[i], nodeInfo) + ';';
                                 parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                             } else {
                                 js += this.parse(nodeExpression[i], nodeInfo);
@@ -5493,7 +5521,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.4.0";
+    this.version = "1.4.1";
 
     this.testResult = {
         "expected": {},
