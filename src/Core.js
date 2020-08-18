@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.4.1";
+    this.version = "1.4.3";
 
     this.testResult = {
         "expected": {},
@@ -264,14 +264,13 @@ function Core() {
         
         var compiler = new MaiaCompiler();
         compiledCode.js = compiler.compile(xml);
-
         try {
-            result = eval(compiledCode.js);
+            var evalFunc = new Function('return ' + compiledCode.js);
+            result = evalFunc();
         } catch (e) {
             var evalError = e.message;
             system.log(evalError);
         }
-
         return result;
     }
 

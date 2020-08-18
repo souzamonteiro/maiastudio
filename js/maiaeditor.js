@@ -28,9 +28,10 @@
  * @class
  * @param {string}   container - HTML element to setup as an editor.
  * @param {string}   language - Programming language to highlight the syntax.
+ * @param {object}   options - Object containing options for configuring the editor.
  * @return {object}  Element configured as source code editor.
  */
-function MaiaEditor(container, language) {
+function MaiaEditor(container, language, options) {
     init();
 
     /**
@@ -39,7 +40,18 @@ function MaiaEditor(container, language) {
     function init() {
         // Class attributes goes here.
     }
+
+    var opts = {
+        'indentChars': '    ',
+        'commentChars': '//'
+    }
     
+    if (typeof options != 'undefined') {
+        for (key in options) {
+            opts[key] = options[key];
+        }
+    }
+
     var maiaeditor = this;
     
     // History for undo and redo operations. 
@@ -59,11 +71,6 @@ function MaiaEditor(container, language) {
     // Creates the editor.
     var editor = document.createElement('pre');
     editorContainer.appendChild(editor);
-
-    // Set scrollbars.
-    //editorContainer.style.overflowX = 'hidden';
-    //editorContainer.style.overflowY = 'hidden';
-    //editorContainer.style.resize = 'none';
     
     // Place the line number bar to the left of the editor.
     lineNumbers.style.setProperty('mix-blend-mode', 'difference');
@@ -197,7 +204,7 @@ function MaiaEditor(container, language) {
         }
         var element = queue.pop();
         while (element) {
-            if (visitor(element) === "stop") {
+            if (visitor(element) === 'stop') {
                 break;
             }
             if (element.nextSibling) {
@@ -221,31 +228,31 @@ function MaiaEditor(container, language) {
             if (element === sel.anchorNode && element === sel.focusNode) {
                 position.start += sel.anchorOffset;
                 position.end += sel.focusOffset;
-                position.dir = sel.anchorOffset <= sel.focusOffset ? "ltr" : "rtl";
-                return "stop";
+                position.dir = sel.anchorOffset <= sel.focusOffset ? 'ltr' : 'rtl';
+                return 'stop';
             }
             if (element === sel.anchorNode) {
                 position.start += sel.anchorOffset;
                 if (!position.dir) {
-                    position.dir = "ltr";
+                    position.dir = 'ltr';
                 } else {
-                    return "stop";
+                    return 'stop';
                 }
             }
             else if (element === sel.focusNode) {
                 position.end += sel.focusOffset;
                 if (!position.dir) {
-                    position.dir = "rtl";
+                    position.dir = 'rtl';
                 }
                 else {
-                    return "stop";
+                    return 'stop';
                 }
             }
             if (element.nodeType === Node.TEXT_NODE) {
-                if (position.dir != "ltr") {
+                if (position.dir != 'ltr') {
                     position.start += element.nodeValue.length;
                 }
-                if (position.dir != "rtl") {
+                if (position.dir != 'rtl') {
                     position.end += element.nodeValue.length;
                 }
             }
@@ -263,7 +270,7 @@ function MaiaEditor(container, language) {
         var startNode, startOffset = 0;
         var endNode, endOffset = 0;
         if (!position.dir) {
-            position.dir = "ltr";
+            position.dir = 'ltr';
         }
         if (position.start < 0) {
             position.start = 0;
@@ -272,7 +279,7 @@ function MaiaEditor(container, language) {
             position.end = 0;
         }
         // Flip start and end if the direction reversed
-        if (position.dir == "rtl") {
+        if (position.dir == 'rtl') {
             const { start, end } = position;
             position.start = end;
             position.end = start;
@@ -282,7 +289,7 @@ function MaiaEditor(container, language) {
             if (element.nodeType !== Node.TEXT_NODE) {
                 return;
             }
-            var len = (element.nodeValue || "").length;
+            var len = (element.nodeValue || '').length;
             if (current + len >= position.start) {
                 if (!startNode) {
                     startNode = element;
@@ -291,7 +298,7 @@ function MaiaEditor(container, language) {
                 if (current + len >= position.end) {
                     endNode = element;
                     endOffset = position.end - current;
-                    return "stop";
+                    return 'stop';
                 }
             }
             current += len;
@@ -302,7 +309,7 @@ function MaiaEditor(container, language) {
         if (!endNode)
             endNode = editor;
         // Flip back the selection
-        if (position.dir == "<-") {
+        if (position.dir == '<-') {
             [startNode, startOffset, endNode, endOffset] = [endNode, endOffset, startNode, startOffset];
         }
         sel.setBaseAndExtent(startNode, startOffset, endNode, endOffset);
@@ -436,7 +443,7 @@ function MaiaEditor(container, language) {
             var newText = '';
             if (Array.isArray(textLines)) {
                 for (var i = 0; i < textLines.length; i++) {
-                    newText += '    ' + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
+                    newText += opts.indentChars + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
                 }
                 this.replaceSelectedText(newText);
             }
@@ -460,7 +467,7 @@ function MaiaEditor(container, language) {
             if (Array.isArray(textLines)) {
                 this.saveEditorContent(editor);
                 for (var i = 0; i < textLines.length; i++) {
-                    newText += textLines[i].replace('    ', '') + (i < textLines.length - 1 ? '\r\n' : '');
+                    newText += textLines[i].replace(opts.indentChars, '') + (i < textLines.length - 1 ? '\r\n' : '');
                 }
                 this.replaceSelectedText(newText);
             }
@@ -484,7 +491,7 @@ function MaiaEditor(container, language) {
             var newText = '';
             if (Array.isArray(textLines)) {
                 for (var i = 0; i < textLines.length; i++) {
-                    newText += '//' + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
+                    newText += opts.commentChars + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
                 }
                 this.replaceSelectedText(newText);
             }
@@ -508,7 +515,7 @@ function MaiaEditor(container, language) {
             var newText = '';
             if (Array.isArray(textLines)) {
                 for (var i = 0; i < textLines.length; i++) {
-                    newText += textLines[i].replace('//', '') + (i < textLines.length - 1 ? '\r\n' : '');
+                    newText += textLines[i].replace(opts.commentChars, '') + (i < textLines.length - 1 ? '\r\n' : '');
                 }
                 this.replaceSelectedText(newText);
             }
@@ -600,7 +607,7 @@ function MaiaEditor(container, language) {
                 while ((j < textBeforeCursor.length) && (/[ \t]/.test(textBeforeCursor[j]))) {
                     j++;
                 }
-                var padding = textBeforeCursor.substring(i, j) || "";
+                var padding = textBeforeCursor.substring(i, j) || '';
                 // Checks whether the line contains open braces.
                 if (textBeforeCursor[textBeforeCursor.length - 1] == '{') {
                     var indentation = padding + '    ';
@@ -645,7 +652,7 @@ function MaiaEditor(container, language) {
         maiaeditor.highlightCode(maiaeditor.editor);
     }, false);
     // Transfer the text from the container to the editor.
-    editor.textContent = code;
+    this.setText(code);
     // Highlights the code syntax in the editor.
     this.highlightCode(editor);
 }

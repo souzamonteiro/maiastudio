@@ -22,6 +22,7 @@ var lang = 'pt-BR';
 var editorMode = 'maia';
 var terminalMode = 'block';
 var editor = {};
+var terminal = {};
 var fullFileName;
 var fileName;
 var fileExtension;
@@ -36,9 +37,9 @@ compiledCode = {
 /**
  * Call the startup function when the document has finished to load.
  */
-$( document ).ready(function() {
+window.onload = function() {
     initApp();
-});
+}
 
 /**
  * Creates a new document.
@@ -47,7 +48,7 @@ function newWorkspace() {
     editorMode = 'maia';
     fileName = 'untitled';
     fileExtension = 'maia';
-    fullFileName = fileName + "." + fileExtension;
+    fullFileName = fileName + '.' + fileExtension;
     fileData = '';
     saveWorkspace();
     var win = window.open('index.html', '', '');
@@ -57,7 +58,7 @@ function newWorkspace() {
  * Clears the workspace.
  */
 function clearWorkspace() {
-    var lang = $('#language').val();
+    var lang = document.getElementById('language').value;
     var msg = language.message[lang].cleanUp + '?';
     var res = confirm(msg);
 
@@ -65,7 +66,7 @@ function clearWorkspace() {
         editorMode = 'maia';
         fileName = 'untitled';
         fileExtension = 'maia';
-        fullFileName = fileName + "." + fileExtension;
+        fullFileName = fileName + '.' + fileExtension;
         editor.setText('');
         saveWorkspace();
     }
@@ -104,8 +105,13 @@ function uploadCode() {
         fullFileName = fileName + '.' + fileExtension;
         fileData = fileObject.fileData;
         if (editorMode) {
-            $('#editorMode').val(editorMode);
-            $('#editorMode').trigger('change');
+            // Update the select object.
+            document.getElementById("editorMode").value = editorMode;
+            // Fires the change event.
+            editorModeSel = document.getElementById('editorMode');
+            var event = document.createEvent('HTMLEvents');
+            event.initEvent('change', true, false);
+            editorModeSel.dispatchEvent(event);
         }
     }
 
@@ -130,7 +136,7 @@ function downloadMil() {
             throw pe;
         } else {
             var parserError = maiaScriptParser.getErrorMessage(pe);
-            alert(parserError);
+            system.showMessageDialog(parserError);
             throw parserError;
         }
     }
@@ -161,7 +167,7 @@ function downloadJs() {
             throw pe;
         } else {
             var parserError = maiaScriptParser.getErrorMessage(pe);
-            alert(parserError);
+            system.showMessageDialog(parserError);
             throw parserError;
         }
     }
@@ -190,7 +196,7 @@ function downloadHtml() {
     if (editorMode == 'md') {
         var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked(editor.getText()) + '</body></html>';
     } else {
-        var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet"/></head><body><pre>' + newLineToBr(editor.getHtml()) + '</pre></body></html>';
+        var html = '<!DOCTYPE html><html lang="en"><head><meta charset=UTF-8"><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet"/></head><body><pre>' + newLineToBr(editor.getHtml()) + '</pre></body></html>';
     }
     system.downloadFile(fileName + '.html', html, 'text/html');
 }
@@ -214,7 +220,7 @@ function compileAndRun() {
                 throw pe;
             } else {
                 var parserError = maiaScriptParser.getErrorMessage(pe);
-                alert(parserError);
+                system.showMessageDialog(parserError);
                 throw parserError;
             }
         }
@@ -236,11 +242,11 @@ function compileAndRun() {
         compiledCode.js = code;
     }
     if (editorMode == 'html') {
-        var win = window.open('index.html', '', '');
+        var win = window.open('_blank', '', '');
         win.location = 'data:text/html;charset=utf-8,' + code;
     } else if (editorMode == 'md') {
         var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked(code) + '</body></html>';
-        var win = window.open('index.html', '', '');
+        var win = window.open('_blank', '', '');
         win.location = 'data:text/html;charset=utf-8,' + html;
     } else if ((editorMode == 'maia') || (editorMode == 'mil') || (editorMode == 'js')) {
         try {
@@ -248,7 +254,7 @@ function compileAndRun() {
         } catch (e) {
             var evalError = e.message;
             system.log(evalError);
-            alert(evalError);
+            system.showMessageDialog(evalError);
         }
     }
 }
@@ -258,83 +264,98 @@ function compileAndRun() {
  */
 function saveWorkspace() {
     var code = editor.getText();
-
-    localStorage.setItem('language', $('#language').val());
-    localStorage.setItem('editorMode', $('#editorMode').val());
-    localStorage.setItem('terminalMode', $('#terminal').css("display"));
-    localStorage.setItem('fullFileName', fullFileName);
-    localStorage.setItem('fileName', fileName);
-    localStorage.setItem('fileExtension', fileExtension);
-    localStorage.setItem('fileData', code);
+    var data = {
+        'language': document.getElementById('language').value,
+        'editorMode': document.getElementById('editorMode').value,
+        'terminalMode': getComputedStyle(document.getElementById('content'))['display'],
+        'fullFileName': fullFileName,
+        'fileName': fileName,
+        'fileExtension': fileExtension,
+        'fileData': code
+    }
+    system.writeDataToStorage(data);
 }
 
 /**
  * Loads the workspace.
  */
 function loadWorkspace() {
-    $('#language').val(lang);
-    $('#editorMode').val(editorMode);
+    document.getElementById('language').value = lang;
+    document.getElementById('editorMode').value = editorMode;
 
-    if (typeof localStorage.getItem('fullFileName') != 'undefined') {
-        fullFileName = localStorage.getItem('fullFileName');
-    }
-    if (typeof localStorage.getItem('fileName') != 'undefined') {
-        fileName = localStorage.getItem('fileName');
-    }
-    if (typeof localStorage.getItem('fileExtension') != 'undefined') {
-        fileExtension = localStorage.getItem('fileExtension');
-    }
-    if (typeof localStorage.getItem('fileData') != 'undefined') {
-        fileData = localStorage.getItem('fileData');
+    var data = {
+        'language': {},
+        'editorMode': {},
+        'terminalMode': {},
+        'fullFileName': {},
+        'fileName': {},
+        'fileExtension': {},
+        'fileData': {}
     }
 
-    if (typeof localStorage.getItem('language') != 'undefined') {
-        lang = localStorage.getItem('language');
-        if (lang) {
-            $('#language').val(lang);
+    function callBack() {
+        if (typeof data['fullFileName'] != 'undefined') {
+            fullFileName = data['fullFileName'];
+        }
+        if (typeof data['fileName'] != 'undefined') {
+            fileName = data['fileName'];
+        }
+        if (typeof data['fileExtension'] != 'undefined') {
+            fileExtension = data['fileExtension'];
+        }
+        if (typeof data['fileData'] != 'undefined') {
+            fileData = data['fileData'];
+        }
+    
+        if (typeof data['language'] != 'undefined') {
+            lang = data['language'];
+            if (lang) {
+                document.getElementById('language').value = lang;
+            } else {
+                lang = 'pt-BR';
+                document.getElementById('language').value = lang;
+            }
         } else {
             lang = 'pt-BR';
-            $('#language').val(lang);
+            document.getElementById('language').value = lang;
         }
-    } else {
-        lang = 'pt-BR';
-        $('#language').val(lang);
-    }
-
-    if (typeof localStorage.getItem('editorMode') != 'undefined') {
-        editorMode = localStorage.getItem('editorMode');
-        if (editorMode) {
-            $('#editorMode').val(editorMode);
+    
+        if (typeof data['editorMode'] != 'undefined') {
+            editorMode = data['editorMode'];
+            if (editorMode) {
+                document.getElementById('editorMode').value = editorMode;
+            } else {
+                editorMode = 'maia';
+                document.getElementById('editorMode').value = editorMode;
+            }
         } else {
             editorMode = 'maia';
-            $('#editorMode').val(editorMode);
+            document.getElementById('editorMode').value = editorMode;
         }
-    } else {
-        editorMode = 'maia';
-        $('#editorMode').val(editorMode);
-    }
-
-    if (typeof localStorage.getItem("terminalMode") != 'undefined') {
-        terminalMode = localStorage.getItem("terminalMode") ;
-        if (editorMode) {
-            $('#terminal').css("display", terminalMode);
+    
+        if (typeof data['terminalMode'] != 'undefined') {
+            terminalMode = data['terminalMode'];
+            if (terminalMode) {
+                document.getElementById('content').style.display = terminalMode;
+            } else {
+                terminalMode = 'block';
+                document.getElementById('content').style.display = terminalMode;
+            }
         } else {
             terminalMode = 'block';
-            $('#terminal').css("display", terminalMode);
+            document.getElementById('content').style.display = terminalMode;
         }
-    } else {
-        terminalMode = 'block';
-        $('#terminal').css("display", terminalMode);
+    
+        translate(lang);
     }
-
-    translate(lang);
+    system.readDataFromStorage(data, callBack);
 }
 
 /**
  * Translates the application interface.
  */
 function translateApp() {
-    lang = $('#language').val();
+    lang = document.getElementById('language').value;
     translate(lang);
 
     saveWorkspace();
@@ -356,7 +377,7 @@ function setEditorMode() {
 function aboutApp() {
     var copyright = 'Copyright (C) Roberto Luiz Souza Monteiro,\nRenata Souza Barreto,\nHernane Barrros de Borges Pereira.\n\nwww.maiascript.com';
     
-    alert(copyright);
+    system.showMessageDialog(copyright);
 }
 
 /**
@@ -374,55 +395,96 @@ function initApp() {
     loadWorkspace();
 
     if (editorMode == 'mil') {
-        editor = new MaiaEditor('editor', 'json');
+        editor = new MaiaEditor('editor', 'json', {'indentChars': '    ', 'commentChars': '//'});
     } else {
-        editor = new MaiaEditor('editor', editorMode);
+        editor = new MaiaEditor('editor', editorMode, {'indentChars': '    ', 'commentChars': '//'});
     }
     
     if (fileData) {
         editor.setText(fileData);
     }
 
-    jQuery(function($, undefined) {
-        $('#terminal').terminal(function(command) {
-            if (command !== '') {
-                try {
-                    var result = core.eval(command);
-                    if (result !== undefined) {
-                        this.echo(new String(result));
-                    }
-                } catch(e) {
-                    this.error(new String(e));
-                }
-            } else {
-               this.echo('');
-            }
-        }, {
-            greetings: 'MaiaStudio (The MaiaScript IDE)',
-            name: 'terminal',
-            height: 100,
-            prompt: 'maia> '
-        });
-    });
+    function callBack() {
+        var res;
+        try {
+            res = core.eval(terminal.getTextBeforeCursor());
+        } catch (e) {
+            var evalError = e.message;
+            system.log(evalError);
+            system.showMessageDialog(evalError);
+        }
+        if (typeof res != 'undefined') {
+            terminal.appendText('\r\n' + res + '\r\n');
+        }
+    }
 
-    // We have rewritten system.log so that all output and error messages are displayed on the console.
+    if (editorMode == 'mil') {
+        terminal = new MaiaConsole('terminal', 'json', callBack, {'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n', 'promptMessage': 'maia>'});
+    } else {
+        terminal = new MaiaConsole('terminal', editorMode, callBack, {'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n', 'promptMessage': 'maia>'});
+    }
+
+    // We have rewritten system.log so that all output and error messages are displayed on the terminal.
     system.log = function(text) {
-        var term = $('#terminal').terminal(function(command) {});
-        term.echo(text);
+        if (typeof text != 'undefined') {
+            terminal.appendText('\r\n' + text);
+        }
     }
 
-    // This code is used to retract the console.
-    var coll = document.getElementsByClassName("collapsible");
+    // This code is used to retract the terminal.
+    var coll = document.getElementsByClassName('collapsible');
     for (var i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function() {
+        coll[i].addEventListener('click', function() {
             var content = this.nextElementSibling;
-            if (content.style.display === "block") {
-                content.style.display = "none";
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
             } else {
-                content.style.display = "block";
+                content.style.display = 'block';
             }
         });
     }
+
+    // Toolbar buttons event listeners.
+    var aboutAppBtn = document.getElementById('aboutApp');
+    aboutAppBtn.addEventListener('click', function() {aboutApp();});
+    var newWorkspaceBtn = document.getElementById('newWorkspace');
+    newWorkspaceBtn.addEventListener('click', function() {newWorkspace();});
+    var uploadCodeBtn = document.getElementById('uploadCode');
+    uploadCodeBtn.addEventListener('click', function() {uploadCode();});
+    var downloadCodeBtn = document.getElementById('downloadCode');
+    downloadCodeBtn.addEventListener('click', function() {downloadCode();});
+    var compileAndRunBtn = document.getElementById('compileAndRun');
+    compileAndRunBtn.addEventListener('click', function() {compileAndRun();});
+    var downloadMilBtn = document.getElementById('downloadMil');
+    downloadMilBtn.addEventListener('click', function() {downloadMil();});
+    var downloadJsBtn = document.getElementById('downloadJs');
+    downloadJsBtn.addEventListener('click', function() {downloadJs();});
+    var downloadHtmlBtn = document.getElementById('downloadHtml');
+    downloadHtmlBtn.addEventListener('click', function() {downloadHtml();});
+    var copySelectionBtn = document.getElementById('copySelection');
+    copySelectionBtn.addEventListener('click', function() {editor.copySelection();});
+    var cutSelectionBtn = document.getElementById('cutSelection');
+    cutSelectionBtn.addEventListener('click', function() {editor.cutSelection();});
+    var pasteSelectionBtn = document.getElementById('pasteSelection');
+    pasteSelectionBtn.addEventListener('click', function() {editor.pasteSelection();});
+    var uncommentSelectionBtn = document.getElementById('uncommentSelection');
+    uncommentSelectionBtn.addEventListener('click', function() {editor.uncommentSelection();});
+    var commentSelectionBtn = document.getElementById('commentSelection');
+    commentSelectionBtn.addEventListener('click', function() {editor.commentSelection();});
+    var unindentSelectionBtn = document.getElementById('unindentSelection');
+    unindentSelectionBtn.addEventListener('click', function() {editor.unindentSelection();});
+    var indentSelectionBtn = document.getElementById('indentSelection');
+    indentSelectionBtn.addEventListener('click', function() {editor.indentSelection();});
+    var restoreEditorContentBtn = document.getElementById('restoreEditorContent');
+    restoreEditorContentBtn.addEventListener('click', function() {editor.restoreEditorContent();});
+    var undoRestoreEditorContentBtn = document.getElementById('undoRestoreEditorContent');
+    undoRestoreEditorContentBtn.addEventListener('click', function() {editor.undoRestoreEditorContent();});
+    var clearWorkspaceBtn = document.getElementById('clearWorkspace');
+    clearWorkspaceBtn.addEventListener('click', function() {clearWorkspace();});
+    var editorModeSel = document.getElementById('editorMode');
+    editorModeSel.addEventListener('change', function() {setEditorMode();});
+    var languageSel = document.getElementById('language');
+    languageSel.addEventListener('change', function() {translateApp();});
 }
 
 /**

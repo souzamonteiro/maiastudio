@@ -5521,7 +5521,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.4.1";
+    this.version = "1.4.3";
 
     this.testResult = {
         "expected": {},
@@ -5759,14 +5759,13 @@ function Core() {
         
         var compiler = new MaiaCompiler();
         compiledCode.js = compiler.compile(xml);
-
         try {
-            result = eval(compiledCode.js);
+            var evalFunc = new Function('return ' + compiledCode.js);
+            result = evalFunc();
         } catch (e) {
             var evalError = e.message;
             system.log(evalError);
         }
-
         return result;
     }
 
@@ -9235,6 +9234,39 @@ function System() {
     }
 
     /**
+     * Reads data from browser storage.
+     * @param {object}  obj - Object to store data: {'key': value, 'key': value, ...}
+     * @param {object}  callBack - Callback function to call after access to storage.
+     * @return          Data from storage.
+     */
+    this.readDataFromStorage = function(obj, callBack) {
+        var keys = Object.keys(obj);
+        if (typeof chrome != 'undefined') {
+            if (typeof chrome.storage != 'undefined') {
+                chrome.storage.sync.get(keys, function(result) {
+                    for (key in result) {
+                        obj[key] = resule[key];
+                    }
+                    if (typeof callBack != 'undefined') {
+                        callBack();
+                    }
+                });
+            }
+        } else {
+            for (key in obj) {
+                if (typeof localStorage.getItem(key) != 'undefined') {
+                    obj[key] = localStorage.getItem(key);
+                } else {
+                    obj[key] = {};
+                }
+            }
+            if (typeof callBack != 'undefined') {
+                callBack();
+            }
+        }
+    }
+
+    /**
      * Displays a message in a dialog box asking for confirmation.
      * @param {string}   text - Text to display.
      * @return {string}  User choice.
@@ -9321,6 +9353,35 @@ function System() {
             }
         }
         input.click();
+    }
+
+    /**
+     * Writes data to storage.
+     * @param {object}  obj - Object to store data: {'key': value, 'key': value, ...}
+     * @param {object}  callBack - Callback function to call after access to storage.
+     * @return          Data written to storage.
+     */
+    this.writeDataToStorage = function(obj, callBack) {
+        if (typeof chrome != 'undefined') {
+            if (typeof chrome.storage != 'undefined') {
+                chrome.storage.sync.set(obj, function(result) {
+                    if (typeof callBack != 'undefined') {
+                        callBack();
+                    }
+                });
+            }
+        } else {
+            for (key in obj) {
+                if (typeof obj[key] != 'undefined') {
+                    localStorage.setItem(key, obj[key]);
+                } else {
+                    localStorage.setItem(key, {});
+                }
+            }
+            if (typeof callBack != 'undefined') {
+                callBack();
+            }
+        }
     }
 }
 
@@ -9414,6 +9475,7 @@ function MaiaVM() {
                                     var xml = parser.parseFromString(compiledCode.xml,'text/xml');
                                     var compiler = new MaiaCompiler();
                                     compiledCode.js = compiler.compile(xml);
+                                    /*
                                     try {
                                         eval(compiledCode.js);
                                     } catch (e) {
@@ -9421,7 +9483,8 @@ function MaiaVM() {
                                         system.log(evalError);
                                         throw evalError;
                                     }
-                                    //document.write('<script type="text/javascript">' + compiledCode.js + '</script>\n');
+                                    */
+                                    document.write('<script type="text/javascript">' + compiledCode.js + '</script>\r\n');
                                 }
                             }
                         });
@@ -9452,14 +9515,7 @@ function MaiaVM() {
                     var xml = parser.parseFromString(compiledCode.xml,'text/xml');
                     var compiler = new MaiaCompiler();
                     compiledCode.js = compiler.compile(xml);
-                    try {
-                        eval(compiledCode.js);
-                    } catch (e) {
-                        var evalError = e.message;
-                        system.log(evalError);
-                        throw evalError;
-                    }
-                    //document.write('<script type="text/javascript">' + compiledCode.js + '</script>\n');
+                    document.write('<script type="text/javascript">' + compiledCode.js + '</script>\r\n');
                 }
             }
         }
@@ -9556,7 +9612,9 @@ function MaiaVM() {
                         }
                     } else {
                         try {
-                            eval(compiledCode.js);
+                            const vm = require('vm');
+                            const script = new vm.Script(compiledCode.js);
+                            script.runInThisContext();
                         } catch (e) {
                             var evalError = e.message;
                             system.log(evalError);

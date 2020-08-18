@@ -32,7 +32,10 @@ language.message["en"] = {
 function translate(selectedLanguage) {
     var languageLabels = language.label[selectedLanguage];
     for (var i in languageLabels) {
-        $('#' + i).html(languageLabels[i]);
+        var element = document.getElementById(i);
+        if (element) {
+            element.innerHTML = languageLabels[i];
+        }
     }
 }
 
@@ -52,5 +55,5 @@ function installLanguages(selectedLanguage, id) {
         }
     }
     
-    $('#' + id).html(list);
+    document.getElementById(id).innerHTML = list;
 }

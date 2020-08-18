@@ -87,6 +87,7 @@ function MaiaVM() {
                                     var xml = parser.parseFromString(compiledCode.xml,'text/xml');
                                     var compiler = new MaiaCompiler();
                                     compiledCode.js = compiler.compile(xml);
+                                    /*
                                     try {
                                         eval(compiledCode.js);
                                     } catch (e) {
@@ -94,7 +95,8 @@ function MaiaVM() {
                                         system.log(evalError);
                                         throw evalError;
                                     }
-                                    //document.write('<script type="text/javascript">' + compiledCode.js + '</script>\n');
+                                    */
+                                    document.write('<script type="text/javascript">' + compiledCode.js + '</script>\r\n');
                                 }
                             }
                         });
@@ -125,14 +127,7 @@ function MaiaVM() {
                     var xml = parser.parseFromString(compiledCode.xml,'text/xml');
                     var compiler = new MaiaCompiler();
                     compiledCode.js = compiler.compile(xml);
-                    try {
-                        eval(compiledCode.js);
-                    } catch (e) {
-                        var evalError = e.message;
-                        system.log(evalError);
-                        throw evalError;
-                    }
-                    //document.write('<script type="text/javascript">' + compiledCode.js + '</script>\n');
+                    document.write('<script type="text/javascript">' + compiledCode.js + '</script>\r\n');
                 }
             }
         }
@@ -229,7 +224,9 @@ function MaiaVM() {
                         }
                     } else {
                         try {
-                            eval(compiledCode.js);
+                            const vm = require('vm');
+                            const script = new vm.Script(compiledCode.js);
+                            script.runInThisContext();
                         } catch (e) {
                             var evalError = e.message;
                             system.log(evalError);
