@@ -419,9 +419,9 @@ function initApp() {
     }
 
     if (editorMode == 'mil') {
-        terminal = new MaiaConsole('terminal', 'json', callBack, {'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n', 'promptMessage': 'maia>'});
+        terminal = new MaiaConsole('terminal', 'json', callBack, {'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n', 'promptMessage': ':'});
     } else {
-        terminal = new MaiaConsole('terminal', editorMode, callBack, {'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n', 'promptMessage': 'maia>'});
+        terminal = new MaiaConsole('terminal', editorMode, callBack, {'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n', 'promptMessage': ':'});
     }
 
     // We have rewritten system.log so that all output and error messages are displayed on the terminal.
