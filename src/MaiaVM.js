@@ -87,7 +87,6 @@ function MaiaVM() {
                                     var xml = parser.parseFromString(compiledCode.xml,'text/xml');
                                     var compiler = new MaiaCompiler();
                                     compiledCode.js = compiler.compile(xml);
-                                    /*
                                     try {
                                         eval(compiledCode.js);
                                     } catch (e) {
@@ -95,8 +94,6 @@ function MaiaVM() {
                                         system.log(evalError);
                                         throw evalError;
                                     }
-                                    */
-                                    document.write('<script type="text/javascript">' + compiledCode.js + '</script>\r\n');
                                 }
                             }
                         });
@@ -127,7 +124,13 @@ function MaiaVM() {
                     var xml = parser.parseFromString(compiledCode.xml,'text/xml');
                     var compiler = new MaiaCompiler();
                     compiledCode.js = compiler.compile(xml);
-                    document.write('<script type="text/javascript">' + compiledCode.js + '</script>\r\n');
+                    try {
+                        eval(compiledCode.js);
+                    } catch (e) {
+                        var evalError = e.message;
+                        system.log(evalError);
+                        throw evalError;
+                    }
                 }
             }
         }

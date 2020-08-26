@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <title>Great Pyramid Calculator</title>
+    <meta charset="utf-8">
+    <script src="js/maiascript.js"></script>
+    <style>
+      form {
+        border: 0;
+        line-height: 2.5;
+        padding: 0 20px;
+        font-family: Arial;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body onload="maiavm.compile();">
+    <form id="pyramidForm">
+      <h1>Great Pyramid Calculator</h1>
+      <table>
+          <tr>
+              <td><label for="base">Base:</label></td>
+              <td><input id="base" type="text" /></td>
+          </tr>
+          <tr>
+              <td><label for="height">Height:</label></td>
+              <td><input id="height" type="text" /></td>
+          </tr>
+          <tr>
+              <td><label for="apothem">Apothem:</label></td>
+              <td><input id="apothem" type="text" /></td>
+          </tr>
+          <tr>
+              <td><label for="edge">Edge:</label></td>
+              <td><input id="edge" type="text" /></td>
+          </tr>
+      </table>
+      <button id="calculateBtn" type="button" onclick="calculatePyramid()">Calculate</button>
+    </form>
+    <script type="text/maiascript">
+      function degreesToRadians(degrees) {
+          return(degrees * math.PI / 180)
+      }
+      function gradient() {
+          return(degreesToRadians(51.844))
+      }
+      function calculateHeight(base) {
+          return(math.sin(gradient) * base / 2)
+      }
+      function calculateApothem(base) {
+          return(math.cos(gradient) * base / 2)
+      }
+      function calculateEdge(base) {
+          return(math.sqrt(calculateApothem(base)^2 + (base / 2)^2))
+      }
+      function calculatePyramid() {
+        baseTxt = document.getElementById("base")
+        heightTxt = document.getElementById("height")
+        apothemTxt = document.getElementById("apothem")
+        edgeTxt = document.getElementById("edge")
+        base = core.toNumber(baseTxt.value)
+        heightTxt.value = calculateHeight(base)
+        apothemTxt.value = calculateApothem(base)
+        edgeTxt.value = calculateEdge(base)
+      }
+    </script>
+  </body>
+</html>

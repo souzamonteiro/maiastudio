@@ -5521,7 +5521,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.4.5";
+    this.version = "1.4.6";
 
     this.testResult = {
         "expected": {},
@@ -5760,8 +5760,7 @@ function Core() {
         var compiler = new MaiaCompiler();
         compiledCode.js = compiler.compile(xml);
         try {
-            var evalFunc = new Function('return ' + compiledCode.js);
-            result = evalFunc();
+            result = eval(compiledCode.js);
         } catch (e) {
             var evalError = e.message;
             system.log(evalError);
@@ -9475,7 +9474,6 @@ function MaiaVM() {
                                     var xml = parser.parseFromString(compiledCode.xml,'text/xml');
                                     var compiler = new MaiaCompiler();
                                     compiledCode.js = compiler.compile(xml);
-                                    /*
                                     try {
                                         eval(compiledCode.js);
                                     } catch (e) {
@@ -9483,8 +9481,6 @@ function MaiaVM() {
                                         system.log(evalError);
                                         throw evalError;
                                     }
-                                    */
-                                    document.write('<script type="text/javascript">' + compiledCode.js + '</script>\r\n');
                                 }
                             }
                         });
@@ -9515,7 +9511,13 @@ function MaiaVM() {
                     var xml = parser.parseFromString(compiledCode.xml,'text/xml');
                     var compiler = new MaiaCompiler();
                     compiledCode.js = compiler.compile(xml);
-                    document.write('<script type="text/javascript">' + compiledCode.js + '</script>\r\n');
+                    try {
+                        eval(compiledCode.js);
+                    } catch (e) {
+                        var evalError = e.message;
+                        system.log(evalError);
+                        throw evalError;
+                    }
                 }
             }
         }
