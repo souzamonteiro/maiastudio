@@ -5521,7 +5521,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.4.6";
+    this.version = "1.4.7";
 
     this.testResult = {
         "expected": {},
@@ -9475,11 +9475,14 @@ function MaiaVM() {
                                     var compiler = new MaiaCompiler();
                                     compiledCode.js = compiler.compile(xml);
                                     try {
-                                        eval(compiledCode.js);
-                                    } catch (e) {
-                                        var evalError = e.message;
-                                        system.log(evalError);
-                                        throw evalError;
+                                        var script = document.createElement('script');
+                                        script.type = 'text/javascript';
+                                        script.text = compiledCode.js;
+                                        document.body.appendChild(script);
+                                    } catch (se) {
+                                        var scriptError = se.message;
+                                        system.log(scriptError);
+                                        throw scriptError;
                                     }
                                 }
                             }
@@ -9512,11 +9515,14 @@ function MaiaVM() {
                     var compiler = new MaiaCompiler();
                     compiledCode.js = compiler.compile(xml);
                     try {
-                        eval(compiledCode.js);
-                    } catch (e) {
-                        var evalError = e.message;
-                        system.log(evalError);
-                        throw evalError;
+                        var script = document.createElement('script');
+                        script.type = 'text/javascript';
+                        script.text = compiledCode.js;
+                        document.body.appendChild(script);
+                    } catch (se) {
+                        var scriptError = se.message;
+                        system.log(scriptError);
+                        throw scriptError;
                     }
                 }
             }

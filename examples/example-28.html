@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Great Pyramid Calculator</title>
+    <title>Replica calculator for the great Cheops pyramid</title>
     <meta charset="utf-8">
     <script src="js/maiascript.js"></script>
     <style>
@@ -15,7 +15,7 @@
   </head>
   <body onload="maiavm.compile();">
     <form id="pyramidForm">
-      <h1>Great Pyramid Calculator</h1>
+      <h1>Replica calculator for the great Cheops pyramid</h1>
       <table>
           <tr>
               <td><label for="base">Base:</label></td>
@@ -23,31 +23,31 @@
           </tr>
           <tr>
               <td><label for="height">Height:</label></td>
-              <td><input id="height" type="text" /></td>
+              <td><input id="height" type="text" disabled /></td>
           </tr>
           <tr>
               <td><label for="apothem">Apothem:</label></td>
-              <td><input id="apothem" type="text" /></td>
+              <td><input id="apothem" type="text" disabled /></td>
           </tr>
           <tr>
               <td><label for="edge">Edge:</label></td>
-              <td><input id="edge" type="text" /></td>
+              <td><input id="edge" type="text" disabled /></td>
           </tr>
       </table>
       <button id="calculateBtn" type="button" onclick="calculatePyramid()">Calculate</button>
     </form>
     <script type="text/maiascript">
       function degreesToRadians(degrees) {
-          return(degrees * math.PI / 180)
+          return(degrees * (math.PI / 180))
       }
       function gradient() {
           return(degreesToRadians(51.844))
       }
       function calculateHeight(base) {
-          return(math.sin(gradient) * base / 2)
+          return(math.tan(gradient()) * (base / 2))
       }
       function calculateApothem(base) {
-          return(math.cos(gradient) * base / 2)
+          return(math.sqrt(calculateHeight(base)^2 + (base / 2)^2))
       }
       function calculateEdge(base) {
           return(math.sqrt(calculateApothem(base)^2 + (base / 2)^2))
