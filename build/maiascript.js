@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// This file was generated on Sun Aug 9, 2020 15:23 (UTC-03) by REx v5.52 which is Copyright (c) 1979-2020 by Gunther Rademacher <grd@gmx.net>
+// This file was generated on Thu Aug 27, 2020 16:43 (UTC-03) by REx v5.52 which is Copyright (c) 1979-2020 by Gunther Rademacher <grd@gmx.net>
 // REx command line: MaiaScript.ebnf -backtrack -javascript -tree
 
 function MaiaScript(string, parsingEventHandler)
@@ -536,7 +536,7 @@ function MaiaScript(string, parsingEventHandler)
   function parse_additiveExpression()
   {
     eventHandler.startNonterminal("additiveExpression", e0);
-    parse_powerExpression();
+    parse_multiplicativeExpression();
     for (;;)
     {
       if (l1 != 20                  // '+'
@@ -555,14 +555,14 @@ function MaiaScript(string, parsingEventHandler)
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       whitespace();
-      parse_powerExpression();
+      parse_multiplicativeExpression();
     }
     eventHandler.endNonterminal("additiveExpression", e0);
   }
 
   function try_additiveExpression()
   {
-    try_powerExpression();
+    try_multiplicativeExpression();
     for (;;)
     {
       if (l1 != 20                  // '+'
@@ -580,41 +580,6 @@ function MaiaScript(string, parsingEventHandler)
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      try_powerExpression();
-    }
-  }
-
-  function parse_powerExpression()
-  {
-    eventHandler.startNonterminal("powerExpression", e0);
-    parse_multiplicativeExpression();
-    for (;;)
-    {
-      if (l1 != 37)                 // '^'
-      {
-        break;
-      }
-      consume(37);                  // '^'
-      lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
-                                    // '!' | '(' | '[' | '{' | '~'
-      whitespace();
-      parse_multiplicativeExpression();
-    }
-    eventHandler.endNonterminal("powerExpression", e0);
-  }
-
-  function try_powerExpression()
-  {
-    try_multiplicativeExpression();
-    for (;;)
-    {
-      if (l1 != 37)                 // '^'
-      {
-        break;
-      }
-      consumeT(37);                 // '^'
-      lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
-                                    // '!' | '(' | '[' | '{' | '~'
       try_multiplicativeExpression();
     }
   }
@@ -622,15 +587,9 @@ function MaiaScript(string, parsingEventHandler)
   function parse_multiplicativeExpression()
   {
     eventHandler.startNonterminal("multiplicativeExpression", e0);
-    parse_unaryExpression();
+    parse_powerExpression();
     for (;;)
     {
-      lookahead1W(27);              // END | identifier | null | true | false | string | complex | real | comment |
-                                    // whitespace^token | '!' | '!=' | '%' | '&' | '&&' | '(' | ')' | '*' | '+' | ',' |
-                                    // '-' | '/' | ';' | '<' | '<<' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '[' |
-                                    // ']' | '^' | '`' | 'break' | 'continue' | 'do' | 'for' | 'foreach' | 'function' |
-                                    // 'if' | 'namespace' | 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '|' |
-                                    // '||' | '}' | '~'
       if (l1 != 14                  // '%'
        && l1 != 19                  // '*'
        && l1 != 24)                 // '/'
@@ -651,22 +610,16 @@ function MaiaScript(string, parsingEventHandler)
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       whitespace();
-      parse_unaryExpression();
+      parse_powerExpression();
     }
     eventHandler.endNonterminal("multiplicativeExpression", e0);
   }
 
   function try_multiplicativeExpression()
   {
-    try_unaryExpression();
+    try_powerExpression();
     for (;;)
     {
-      lookahead1W(27);              // END | identifier | null | true | false | string | complex | real | comment |
-                                    // whitespace^token | '!' | '!=' | '%' | '&' | '&&' | '(' | ')' | '*' | '+' | ',' |
-                                    // '-' | '/' | ';' | '<' | '<<' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '[' |
-                                    // ']' | '^' | '`' | 'break' | 'continue' | 'do' | 'for' | 'foreach' | 'function' |
-                                    // 'if' | 'namespace' | 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '|' |
-                                    // '||' | '}' | '~'
       if (l1 != 14                  // '%'
        && l1 != 19                  // '*'
        && l1 != 24)                 // '/'
@@ -684,6 +637,53 @@ function MaiaScript(string, parsingEventHandler)
       default:
         consumeT(14);               // '%'
       }
+      lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
+                                    // '!' | '(' | '[' | '{' | '~'
+      try_powerExpression();
+    }
+  }
+
+  function parse_powerExpression()
+  {
+    eventHandler.startNonterminal("powerExpression", e0);
+    parse_unaryExpression();
+    for (;;)
+    {
+      lookahead1W(27);              // END | identifier | null | true | false | string | complex | real | comment |
+                                    // whitespace^token | '!' | '!=' | '%' | '&' | '&&' | '(' | ')' | '*' | '+' | ',' |
+                                    // '-' | '/' | ';' | '<' | '<<' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '[' |
+                                    // ']' | '^' | '`' | 'break' | 'continue' | 'do' | 'for' | 'foreach' | 'function' |
+                                    // 'if' | 'namespace' | 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '|' |
+                                    // '||' | '}' | '~'
+      if (l1 != 37)                 // '^'
+      {
+        break;
+      }
+      consume(37);                  // '^'
+      lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
+                                    // '!' | '(' | '[' | '{' | '~'
+      whitespace();
+      parse_unaryExpression();
+    }
+    eventHandler.endNonterminal("powerExpression", e0);
+  }
+
+  function try_powerExpression()
+  {
+    try_unaryExpression();
+    for (;;)
+    {
+      lookahead1W(27);              // END | identifier | null | true | false | string | complex | real | comment |
+                                    // whitespace^token | '!' | '!=' | '%' | '&' | '&&' | '(' | ')' | '*' | '+' | ',' |
+                                    // '-' | '/' | ';' | '<' | '<<' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '[' |
+                                    // ']' | '^' | '`' | 'break' | 'continue' | 'do' | 'for' | 'foreach' | 'function' |
+                                    // 'if' | 'namespace' | 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '|' |
+                                    // '||' | '}' | '~'
+      if (l1 != 37)                 // '^'
+      {
+        break;
+      }
+      consumeT(37);                 // '^'
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       try_unaryExpression();
@@ -5065,6 +5065,7 @@ function MaiaCompiler() {
                             } else {
                                 js += operators[operator[j]] + '(' + left + ',' + right + ')';
                             }
+                            j++;
                             for (var i = 2; i < node.length; i++) {
                                 var right = this.parse(node[i], nodeInfo);
                                 parentNodeInfo.terminalNode = nodeInfo.terminalNode;
@@ -5074,6 +5075,7 @@ function MaiaCompiler() {
                                 } else {
                                     js = operators[operator[j]] + '(' + js + ',' + right + ')';
                                 }
+                                j++;
                             }
                         } else {
                             if (operator == '=') {
@@ -5521,7 +5523,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.4.7";
+    this.version = "1.4.8";
 
     this.testResult = {
         "expected": {},

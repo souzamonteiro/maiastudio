@@ -1,10 +1,54 @@
-// This file was generated on Sun Aug 9, 2020 15:23 (UTC-03) by REx v5.52 which is Copyright (c) 1979-2020 by Gunther Rademacher <grd@gmx.net>
-// REx command line: MaiaScript.ebnf -backtrack -tree -java
+// This file was generated on Thu Aug 27, 2020 16:43 (UTC-03) by REx v5.52 which is Copyright (c) 1979-2020 by Gunther Rademacher <grd@gmx.net>
+// REx command line: MaiaScript.ebnf -backtrack -tree -java -main
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Arrays;
 
 public class MaiaScript
 {
+  public static void main(String args[]) throws Exception
+  {
+    if (args.length == 0)
+    {
+      System.out.println("Usage: java MaiaScript [-i] INPUT...");
+      System.out.println();
+      System.out.println("  parse INPUT, which is either a filename or literal text enclosed in curly braces");
+      System.out.println();
+      System.out.println("  Option:");
+      System.out.println("    -i     indented parse tree");
+    }
+    else
+    {
+      boolean indent = false;
+      for (String arg : args)
+      {
+        if (arg.equals("-i"))
+        {
+          indent = true;
+          continue;
+        }
+        Writer w = new OutputStreamWriter(System.out, "UTF-8");
+        XmlSerializer s = new XmlSerializer(w, indent);
+        String input = read(arg);
+        MaiaScript parser = new MaiaScript(input, s);
+        try
+        {
+          parser.parse_maiascript();
+        }
+        catch (ParseException pe)
+        {
+          throw new RuntimeException("ParseException while processing " + arg + ":\n" + parser.getErrorMessage(pe));
+        }
+        finally
+        {
+          w.close();
+        }
+      }
+    }
+  }
+
   public static class ParseException extends RuntimeException
   {
     private static final long serialVersionUID = 1L;
@@ -155,6 +199,155 @@ public class MaiaScript
       }
       if (pos < end) e.whitespace(pos, end);
       e.endNonterminal(name, end);
+    }
+  }
+
+  public static class XmlSerializer implements EventHandler
+  {
+    private CharSequence input;
+    private String delayedTag;
+    private Writer out;
+    private boolean indent;
+    private boolean hasChildElement;
+    private int depth;
+
+    public XmlSerializer(Writer w, boolean indent)
+    {
+      input = null;
+      delayedTag = null;
+      out = w;
+      this.indent = indent;
+    }
+
+    @Override
+    public void reset(CharSequence string)
+    {
+      writeOutput("<?xml version=\"1.0\" encoding=\"UTF-8\"?" + ">");
+      input = string;
+      delayedTag = null;
+      hasChildElement = false;
+      depth = 0;
+    }
+
+    @Override
+    public void startNonterminal(String name, int begin)
+    {
+      if (delayedTag != null)
+      {
+        writeOutput("<");
+        writeOutput(delayedTag);
+        writeOutput(">");
+      }
+      delayedTag = name;
+      if (indent)
+      {
+        writeOutput("\n");
+        for (int i = 0; i < depth; ++i)
+        {
+          writeOutput("  ");
+        }
+      }
+      hasChildElement = false;
+      ++depth;
+    }
+
+    @Override
+    public void endNonterminal(String name, int end)
+    {
+      --depth;
+      if (delayedTag != null)
+      {
+        delayedTag = null;
+        writeOutput("<");
+        writeOutput(name);
+        writeOutput("/>");
+      }
+      else
+      {
+        if (indent)
+        {
+          if (hasChildElement)
+          {
+            writeOutput("\n");
+            for (int i = 0; i < depth; ++i)
+            {
+              writeOutput("  ");
+            }
+          }
+        }
+        writeOutput("</");
+        writeOutput(name);
+        writeOutput(">");
+      }
+      hasChildElement = true;
+    }
+
+    @Override
+    public void terminal(String name, int begin, int end)
+    {
+      if (name.charAt(0) == '\'')
+      {
+        name = "TOKEN";
+      }
+      startNonterminal(name, begin);
+      characters(begin, end);
+      endNonterminal(name, end);
+    }
+
+    @Override
+    public void whitespace(int begin, int end)
+    {
+      characters(begin, end);
+    }
+
+    private void characters(int begin, int end)
+    {
+      if (begin < end)
+      {
+        if (delayedTag != null)
+        {
+          writeOutput("<");
+          writeOutput(delayedTag);
+          writeOutput(">");
+          delayedTag = null;
+        }
+        writeOutput(input.subSequence(begin, end)
+                         .toString()
+                         .replace("&", "&amp;")
+                         .replace("<", "&lt;")
+                         .replace(">", "&gt;"));
+      }
+    }
+
+    public void writeOutput(String content)
+    {
+      try
+      {
+        out.write(content);
+      }
+      catch (IOException e)
+      {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  private static String read(String input) throws Exception
+  {
+    if (input.startsWith("{") && input.endsWith("}"))
+    {
+      return input.substring(1, input.length() - 1);
+    }
+    else
+    {
+      byte buffer[] = new byte[(int) new java.io.File(input).length()];
+      java.io.FileInputStream stream = new java.io.FileInputStream(input);
+      stream.read(buffer);
+      stream.close();
+      String content = new String(buffer, System.getProperty("file.encoding"));
+      return content.length() > 0 && content.charAt(0) == '\uFEFF'
+           ? content.substring(1)
+           : content;
     }
   }
 
@@ -666,7 +859,7 @@ public class MaiaScript
   private void parse_additiveExpression()
   {
     eventHandler.startNonterminal("additiveExpression", e0);
-    parse_powerExpression();
+    parse_multiplicativeExpression();
     for (;;)
     {
       if (l1 != 20                  // '+'
@@ -685,14 +878,14 @@ public class MaiaScript
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       whitespace();
-      parse_powerExpression();
+      parse_multiplicativeExpression();
     }
     eventHandler.endNonterminal("additiveExpression", e0);
   }
 
   private void try_additiveExpression()
   {
-    try_powerExpression();
+    try_multiplicativeExpression();
     for (;;)
     {
       if (l1 != 20                  // '+'
@@ -710,41 +903,6 @@ public class MaiaScript
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      try_powerExpression();
-    }
-  }
-
-  private void parse_powerExpression()
-  {
-    eventHandler.startNonterminal("powerExpression", e0);
-    parse_multiplicativeExpression();
-    for (;;)
-    {
-      if (l1 != 37)                 // '^'
-      {
-        break;
-      }
-      consume(37);                  // '^'
-      lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
-                                    // '!' | '(' | '[' | '{' | '~'
-      whitespace();
-      parse_multiplicativeExpression();
-    }
-    eventHandler.endNonterminal("powerExpression", e0);
-  }
-
-  private void try_powerExpression()
-  {
-    try_multiplicativeExpression();
-    for (;;)
-    {
-      if (l1 != 37)                 // '^'
-      {
-        break;
-      }
-      consumeT(37);                 // '^'
-      lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
-                                    // '!' | '(' | '[' | '{' | '~'
       try_multiplicativeExpression();
     }
   }
@@ -752,15 +910,9 @@ public class MaiaScript
   private void parse_multiplicativeExpression()
   {
     eventHandler.startNonterminal("multiplicativeExpression", e0);
-    parse_unaryExpression();
+    parse_powerExpression();
     for (;;)
     {
-      lookahead1W(27);              // END | identifier | null | true | false | string | complex | real | comment |
-                                    // whitespace^token | '!' | '!=' | '%' | '&' | '&&' | '(' | ')' | '*' | '+' | ',' |
-                                    // '-' | '/' | ';' | '<' | '<<' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '[' |
-                                    // ']' | '^' | '`' | 'break' | 'continue' | 'do' | 'for' | 'foreach' | 'function' |
-                                    // 'if' | 'namespace' | 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '|' |
-                                    // '||' | '}' | '~'
       if (l1 != 14                  // '%'
        && l1 != 19                  // '*'
        && l1 != 24)                 // '/'
@@ -781,22 +933,16 @@ public class MaiaScript
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       whitespace();
-      parse_unaryExpression();
+      parse_powerExpression();
     }
     eventHandler.endNonterminal("multiplicativeExpression", e0);
   }
 
   private void try_multiplicativeExpression()
   {
-    try_unaryExpression();
+    try_powerExpression();
     for (;;)
     {
-      lookahead1W(27);              // END | identifier | null | true | false | string | complex | real | comment |
-                                    // whitespace^token | '!' | '!=' | '%' | '&' | '&&' | '(' | ')' | '*' | '+' | ',' |
-                                    // '-' | '/' | ';' | '<' | '<<' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '[' |
-                                    // ']' | '^' | '`' | 'break' | 'continue' | 'do' | 'for' | 'foreach' | 'function' |
-                                    // 'if' | 'namespace' | 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '|' |
-                                    // '||' | '}' | '~'
       if (l1 != 14                  // '%'
        && l1 != 19                  // '*'
        && l1 != 24)                 // '/'
@@ -814,6 +960,53 @@ public class MaiaScript
       default:
         consumeT(14);               // '%'
       }
+      lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
+                                    // '!' | '(' | '[' | '{' | '~'
+      try_powerExpression();
+    }
+  }
+
+  private void parse_powerExpression()
+  {
+    eventHandler.startNonterminal("powerExpression", e0);
+    parse_unaryExpression();
+    for (;;)
+    {
+      lookahead1W(27);              // END | identifier | null | true | false | string | complex | real | comment |
+                                    // whitespace^token | '!' | '!=' | '%' | '&' | '&&' | '(' | ')' | '*' | '+' | ',' |
+                                    // '-' | '/' | ';' | '<' | '<<' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '[' |
+                                    // ']' | '^' | '`' | 'break' | 'continue' | 'do' | 'for' | 'foreach' | 'function' |
+                                    // 'if' | 'namespace' | 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '|' |
+                                    // '||' | '}' | '~'
+      if (l1 != 37)                 // '^'
+      {
+        break;
+      }
+      consume(37);                  // '^'
+      lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
+                                    // '!' | '(' | '[' | '{' | '~'
+      whitespace();
+      parse_unaryExpression();
+    }
+    eventHandler.endNonterminal("powerExpression", e0);
+  }
+
+  private void try_powerExpression()
+  {
+    try_unaryExpression();
+    for (;;)
+    {
+      lookahead1W(27);              // END | identifier | null | true | false | string | complex | real | comment |
+                                    // whitespace^token | '!' | '!=' | '%' | '&' | '&&' | '(' | ')' | '*' | '+' | ',' |
+                                    // '-' | '/' | ';' | '<' | '<<' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '[' |
+                                    // ']' | '^' | '`' | 'break' | 'continue' | 'do' | 'for' | 'foreach' | 'function' |
+                                    // 'if' | 'namespace' | 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '|' |
+                                    // '||' | '}' | '~'
+      if (l1 != 37)                 // '^'
+      {
+        break;
+      }
+      consumeT(37);                 // '^'
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
       try_unaryExpression();

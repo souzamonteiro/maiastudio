@@ -11,9 +11,9 @@ bitwiseANDExpression     ::= equalityExpression ('&' equalityExpression)*
 equalityExpression       ::= relationalExpression (('==' | '!=') relationalExpression)*
 relationalExpression     ::= shiftExpression (('<' | '>' | '<=' | '>=') shiftExpression)*
 shiftExpression          ::= additiveExpression (('<<' | '>>') additiveExpression)*
-additiveExpression       ::= powerExpression (('+' | '-') powerExpression)*
-powerExpression          ::= multiplicativeExpression ('^' multiplicativeExpression)*
-multiplicativeExpression ::= unaryExpression (('*' | '/' | '%') unaryExpression)*
+additiveExpression       ::= multiplicativeExpression (('+' | '-') multiplicativeExpression)*
+multiplicativeExpression ::= powerExpression (('*' | '/' | '%') powerExpression)*
+powerExpression          ::= unaryExpression ('^' unaryExpression)*
 unaryExpression          ::= '~' primary
                            | '!' primary
                            | primary

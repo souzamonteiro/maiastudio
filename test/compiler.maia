@@ -230,7 +230,7 @@ test (tries; "1 1 [[0,1],[0,1]]"; 0) {
 
 system.println("Testing the expression compiler...")
 
-test (tries; 21; 0) {
+test (tries; 13; 0) {
     x = 2
     y = 2 * x ^ 2 + 2 * x + 1
 } catch (v) {

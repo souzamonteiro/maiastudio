@@ -2,7 +2,7 @@
   <head>
     <title>Replica calculator for the great Cheops pyramid</title>
     <meta charset="utf-8">
-    <script src="js/maiascript.js"></script>
+    <script src="http://www.maiascript.com/maiastudio/js/maiascript.js"></script>
     <style>
       form {
         border: 0;
@@ -53,14 +53,14 @@
           return(math.sqrt(calculateApothem(base)^2 + (base / 2)^2))
       }
       function calculatePyramid() {
-        baseTxt = document.getElementById("base")
-        heightTxt = document.getElementById("height")
-        apothemTxt = document.getElementById("apothem")
-        edgeTxt = document.getElementById("edge")
-        base = core.toNumber(baseTxt.value)
-        heightTxt.value = calculateHeight(base)
-        apothemTxt.value = calculateApothem(base)
-        edgeTxt.value = calculateEdge(base)
+          baseTxt = document.getElementById("base")
+          heightTxt = document.getElementById("height")
+          apothemTxt = document.getElementById("apothem")
+          edgeTxt = document.getElementById("edge")
+          base = core.toNumber(baseTxt.value)
+          heightTxt.value = calculateHeight(base)
+          apothemTxt.value = calculateApothem(base)
+          edgeTxt.value = calculateEdge(base)
       }
     </script>
   </body>

@@ -877,6 +877,7 @@ function MaiaCompiler() {
                             } else {
                                 js += operators[operator[j]] + '(' + left + ',' + right + ')';
                             }
+                            j++;
                             for (var i = 2; i < node.length; i++) {
                                 var right = this.parse(node[i], nodeInfo);
                                 parentNodeInfo.terminalNode = nodeInfo.terminalNode;
@@ -886,6 +887,7 @@ function MaiaCompiler() {
                                 } else {
                                     js = operators[operator[j]] + '(' + js + ',' + right + ')';
                                 }
+                                j++;
                             }
                         } else {
                             if (operator == '=') {
