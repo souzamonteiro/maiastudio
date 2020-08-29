@@ -38,13 +38,13 @@
     </form>
     <script type="text/maiascript">
       function degreesToRadians(degrees) {
-          return(degrees * (math.PI / 180))
+          return(degrees * math.PI / 180)
       }
       function gradient() {
           return(degreesToRadians(51.844))
       }
       function calculateHeight(base) {
-          return(math.tan(gradient()) * (base / 2))
+          return(math.tan(gradient()) * base / 2)
       }
       function calculateApothem(base) {
           return(math.sqrt(calculateHeight(base)^2 + (base / 2)^2))

@@ -66,12 +66,13 @@ function Matrix() {
                 }
                 sx = 0;
                 sx2 = 0;
-                n = dimMatrix[0] * dimMatrix[1];
+                n = 0;
                 for (var i = r1; i <= r2; i++) {
                     for (var j = c1; j <= c2; j++) {
                         if (core.type(mtx[i][j]) == 'number') {
                             sx += mtx[i][j];
                             sx2 += mtx[i][j] * mtx[i][j];
+                            n++;
                         } else {
                             throw new Error('Invalid element ' + mtx[i][j] + ' in matrix for function avg. All elements must be numeric.');
                         }
@@ -87,11 +88,12 @@ function Matrix() {
                     }
                     sx = 0;
                     sx2 = 0;
-                    n = dimMatrix[0];
+                    n = 0;
                     for (var j = c1; j <= c2; j++) {
                         if (core.type(mtx[j]) == 'number') {
                             sx += mtx[j];
                             sx2 += mtx[j] * mtx[j];
+                            n++;
                         } else {
                             throw new Error('Invalid element ' + mtx[j] + ' in matrix for function avg. All elements must be numeric.');
                         }
