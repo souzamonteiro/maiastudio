@@ -111,7 +111,7 @@ function MaiaConsole(container, language, callBack, options) {
      */
     this.addToHistory = function(text) {
         commandHistoryPosition = -1;
-        commandHistory.push(text.trim());
+        commandHistory.unshift(text.trim());
         return commandHistory.length - 1;
     }
     
