@@ -111,16 +111,26 @@ function MaiaConsole(container, language, callBack, options) {
      */
     this.addToHistory = function(text) {
         commandHistoryPosition = -1;
-        commandHistory.push(text);
+        commandHistory.push(text.trim());
         return commandHistory.length - 1;
     }
-
+    
     /**
      * Clear the command history.
      * @return  The command history cleared.
      */
     this.clearHistory = function() {
         commandHistory = [];
+        commandHistoryPosition = -1;
+    }
+
+    /**
+     * Set the command history.
+     * @param {object}  cmdhistory - The new content of the history.
+     * @return          The contents of the history are set.
+     */
+    this.setHistory = function(cmdhistory) {
+        commandHistory = cmdhistory.slice();
         commandHistoryPosition = -1;
     }
 
@@ -167,7 +177,7 @@ function MaiaConsole(container, language, callBack, options) {
     }
 
     /**
-     * Gets the text of the line where the cursor is.
+     * Gets the text of the line before the cursor.
      * @return {string}  The text of the line where the cursor is.
      */
     this.getTextBeforeCursor = function() {
@@ -192,6 +202,34 @@ function MaiaConsole(container, language, callBack, options) {
         i++;
         
         var textAtCursor = textBeforeCursor.substr(i, textBeforeCursor.length);
+        return textAtCursor;
+    }
+
+    /**
+     * Gets the text of the line after the cursor.
+     * @return {string}  The text of the line where the cursor is.
+     */
+    this.getTextAfterCursor = function() {
+        // Gets the cursor position.
+        var sel = window.getSelection();
+        var rangeAtCursor = sel.getRangeAt(0);
+
+        // Gets the text to the right of the cursor.
+        var rangeRight = document.createRange();
+        rangeRight.selectNodeContents(terminal);
+        rangeRight.setStart(rangeAtCursor.endContainer, rangeAtCursor.endOffset);
+        var textAfterCursor = rangeRight.toString();
+
+        var textAtCursor = textAfterCursor;
+        return textAtCursor;
+    }
+
+    /**
+     * Gets the text of the line where the cursor is.
+     * @return {string}  The text of the line where the cursor is.
+     */
+    this.getTextAtCursor = function() {
+        var textAtCursor = this.getTextBeforeCursor() + this.getTextAfterCursor();
         return textAtCursor;
     }
 
@@ -555,17 +593,18 @@ function MaiaConsole(container, language, callBack, options) {
         } else {
             var openChars = {'{': '}', '[': ']', '(': ')'};
             if (event.key == 'Enter') {
+                //event.preventDefault();
                 // Gets the text to the left of the cursor.
-                var textBeforeCursor = maiaterminal.getTextBeforeCursor();
-                if (textBeforeCursor.trim() == 'clear') {
+                var textAtCursor = maiaterminal.getTextAtCursor();
+                if (textAtCursor.trim() == 'clear') {
                     if (opts.greetingMessage.length > 0) {
                         maiaterminal.setText(opts.greetingMessage);
                     } else {
                         maiaterminal.setText('');
                     }
-                    maiaterminal.moveCursorToEnd();
                 } else {
-                    maiaterminal.addToHistory(textBeforeCursor);
+                    maiaterminal.addToHistory(textAtCursor);
+                    maiaterminal.moveCursorToEnd();
                     if (typeof callBack != 'undefined') {
                         terminalCallBack();
                     }

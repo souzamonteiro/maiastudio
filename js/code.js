@@ -21,6 +21,7 @@
 var lang = 'pt-BR';
 var editorMode = 'maia';
 var terminalMode = 'block';
+var terminalHistory = [];
 var editor = {};
 var terminal = {};
 var fullFileName;
@@ -264,10 +265,12 @@ function compileAndRun() {
  */
 function saveWorkspace() {
     var code = editor.getText();
+    var terminalHistory = terminal.getHistory();
     var data = {
         'language': document.getElementById('language').value,
         'editorMode': document.getElementById('editorMode').value,
         'terminalMode': getComputedStyle(document.getElementById('content'))['display'],
+        'terminalHistory': JSON.stringify(terminalHistory),
         'fullFileName': fullFileName,
         'fileName': fileName,
         'fileExtension': fileExtension,
@@ -287,6 +290,7 @@ function loadWorkspace() {
         'language': {},
         'editorMode': {},
         'terminalMode': {},
+        'terminalHistory': {},
         'fullFileName': {},
         'fileName': {},
         'fileExtension': {},
@@ -345,7 +349,20 @@ function loadWorkspace() {
             terminalMode = 'block';
             document.getElementById('content').style.display = terminalMode;
         }
-    
+        if (typeof data['terminalHistory'] != 'undefined') {
+            if (Array.isArray(data['terminalHistory'])) {
+                terminalHistory = data['terminalHistory'];
+            } else {
+                if (typeof data['terminalHistory'] == 'string') {
+                    terminalHistory = JSON.parse(data['terminalHistory']);
+                } else {
+                    terminalHistory = [];
+                }
+            }
+        } else {
+            terminalHistory = [];
+        }
+
         translate(lang);
     }
     system.readDataFromStorage(data, callBack);
@@ -407,7 +424,7 @@ function initApp() {
     function callBack() {
         var res;
         try {
-            res = core.eval(terminal.getTextBeforeCursor());
+            res = core.eval(terminal.getTextAtCursor());
         } catch (e) {
             var evalError = e.message;
             system.log(evalError);
@@ -423,6 +440,7 @@ function initApp() {
     } else {
         terminal = new MaiaConsole('terminal', editorMode, callBack, {'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n', 'promptMessage': ':'});
     }
+    terminal.setHistory(terminalHistory);
 
     // We have rewritten system.log so that all output and error messages are displayed on the terminal.
     system.log = function(text) {
