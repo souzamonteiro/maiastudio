@@ -431,7 +431,7 @@ function initApp() {
             system.showMessageDialog(evalError);
         }
         if (typeof res != 'undefined') {
-            terminal.appendText('\r\n' + res + '\r\n');
+            terminal.appendText('\r\n' + res);
         }
     }
 

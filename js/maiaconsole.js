@@ -105,6 +105,25 @@ function MaiaConsole(container, language, callBack, options) {
     terminal.style.textAlign = 'left';
 
     /**
+     * Removes characters from the beginning and end of a string.
+     * @param {string}   str - The string to be trimmed
+     * @param {string}   chars - The characters to remove.
+     * @return {string}  A new string.
+     */
+    this.trim = function(str, chars) {
+        if (typeof chars == 'undefined') {
+            return str.trim();
+        }
+        if (chars == ']') {
+            var chars = '\\]';
+        }
+        if (chars == '\\') {
+            var chars = '\\\\';
+        }
+        return str.replace(new RegExp('^[' + chars + ']+|[' + chars + ']+$', 'g'), '');
+    }
+
+    /**
      * Add an item to the command history.
      * @param {string}   text - Item to add to the command history.
      * @return {number}  The number of the item added to command history.
@@ -193,15 +212,14 @@ function MaiaConsole(container, language, callBack, options) {
 
         // Find the begin of previous line.
         var i = textBeforeCursor.length - 1;
-        if (textBeforeCursor[i] == '\n') {
+        while ((i >= 0) && !((textBeforeCursor[i] == '\r') || (textBeforeCursor[i] == '\n'))) {
             i--;
         }
-        while ((i >= 0) && (textBeforeCursor[i] != '\n')) {
-            i--;
+        if ((i < 0) || (textBeforeCursor[i] == '\r') || (textBeforeCursor[i] == '\n')) {
+            i++;
         }
-        i++;
         
-        var textAtCursor = textBeforeCursor.substr(i, textBeforeCursor.length);
+        var textAtCursor = textBeforeCursor.substr(i, textBeforeCursor.length - 1);
         return textAtCursor;
     }
 
@@ -220,7 +238,13 @@ function MaiaConsole(container, language, callBack, options) {
         rangeRight.setStart(rangeAtCursor.endContainer, rangeAtCursor.endOffset);
         var textAfterCursor = rangeRight.toString();
 
-        var textAtCursor = textAfterCursor;
+        // Find the begin of next line.
+        var i = 0;
+        while ((i < textAfterCursor.length) && !((textAfterCursor[i] == '\r') || (textAfterCursor[i] == '\n'))) {
+            i++;
+        }
+
+        var textAtCursor = textAfterCursor.substr(0, i);
         return textAtCursor;
     }
 
@@ -234,7 +258,7 @@ function MaiaConsole(container, language, callBack, options) {
     }
 
     /**
-     * Gets the terminal's text.
+     * Gets the terminal's text in HTML format.
      * @return {string}  The text in the terminal.
      */
     this.getHtml = function() {
@@ -259,6 +283,7 @@ function MaiaConsole(container, language, callBack, options) {
      */
     this.appendText = function(text) {
         if (typeof text != 'undefined') {
+            this.moveCursorToEnd();
             document.execCommand('insertHTML', false, text);
             this.moveCursorToEnd();
         }
@@ -404,28 +429,15 @@ function MaiaConsole(container, language, callBack, options) {
     this.selectLineAtCursor = function() {
         // Gets the cursor position.
         var pos = this.getCursorPosition();
-        var sel = window.getSelection();
-        var rangeAtCursor = sel.getRangeAt(0);
 
-        // Gets the text to the left of the cursor.
-        var rangeLeft = document.createRange();
-        rangeLeft.selectNodeContents(terminal);
-        rangeLeft.setEnd(rangeAtCursor.startContainer, rangeAtCursor.startOffset);
-        var textBeforeCursor = rangeLeft.toString();
+        var textBeforeCursor = this.getTextBeforeCursor();
+        var textAfterCursor = this.getTextAfterCursor();
 
-        // Find the begin of previous line.
-        var i = textBeforeCursor.length - 1;
-        if (textBeforeCursor[i] == '\n') {
-            i--;
-        }
-        while ((i >= 0) && (textBeforeCursor[i] != '\n')) {
-            i--;
-        }
-        i++;
-
-        // Calculates the offset for the beginning of this line.
-        var offset = textBeforeCursor.length - i;
-        pos.start = pos.start - offset;
+        // Calculates the offset for the beginning and ending of this line.
+        var offsetBeforeCursor = textBeforeCursor.length;
+        var offsetAfterCursor = textAfterCursor.length;
+        pos.start = pos.start - offsetBeforeCursor;
+        pos.end = pos.end - offsetAfterCursor;
         // Sets the range start to the begin of the line.
         this.setCursorPosition(pos);
     }
@@ -593,8 +605,7 @@ function MaiaConsole(container, language, callBack, options) {
         } else {
             var openChars = {'{': '}', '[': ']', '(': ')'};
             if (event.key == 'Enter') {
-                //event.preventDefault();
-                // Gets the text to the left of the cursor.
+                // Gets the text at the cursor position.
                 var textAtCursor = maiaterminal.getTextAtCursor();
                 if (textAtCursor.trim() == 'clear') {
                     if (opts.greetingMessage.length > 0) {
@@ -603,10 +614,13 @@ function MaiaConsole(container, language, callBack, options) {
                         maiaterminal.setText('');
                     }
                 } else {
-                    maiaterminal.addToHistory(textAtCursor);
-                    maiaterminal.moveCursorToEnd();
-                    if (typeof callBack != 'undefined') {
-                        terminalCallBack();
+                    if (textAtCursor.length > 0) {
+                        maiaterminal.addToHistory(textAtCursor);
+                        maiaterminal.moveCursorToEnd();
+                        if (typeof callBack != 'undefined') {
+                            terminalCallBack();
+                            maiaterminal.moveCursorToEnd();
+                        }
                     }
                 }
             } else if (event.key == 'ArrowUp') {
@@ -617,6 +631,7 @@ function MaiaConsole(container, language, callBack, options) {
                     maiaterminal.selectLineAtCursor();
                     maiaterminal.replaceSelectedText(historyItem);
                     maiaterminal.moveCursorToEnd();
+                    maiaterminal.highlightCode(maiaterminal.terminal);
                 }
             } else if (event.key == 'ArrowDown') {
                 event.preventDefault();
@@ -626,6 +641,19 @@ function MaiaConsole(container, language, callBack, options) {
                     maiaterminal.selectLineAtCursor();
                     maiaterminal.replaceSelectedText(historyItem);
                     maiaterminal.moveCursorToEnd();
+                    maiaterminal.highlightCode(maiaterminal.terminal);
+                }
+            } else if (event.key == 'ArrowLeft') {
+                var textAtCursor = maiaterminal.getTextAtCursor();
+                var textAfterCursor = maiaterminal.getTextAfterCursor();
+                if (textAtCursor == textAfterCursor) {
+                    event.preventDefault();
+                }
+            } else if (event.key == 'Backspace') {
+                var textAtCursor = maiaterminal.getTextAtCursor();
+                var textAfterCursor = maiaterminal.getTextAfterCursor();
+                if (textAtCursor == textAfterCursor) {
+                    event.preventDefault();
                 }
             } else if (event.key in openChars) {
                 var pos = maiaterminal.getCursorPosition();
@@ -650,6 +678,14 @@ function MaiaConsole(container, language, callBack, options) {
         // Highlights the code syntax in the terminal.
         maiaterminal.highlightCode(maiaterminal.terminal);
     }, false);
+
+    // Prevents the user from placing the cursor outside the prompt area.
+    terminal.addEventListener('click', function(event) {
+        event.preventDefault();
+        maiaterminal.moveCursorToEnd();
+        this.focus();
+    }, false);
+
     // Transfer the text from the container to the terminal.
     if (opts.greetingMessage.length > 0) {
         this.setText(opts.greetingMessage + '\r\n' + code);

@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.4.12";
+    this.version = "1.4.13";
 
     this.testResult = {
         "expected": {},
@@ -755,14 +755,61 @@ function Core() {
         return text.toUpperCase();
     }
 
-    /**
-     * Removes spaces from the beginning and end of a string.
-     * @param {string}   text - The string to convert.
+   /**
+     * Removes characters from the beginning and end of a string.
+     * @param {string}   str - The string to be trimmed
+     * @param {string}   chars - The characters to remove.
      * @return {string}  A new string.
      */
-    this.trim = function(text)
-    {
-        return text.trim();
+    this.trim = function(str, chars) {
+        if (typeof chars == 'undefined') {
+            return str.trim();
+        }
+        if (chars == ']') {
+            var chars = '\\]';
+        }
+        if (chars == '\\') {
+            var chars = '\\\\';
+        }
+        return str.replace(new RegExp('^[' + chars + ']+|[' + chars + ']+$', 'g'), '');
+    }
+
+       /**
+     * Removes characters from the beginning and end of a string.
+     * @param {string}   str - The string to be trimmed
+     * @param {string}   chars - The characters to remove.
+     * @return {string}  A new string.
+     */
+    this.trimLeft = function(str, chars) {
+        if (typeof chars == 'undefined') {
+            return str.trim();
+        }
+        if (chars == ']') {
+            var chars = '\\]';
+        }
+        if (chars == '\\') {
+            var chars = '\\\\';
+        }
+        return str.replace(new RegExp('^[' + chars + ']+', 'g'), '');
+    }
+
+    /**
+     * Removes characters from the beginning and end of a string.
+     * @param {string}   str - The string to be trimmed
+     * @param {string}   chars - The characters to remove.
+     * @return {string}  A new string.
+     */
+    this.trimRight = function(str, chars) {
+        if (typeof chars == 'undefined') {
+            return str.trim();
+        }
+        if (chars == ']') {
+            var chars = '\\]';
+        }
+        if (chars == '\\') {
+            var chars = '\\\\';
+        }
+        return str.replace(new RegExp('[' + chars + ']+$', 'g'), '');
     }
 
     /**

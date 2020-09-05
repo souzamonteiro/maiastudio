@@ -100,7 +100,7 @@ function System() {
      */
     this.println = function(text)
     {
-        this.log(text + '\n');
+        this.log(text + '\r\n');
     }
 
     /**
