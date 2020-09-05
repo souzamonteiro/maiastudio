@@ -317,8 +317,8 @@ function MaiaEditor(container, language, options) {
 
     /**
      * Highlights the code syntax in the editor.
-     * @param {object}  element - Element to do code syntax highlighte.
-     * @return          The content of the editor is Highlighted.
+     * @param {object}   element - Element to do code syntax highlighte.
+     * @return           The content of the editor is Highlighted.
      */
     this.highlightCode = function(element) {
         if (typeof element == 'undefined') {
@@ -326,6 +326,7 @@ function MaiaEditor(container, language, options) {
         } else {
             var thisEditor = element;
         }
+        
         // Gets the code in the editor.
         var code = thisEditor.textContent || '';
         // Saves the cursor position.
@@ -447,7 +448,6 @@ function MaiaEditor(container, language, options) {
                 }
                 this.replaceSelectedText(newText);
             }
-            this.highlightCode(element);
         }
     }
 
@@ -471,7 +471,6 @@ function MaiaEditor(container, language, options) {
                 }
                 this.replaceSelectedText(newText);
             }
-            this.highlightCode(element);
         }
     }
 
@@ -484,6 +483,7 @@ function MaiaEditor(container, language, options) {
         if (typeof element == 'undefined') {
             var element = editor;
         }
+        // Get the selected text.
         var text = this.getSelectedText();
         if (typeof text == 'string') {
             this.saveEditorContent(editor);
@@ -495,7 +495,6 @@ function MaiaEditor(container, language, options) {
                 }
                 this.replaceSelectedText(newText);
             }
-            this.highlightCode(element);
         }
     }
 
@@ -508,6 +507,7 @@ function MaiaEditor(container, language, options) {
         if (typeof element == 'undefined') {
             var element = editor;
         }
+        // Get the selected text.
         var text = this.getSelectedText();
         if (typeof text == 'string') {
             this.saveEditorContent(editor);
@@ -519,7 +519,6 @@ function MaiaEditor(container, language, options) {
                 }
                 this.replaceSelectedText(newText);
             }
-            this.highlightCode(element);
         }
     }
 
@@ -650,6 +649,24 @@ function MaiaEditor(container, language, options) {
         }
         // Highlights the code syntax in the editor.
         maiaeditor.highlightCode(maiaeditor.editor);
+    }, false);
+    editor.addEventListener('click', function(event) {
+        // Highlights the code syntax in the editor.
+        if (window.getSelection) {
+            var selectedText = window.getSelection().toString();
+            if (selectedText.length == 0) {
+                maiaeditor.highlightCode(maiaeditor.editor);
+            }
+        }
+    }, false);
+    editor.addEventListener('keyup', function(event) {
+        // Highlights the code syntax in the editor.
+        if (window.getSelection) {
+            var selectedText = window.getSelection().toString();
+            if (selectedText.length == 0) {
+                maiaeditor.highlightCode(maiaeditor.editor);
+            }
+        }
     }, false);
     // Transfer the text from the container to the editor.
     this.setText(code);
