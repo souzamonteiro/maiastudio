@@ -210,16 +210,20 @@ function MaiaConsole(container, language, callBack, options) {
         rangeLeft.setEnd(rangeAtCursor.startContainer, rangeAtCursor.startOffset);
         var textBeforeCursor = rangeLeft.toString();
 
-        // Find the begin of previous line.
-        var i = textBeforeCursor.length - 1;
-        while ((i >= 0) && !((textBeforeCursor[i] == '\r') || (textBeforeCursor[i] == '\n'))) {
-            i--;
+        // Find the begin of previous line and get the text before for cursos in the current line.
+        var textAtCursor = '';
+        if (textBeforeCursor.length > 1) {
+            var i = textBeforeCursor.length - 1;
+            while ((i >= 0) && !((textBeforeCursor[i] == '\r') || (textBeforeCursor[i] == '\n'))) {
+                i--;
+            }
+            if ((i < 0) || (textBeforeCursor[i] == '\r') || (textBeforeCursor[i] == '\n')) {
+                i++;
+            }
+            textAtCursor = textBeforeCursor.substr(i, textBeforeCursor.length - 1);
+        } else if (textBeforeCursor.length == 1){
+            textAtCursor = textBeforeCursor;
         }
-        if ((i < 0) || (textBeforeCursor[i] == '\r') || (textBeforeCursor[i] == '\n')) {
-            i++;
-        }
-        
-        var textAtCursor = textBeforeCursor.substr(i, textBeforeCursor.length - 1);
         return textAtCursor;
     }
 
@@ -238,13 +242,15 @@ function MaiaConsole(container, language, callBack, options) {
         rangeRight.setStart(rangeAtCursor.endContainer, rangeAtCursor.endOffset);
         var textAfterCursor = rangeRight.toString();
 
-        // Find the begin of next line.
-        var i = 0;
-        while ((i < textAfterCursor.length) && !((textAfterCursor[i] == '\r') || (textAfterCursor[i] == '\n'))) {
-            i++;
+        // Find the begin of previous line and get the text before for cursos in the current line.
+        var textAtCursor = '';
+        if (textAfterCursor.length > 0) {
+            var i = 0;
+            while ((i < textAfterCursor.length) && !((textAfterCursor[i] == '\r') || (textAfterCursor[i] == '\n'))) {
+                i++;
+            }
+            var textAtCursor = textAfterCursor.substr(0, i);
         }
-
-        var textAtCursor = textAfterCursor.substr(0, i);
         return textAtCursor;
     }
 
