@@ -129,8 +129,13 @@ function MaiaConsole(container, language, callBack, options) {
      * @return {number}  The number of the item added to command history.
      */
     this.addToHistory = function(text) {
+        command = this.trim(text);
+        command = this.trim(text, '\n');
+        command = this.trim(text, '\r');
+        command = this.trim(text, '\n');
+        command = this.trim(text);
         commandHistoryPosition = -1;
-        commandHistory.unshift(text.trim());
+        commandHistory.unshift(command);
         return commandHistory.length - 1;
     }
     
@@ -290,8 +295,19 @@ function MaiaConsole(container, language, callBack, options) {
     this.appendText = function(text) {
         if (typeof text != 'undefined') {
             this.moveCursorToEnd();
-            document.execCommand('insertHTML', false, text);
+            this.insertText(text);
             this.moveCursorToEnd();
+        }
+    }
+
+    /**
+     * Inserts text in terminal at cursor position. 
+     * @param {string}  text - Text to be inserted at cursor position
+     * @return          The text is inserted at cursor position.
+     */
+    this.insertText = function(text) {
+        if (typeof text != 'undefined') {
+            this.replaceSelectedText(text);
         }
     }
 
@@ -485,12 +501,24 @@ function MaiaConsole(container, language, callBack, options) {
      * @return  The selected text copied to clipboard.
      */
     this.copySelection = function() {
+        var selectedText = this.getSelectedText();
         try {
-            this.saveTerminalContent(terminal);
-            document.execCommand('copy')
-            this.highlightCode(terminal);
+            navigator.permissions.query({'name': "clipboard-write"}).then(result => {
+                if (result.state == 'granted' || result.state == 'prompt') {
+                    // Write to the clipboard now.
+                    navigator.clipboard.writeText(selectedText).then(function() {
+                        // Clipboard successfully set.
+                    }, function() {
+                        /// Clipboard write failed.
+                        alert('This browser does not support copy to clipboard from JavaScript code.');
+                    });
+                } else {
+                    alert('This browser does not support copy to clipboard from JavaScript code.');
+                }
+            });
+            this.highlightCode(editor);
         } catch (e) {
-            alert('This browser does not support copy from JavaScript code.');
+            alert('This browser does not support the JavaScript clipboard API.');
         }
     }
 
@@ -500,9 +528,9 @@ function MaiaConsole(container, language, callBack, options) {
      */
     this.cutSelection = function() {
         try {
-            this.saveTerminalContent(terminal);
-            document.execCommand('cut')
-            this.highlightCode(terminal);
+            this.saveEditorContent(editor);
+            this.copySelection();
+            this.replaceSelectedText('');
         } catch (e) {
             alert('This browser does not support cut from JavaScript code.');
         }
@@ -514,8 +542,8 @@ function MaiaConsole(container, language, callBack, options) {
      */
     this.pasteSelection = function() {
         try {
-            document.execCommand('paste')
-            this.highlightCode(terminal);
+            this.saveEditorContent(editor);
+            navigator.clipboard.readText().then(text => this.insertText(text));
         } catch (e) {
             alert('This browser does not support past from JavaScript code.');
         }
@@ -664,8 +692,9 @@ function MaiaConsole(container, language, callBack, options) {
             } else if (event.key in openChars) {
                 var pos = maiaterminal.getCursorPosition();
                 event.preventDefault();
-                document.execCommand('insertHTML', false, event.key + openChars[event.key]);
+                maiaterminal.insertText(event.key + openChars[event.key]);
                 pos.start = ++pos.end;
+                maiaterminal.highlightCode(maiaterminal.terminal);
                 maiaterminal.setCursorPosition(pos);
             }
             maiaterminal.saveTerminalContent(maiaterminal.terminal);

@@ -5523,7 +5523,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.4.15";
+    this.version = "1.5.0";
 
     this.testResult = {
         "expected": {},
@@ -9290,29 +9290,15 @@ function System() {
      * @return          Data from storage.
      */
     this.readDataFromStorage = function(obj, callBack) {
-        var keys = Object.keys(obj);
-        if (typeof chrome != 'undefined') {
-            if (typeof chrome.storage != 'undefined') {
-                chrome.storage.sync.get(keys, function(result) {
-                    for (key in result) {
-                        obj[key] = resule[key];
-                    }
-                    if (typeof callBack != 'undefined') {
-                        callBack();
-                    }
-                });
+        for (key in obj) {
+            if (typeof localStorage.getItem(key) != 'undefined') {
+                obj[key] = localStorage.getItem(key);
+            } else {
+                obj[key] = {};
             }
-        } else {
-            for (key in obj) {
-                if (typeof localStorage.getItem(key) != 'undefined') {
-                    obj[key] = localStorage.getItem(key);
-                } else {
-                    obj[key] = {};
-                }
-            }
-            if (typeof callBack != 'undefined') {
-                callBack();
-            }
+        }
+        if (typeof callBack != 'undefined') {
+            callBack();
         }
     }
 
@@ -9412,25 +9398,15 @@ function System() {
      * @return          Data written to storage.
      */
     this.writeDataToStorage = function(obj, callBack) {
-        if (typeof chrome != 'undefined') {
-            if (typeof chrome.storage != 'undefined') {
-                chrome.storage.sync.set(obj, function(result) {
-                    if (typeof callBack != 'undefined') {
-                        callBack();
-                    }
-                });
+        for (key in obj) {
+            if (typeof obj[key] != 'undefined') {
+                localStorage.setItem(key, obj[key]);
+            } else {
+                localStorage.setItem(key, {});
             }
-        } else {
-            for (key in obj) {
-                if (typeof obj[key] != 'undefined') {
-                    localStorage.setItem(key, obj[key]);
-                } else {
-                    localStorage.setItem(key, {});
-                }
-            }
-            if (typeof callBack != 'undefined') {
-                callBack();
-            }
+        }
+        if (typeof callBack != 'undefined') {
+            callBack();
         }
     }
 }
