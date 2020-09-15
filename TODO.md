@@ -1,3 +1,5 @@
+- [x] Fix press [ENTER] in Google Chrome
+- [ ] Fix press [ENTER] in Google Chrome after command in history
 - [ ] Implement support for complex network analysis
 - [ ] Prepare binary distributions for macOS, Windows and Linux
 - [ ] Prepare binary distributions for iOS and Android

@@ -307,7 +307,7 @@ function MaiaConsole(container, language, callBack, options) {
      */
     this.insertText = function(text) {
         if (typeof text != 'undefined') {
-            this.replaceSelectedText(text);
+            document.execCommand('insertHTML', false, text);
         }
     }
 

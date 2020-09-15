@@ -1,6 +1,6 @@
 {
   "name": "maiascript-cli",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "MaiaStudio (The MaiaScript IDE)\n\nMaiaScript is a programming language aimed at developing adaptable and intelligent applications.",
   "keywords": [
     "maia",

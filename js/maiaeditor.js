@@ -121,6 +121,85 @@ function MaiaEditor(container, language, options) {
     }
 
     /**
+     * Gets the text of the line before the cursor.
+     * @return {string}  The text of the line where the cursor is.
+     */
+    this.getTextBeforeCursor = function() {
+        // Gets the cursor position.
+        var sel = window.getSelection();
+        var rangeAtCursor = sel.getRangeAt(0);
+
+        // Gets the text to the left of the cursor.
+        var rangeLeft = document.createRange();
+        rangeLeft.selectNodeContents(editor);
+        rangeLeft.setEnd(rangeAtCursor.startContainer, rangeAtCursor.startOffset);
+        var textBeforeCursor = rangeLeft.toString();
+
+        // Find the begin of previous line and get the text before for cursos in the current line.
+        var textAtCursor = '';
+        if (textBeforeCursor.length > 1) {
+            var i = textBeforeCursor.length - 1;
+            while ((i >= 0) && !((textBeforeCursor[i] == '\r') || (textBeforeCursor[i] == '\n'))) {
+                i--;
+            }
+            if ((i < 0) || (textBeforeCursor[i] == '\r') || (textBeforeCursor[i] == '\n')) {
+                i++;
+            }
+            textAtCursor = textBeforeCursor.substr(i, textBeforeCursor.length - 1);
+        } else if (textBeforeCursor.length == 1){
+            textAtCursor = textBeforeCursor;
+        }
+        return textAtCursor;
+    }
+
+    /**
+     * Gets the text of the line after the cursor.
+     * @return {string}  The text of the line where the cursor is.
+     */
+    this.getTextAfterCursor = function() {
+        // Gets the cursor position.
+        var sel = window.getSelection();
+        var rangeAtCursor = sel.getRangeAt(0);
+
+        // Gets the text to the right of the cursor.
+        var rangeRight = document.createRange();
+        rangeRight.selectNodeContents(editor);
+        rangeRight.setStart(rangeAtCursor.endContainer, rangeAtCursor.endOffset);
+        var textAfterCursor = rangeRight.toString();
+
+        // Find the begin of previous line and get the text before for cursos in the current line.
+        var textAtCursor = '';
+        if (textAfterCursor.length > 0) {
+            var i = 0;
+            while ((i < textAfterCursor.length) && !((textAfterCursor[i] == '\r') || (textAfterCursor[i] == '\n'))) {
+                i++;
+            }
+            var textAtCursor = textAfterCursor.substr(0, i);
+        }
+        return textAtCursor;
+    }
+
+    /**
+     * Gets the text of the line where the cursor is.
+     * @return {string}  The text of the line where the cursor is.
+     */
+    this.getTextAtCursor = function() {
+        var textAtCursor = this.getTextBeforeCursor() + this.getTextAfterCursor();
+        return textAtCursor;
+    }
+
+    /**
+     * Place the cursor after the selected text.
+     * @param {object}  editor - Editor object.
+     * @return          Place the cursor after the selected text.
+     */
+    this.moveCursorToEndOfSelection = function(editor) {
+        var pos = this.getCursorPosition();
+        pos.start = pos.end;
+        this.setCursorPosition(pos);
+    }
+    
+    /**
      * Appends text in terminal.
      * @param {string}  text - Text to be set in the terminal.
      * @return          The text is appended to terminal.
@@ -140,7 +219,7 @@ function MaiaEditor(container, language, options) {
      */
     this.insertText = function(text) {
         if (typeof text != 'undefined') {
-            this.replaceSelectedText(text);
+            document.execCommand('insertHTML', false, text);
         }
     }
 
@@ -616,6 +695,7 @@ function MaiaEditor(container, language, options) {
         } else {
             var openChars = {'{': '}', '[': ']', '(': ')'};
             if (event.key == 'Enter') {
+                /*
                 // Gets the cursor position.
                 var sel = window.getSelection();
                 var rangeAtCursor = sel.getRangeAt(0);
@@ -629,6 +709,11 @@ function MaiaEditor(container, language, options) {
                 rangeRight.selectNodeContents(editor);
                 rangeRight.setStart(rangeAtCursor.endContainer, rangeAtCursor.endOffset);
                 var textAfterCursor = rangeRight.toString();
+                */
+                
+                var textBeforeCursor =  maiaeditor.getTextBeforeCursor();
+                var textAfterCursor = maiaeditor.getTextAfterCursor();
+                
                 // Calculates indentation.
                 // Find beginning of previous line.
                 var i = textBeforeCursor.length - 1;
