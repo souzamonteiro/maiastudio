@@ -547,7 +547,11 @@ function MaiaEditor(container, language, options) {
             var newText = '';
             if (Array.isArray(textLines)) {
                 for (var i = 0; i < textLines.length; i++) {
-                    newText += opts.indentChars + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
+                    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+                        newText += opts.indentChars + textLines[i] + (i < textLines.length - 1 ? '\n' : '');
+                    } else {
+                        newText += opts.indentChars + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
+                    }
                 }
                 this.replaceSelectedText(newText);
             }
@@ -570,7 +574,11 @@ function MaiaEditor(container, language, options) {
             if (Array.isArray(textLines)) {
                 this.saveEditorContent(editor);
                 for (var i = 0; i < textLines.length; i++) {
-                    newText += textLines[i].replace(opts.indentChars, '') + (i < textLines.length - 1 ? '\r\n' : '');
+                    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+                        newText += textLines[i].replace(opts.indentChars, '') + (i < textLines.length - 1 ? '\n' : '');
+                    } else {
+                        newText += textLines[i].replace(opts.indentChars, '') + (i < textLines.length - 1 ? '\r\n' : '');
+                    }
                 }
                 this.replaceSelectedText(newText);
             }
@@ -594,7 +602,11 @@ function MaiaEditor(container, language, options) {
             var newText = '';
             if (Array.isArray(textLines)) {
                 for (var i = 0; i < textLines.length; i++) {
-                    newText += opts.commentChars + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
+                    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+                        newText += opts.commentChars + textLines[i] + (i < textLines.length - 1 ? '\n' : '');
+                    } else {
+                        newText += opts.commentChars + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
+                    }
                 }
                 this.replaceSelectedText(newText);
             }
@@ -618,7 +630,11 @@ function MaiaEditor(container, language, options) {
             var newText = '';
             if (Array.isArray(textLines)) {
                 for (var i = 0; i < textLines.length; i++) {
-                    newText += textLines[i].replace(opts.commentChars, '') + (i < textLines.length - 1 ? '\r\n' : '');
+                    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+                        newText += textLines[i].replace(opts.commentChars, '') + (i < textLines.length - 1 ? '\n' : '');
+                    } else {
+                        newText += textLines[i].replace(opts.commentChars, '') + (i < textLines.length - 1 ? '\r\n' : '');
+                    }
                 }
                 this.replaceSelectedText(newText);
             }
@@ -646,7 +662,11 @@ function MaiaEditor(container, language, options) {
                 }
             });
         } catch (e) {
-            alert('This browser does not support the JavaScript clipboard API.');
+            try {
+                document.execCommand('copy');
+            } catch (errorExecCommand) {
+                alert('This browser does not support copy to clipboard from JavaScript code.');
+            }
         }
     }
 
@@ -660,7 +680,11 @@ function MaiaEditor(container, language, options) {
             this.copySelection();
             this.replaceSelectedText('');
         } catch (e) {
-            alert('This browser does not support cut from JavaScript code.');
+            try {
+                document.execCommand('cut');
+            } catch (errorExecCommand) {
+                alert('This browser does not support cut to clipboard from JavaScript code.');
+            }
         }
     }
 
@@ -673,7 +697,11 @@ function MaiaEditor(container, language, options) {
             this.saveEditorContent(editor);
             navigator.clipboard.readText().then(text => this.insertText(text));
         } catch (e) {
-            alert('This browser does not support past from JavaScript code.');
+            try {
+                document.execCommand('paste');
+            } catch (errorExecCommand) {
+                alert('This browser does not support paste from clipboard from JavaScript code.');
+            }
         }
     }
 
@@ -695,22 +723,6 @@ function MaiaEditor(container, language, options) {
         } else {
             var openChars = {'{': '}', '[': ']', '(': ')'};
             if (event.key == 'Enter') {
-                /*
-                // Gets the cursor position.
-                var sel = window.getSelection();
-                var rangeAtCursor = sel.getRangeAt(0);
-                // Gets the text to the left of the cursor.
-                var rangeLeft = document.createRange();
-                rangeLeft.selectNodeContents(editor);
-                rangeLeft.setEnd(rangeAtCursor.startContainer, rangeAtCursor.startOffset);
-                var textBeforeCursor = rangeLeft.toString();
-                // Gets the text to the right of the cursor.
-                var rangeRight = document.createRange();
-                rangeRight.selectNodeContents(editor);
-                rangeRight.setStart(rangeAtCursor.endContainer, rangeAtCursor.endOffset);
-                var textAfterCursor = rangeRight.toString();
-                */
-                
                 var textBeforeCursor =  maiaeditor.getTextBeforeCursor();
                 var textAfterCursor = maiaeditor.getTextAfterCursor();
                 
