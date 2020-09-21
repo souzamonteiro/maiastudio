@@ -42,7 +42,10 @@ function MaiaConsole(container, language, callBack, options) {
         // Class attributes goes here.
     }
 
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    
     var opts = {
+        'lineBreak': '\r\n',
         'greetingMessage': '',
         'promptMessage': '>'
     }
@@ -501,24 +504,10 @@ function MaiaConsole(container, language, callBack, options) {
      * @return  The selected text copied to clipboard.
      */
     this.copySelection = function() {
-        var selectedText = this.getSelectedText();
         try {
-            navigator.permissions.query({'name': "clipboard-write"}).then(result => {
-                if (result.state == 'granted' || result.state == 'prompt') {
-                    // Write to the clipboard now.
-                    navigator.clipboard.writeText(selectedText).then(function() {
-                        // Clipboard successfully set.
-                    }, function() {
-                        /// Clipboard write failed.
-                        alert('This browser does not support copy to clipboard from JavaScript code.');
-                    });
-                } else {
-                    alert('This browser does not support copy to clipboard from JavaScript code.');
-                }
-            });
-            this.highlightCode(editor);
+            document.execCommand('copy');
         } catch (e) {
-            alert('This browser does not support the JavaScript clipboard API.');
+            alert('This browser does not support copy to clipboard from JavaScript code.');
         }
     }
 
@@ -528,11 +517,9 @@ function MaiaConsole(container, language, callBack, options) {
      */
     this.cutSelection = function() {
         try {
-            this.saveEditorContent(editor);
-            this.copySelection();
-            this.replaceSelectedText('');
+            document.execCommand('cut');
         } catch (e) {
-            alert('This browser does not support cut from JavaScript code.');
+            alert('This browser does not support cut to clipboard from JavaScript code.');
         }
     }
 
@@ -542,13 +529,12 @@ function MaiaConsole(container, language, callBack, options) {
      */
     this.pasteSelection = function() {
         try {
-            this.saveEditorContent(editor);
-            navigator.clipboard.readText().then(text => this.insertText(text));
+            document.execCommand('paste');
         } catch (e) {
-            alert('This browser does not support past from JavaScript code.');
+            alert('This browser does not support paste from clipboard from JavaScript code.');
         }
     }
-
+    
     /**
      * Highlights the code syntax in the terminal.
      * @param {object}  element - Element to do code syntax highlighte.
@@ -572,7 +558,7 @@ function MaiaConsole(container, language, callBack, options) {
         var numberOfLines = code.split(/\r\n|\r|\n/).length + (code.endsWith('\r') || code.endsWith('\n') ? 0 : 1);
         var text = '';
         for (var i = 1; i < numberOfLines; i++) {
-            text += opts.promptMessage + '\r\n';
+            text += opts.promptMessage + opts.lineBreak;
         }
         terminalMargin.innerText = text;
     }
@@ -600,6 +586,9 @@ function MaiaConsole(container, language, callBack, options) {
      * @return          The terminal's previous content is restored.
      */
     this.restoreTerminalContent = function(element) {
+        if (typeof element == 'undefined') {
+            var element = terminal;
+        }    
         // Removes the previous contents from the stack.
         var lastContent = terminalHistory.pop();
         // Place the previous contents on the backup stack.
@@ -655,6 +644,8 @@ function MaiaConsole(container, language, callBack, options) {
                             terminalCallBack();
                             maiaterminal.moveCursorToEnd();
                         }
+                    } else {
+                        maiaterminal.moveCursorToEnd();
                     }
                 }
             } else if (event.key == 'ArrowUp') {
@@ -723,7 +714,7 @@ function MaiaConsole(container, language, callBack, options) {
 
     // Transfer the text from the container to the terminal.
     if (opts.greetingMessage.length > 0) {
-        this.setText(opts.greetingMessage + '\r\n' + code);
+        this.setText(opts.greetingMessage + opts.lineBreak + code);
     } else {
         this.setText(code);
     }

@@ -41,7 +41,10 @@ function MaiaEditor(container, language, options) {
         // Class attributes goes here.
     }
 
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    
     var opts = {
+        'lineBreak': '\r\n',
         'indentChars': '    ',
         'commentChars': '//'
     }
@@ -470,6 +473,9 @@ function MaiaEditor(container, language, options) {
      * @return          The editor's previous content is restored.
      */
     this.restoreEditorContent = function(element) {
+        if (typeof element == 'undefined') {
+            var element = editor;
+        }
         // Removes the previous contents from the stack.
         var lastContent = editorHistory.pop();
         // Place the previous contents on the backup stack.
@@ -547,11 +553,7 @@ function MaiaEditor(container, language, options) {
             var newText = '';
             if (Array.isArray(textLines)) {
                 for (var i = 0; i < textLines.length; i++) {
-                    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-                        newText += opts.indentChars + textLines[i] + (i < textLines.length - 1 ? '\n' : '');
-                    } else {
-                        newText += opts.indentChars + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
-                    }
+                    newText += opts.indentChars + textLines[i] + (i < textLines.length - 1 ? (isFirefox ? '\n' : opts.lineBreak) : '');
                 }
                 this.replaceSelectedText(newText);
             }
@@ -574,11 +576,7 @@ function MaiaEditor(container, language, options) {
             if (Array.isArray(textLines)) {
                 this.saveEditorContent(editor);
                 for (var i = 0; i < textLines.length; i++) {
-                    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-                        newText += textLines[i].replace(opts.indentChars, '') + (i < textLines.length - 1 ? '\n' : '');
-                    } else {
-                        newText += textLines[i].replace(opts.indentChars, '') + (i < textLines.length - 1 ? '\r\n' : '');
-                    }
+                    newText += textLines[i].replace(opts.indentChars, '') + (i < textLines.length - 1 ? (isFirefox ? '\n' : opts.lineBreak) : '');
                 }
                 this.replaceSelectedText(newText);
             }
@@ -602,11 +600,7 @@ function MaiaEditor(container, language, options) {
             var newText = '';
             if (Array.isArray(textLines)) {
                 for (var i = 0; i < textLines.length; i++) {
-                    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-                        newText += opts.commentChars + textLines[i] + (i < textLines.length - 1 ? '\n' : '');
-                    } else {
-                        newText += opts.commentChars + textLines[i] + (i < textLines.length - 1 ? '\r\n' : '');
-                    }
+                    newText += opts.commentChars + textLines[i] + (i < textLines.length - 1 ? (isFirefox ? '\n' : opts.lineBreak) : '');
                 }
                 this.replaceSelectedText(newText);
             }
@@ -630,11 +624,7 @@ function MaiaEditor(container, language, options) {
             var newText = '';
             if (Array.isArray(textLines)) {
                 for (var i = 0; i < textLines.length; i++) {
-                    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-                        newText += textLines[i].replace(opts.commentChars, '') + (i < textLines.length - 1 ? '\n' : '');
-                    } else {
-                        newText += textLines[i].replace(opts.commentChars, '') + (i < textLines.length - 1 ? '\r\n' : '');
-                    }
+                    newText += textLines[i].replace(opts.commentChars, '') + (i < textLines.length - 1 ? (isFirefox ? '\n' : opts.lineBreak) : '');
                 }
                 this.replaceSelectedText(newText);
             }
@@ -646,27 +636,11 @@ function MaiaEditor(container, language, options) {
      * @return  The selected text copied to clipboard.
      */
     this.copySelection = function() {
-        var selectedText = this.getSelectedText();
+        this.saveEditorContent(editor);
         try {
-            navigator.permissions.query({'name': "clipboard-write"}).then(result => {
-                if (result.state == 'granted' || result.state == 'prompt') {
-                    // Write to the clipboard now.
-                    navigator.clipboard.writeText(selectedText).then(function() {
-                        // Clipboard successfully set.
-                    }, function() {
-                        /// Clipboard write failed.
-                        alert('This browser does not support copy to clipboard from JavaScript code.');
-                    });
-                } else {
-                    alert('This browser does not support copy to clipboard from JavaScript code.');
-                }
-            });
+            document.execCommand('copy');
         } catch (e) {
-            try {
-                document.execCommand('copy');
-            } catch (errorExecCommand) {
-                alert('This browser does not support copy to clipboard from JavaScript code.');
-            }
+            alert('This browser does not support copy to clipboard from JavaScript code.');
         }
     }
 
@@ -675,16 +649,11 @@ function MaiaEditor(container, language, options) {
      * @return  The selected text cuted from clipboard.
      */
     this.cutSelection = function() {
+        this.saveEditorContent(editor);
         try {
-            this.saveEditorContent(editor);
-            this.copySelection();
-            this.replaceSelectedText('');
+            document.execCommand('cut');
         } catch (e) {
-            try {
-                document.execCommand('cut');
-            } catch (errorExecCommand) {
-                alert('This browser does not support cut to clipboard from JavaScript code.');
-            }
+            alert('This browser does not support cut to clipboard from JavaScript code.');
         }
     }
 
@@ -693,15 +662,11 @@ function MaiaEditor(container, language, options) {
      * @return  The selected text pasted to clipboard.
      */
     this.pasteSelection = function() {
+        this.saveEditorContent(editor);
         try {
-            this.saveEditorContent(editor);
-            navigator.clipboard.readText().then(text => this.insertText(text));
+            document.execCommand('paste');
         } catch (e) {
-            try {
-                document.execCommand('paste');
-            } catch (errorExecCommand) {
-                alert('This browser does not support paste from clipboard from JavaScript code.');
-            }
+            alert('This browser does not support paste from clipboard from JavaScript code.');
         }
     }
 
@@ -747,15 +712,20 @@ function MaiaEditor(container, language, options) {
                 }
                 if (indentation.length > 0) {
                     event.preventDefault();
-                    maiaeditor.insertText('\r\n' + indentation);
+                    maiaeditor.insertText(opts.lineBreak + indentation);
+                } else {
+                    if (isFirefox) {
+                        event.preventDefault();
+                        maiaeditor.insertText(opts.lineBreak);
+                    }
                 }
                 // Checks whether the line contains close braces.
                 if ((indentation != padding) && (textAfterCursor[0] == '}')) {
-                    var pos = maiaeditor.getCursorPosition();
+                    var pos = maiaeditor.getCursorPosition();                                                
                     if (padding.length == 0) {
-                        maiaeditor.insertText('\r\n\r\n');
+                        maiaeditor.insertText(opts.lineBreak + opts.lineBreak);
                     } else {
-                        maiaeditor.insertText('\r\n' + padding);
+                        maiaeditor.insertText(opts.lineBreak + padding);
                     }
                     maiaeditor.setCursorPosition(pos);
                 }
@@ -800,6 +770,7 @@ function MaiaEditor(container, language, options) {
             }
         }
     }, false);
+
     // Transfer the text from the container to the editor.
     this.setText(code);
     // Highlights the code syntax in the editor.
