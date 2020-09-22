@@ -401,7 +401,7 @@ function MaiaConsole(container, language, callBack, options) {
         if (position.end < 0) {
             position.end = 0;
         }
-        // Flip start and end if the direction reversed
+        // Flip start and end if the direction reversed.
         if (position.dir == 'rtl') {
             const { start, end } = position;
             position.start = end;
@@ -426,12 +426,12 @@ function MaiaConsole(container, language, callBack, options) {
             }
             current += len;
         });
-        // If everything deleted place cursor at terminal
+        // If everything deleted place cursor at terminal.
         if (!startNode)
             startNode = terminal;
         if (!endNode)
             endNode = terminal;
-        // Flip back the selection
+        // Flip back the selection.
         if (position.dir == 'rtl') {
             [startNode, startOffset, endNode, endOffset] = [endNode, endOffset, startNode, startOffset];
         }
@@ -632,7 +632,11 @@ function MaiaConsole(container, language, callBack, options) {
                 var textAtCursor = maiaterminal.getTextAtCursor();
                 if (textAtCursor.trim() == 'clear') {
                     if (opts.greetingMessage.length > 0) {
-                        maiaterminal.setText(opts.greetingMessage);
+                        if (isFirefox) {
+                            maiaterminal.setText(opts.greetingMessage + opts.lineBreak);
+                        } else {
+                            maiaterminal.setText(opts.greetingMessage);
+                        }
                     } else {
                         maiaterminal.setText('');
                     }
@@ -642,10 +646,22 @@ function MaiaConsole(container, language, callBack, options) {
                         maiaterminal.moveCursorToEnd();
                         if (typeof callBack != 'undefined') {
                             terminalCallBack();
-                            maiaterminal.moveCursorToEnd();
+                            if (isFirefox) {
+                                event.preventDefault();
+                                maiaterminal.insertText(opts.lineBreak + opts.lineBreak);
+                                //maiaterminal.moveCursorToEnd();
+                            } else {
+                                maiaterminal.moveCursorToEnd();
+                            }
                         }
                     } else {
-                        maiaterminal.moveCursorToEnd();
+                        if (isFirefox) {
+                            event.preventDefault();
+                            maiaterminal.insertText(opts.lineBreak + opts.lineBreak);
+                            maiaterminal.moveCursorToEnd();
+                        } else {
+                            maiaterminal.moveCursorToEnd();
+                        }
                     }
                 }
             } else if (event.key == 'ArrowUp') {

@@ -384,7 +384,7 @@ function MaiaEditor(container, language, options) {
         if (position.end < 0) {
             position.end = 0;
         }
-        // Flip start and end if the direction reversed
+        // Flip start and end if the direction reversed.
         if (position.dir == 'rtl') {
             const { start, end } = position;
             position.start = end;
@@ -409,12 +409,12 @@ function MaiaEditor(container, language, options) {
             }
             current += len;
         });
-        // If everything deleted place cursor at editor
+        // If everything deleted place cursor at editor.
         if (!startNode)
             startNode = editor;
         if (!endNode)
             endNode = editor;
-        // Flip back the selection
+        // Flip back the selection.
         if (position.dir == '<-') {
             [startNode, startOffset, endNode, endOffset] = [endNode, endOffset, startNode, startOffset];
         }
