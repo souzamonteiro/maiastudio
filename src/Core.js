@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.5.1";
+    this.version = "1.5.5";
 
     this.testResult = {
         "expected": {},
