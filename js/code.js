@@ -243,11 +243,11 @@ function compileAndRun() {
         compiledCode.js = code;
     }
     if (editorMode == 'html') {
-        var win = window.open('_blank', '', '');
+        var win = window.open('', '_blank', '');
         win.location = 'data:text/html;charset=utf-8,' + code;
     } else if (editorMode == 'md') {
         var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked(code) + '</body></html>';
-        var win = window.open('_blank', '', '');
+        var win = window.open('', '_blank', '');
         win.location = 'data:text/html;charset=utf-8,' + html;
     } else if ((editorMode == 'maia') || (editorMode == 'mil') || (editorMode == 'js')) {
         try {
