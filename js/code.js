@@ -244,7 +244,6 @@ function compileAndRun() {
     }
     if (editorMode == 'html') {
         var win = window.open();
-        //win.location = 'data:text/html;charset=utf-8,' + code;
         iframe = win.document.createElement('iframe');
         iframe.width = '100%';
         iframe.height = '100%';
@@ -255,7 +254,6 @@ function compileAndRun() {
     } else if (editorMode == 'md') {
         var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked(code) + '</body></html>';
         var win = window.open();
-        //win.location = 'data:text/html;charset=utf-8,' + html;
         iframe = win.document.createElement('iframe');
         iframe.width = '100%';
         iframe.height = '100%';
