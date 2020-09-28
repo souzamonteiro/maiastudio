@@ -43,6 +43,7 @@ function MaiaConsole(container, language, callBack, options) {
     }
 
     var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
     
     var opts = {
         'lineBreak': '\r\n',
@@ -473,11 +474,8 @@ function MaiaConsole(container, language, callBack, options) {
      * @return {string}  The selected text.
      */
     this.getSelectedText = function() {
-        var res;
-        if (window.getSelection) {
-            res = window.getSelection().toString();
-        }
-        return res;
+        var sel = window.getSelection();
+        return sel.toString();
     }
 
     /**
@@ -486,17 +484,11 @@ function MaiaConsole(container, language, callBack, options) {
      * @return          The selected text replaced.
      */
     this.replaceSelectedText = function(text) {
-        if (window.getSelection) {
-            var sel = window.getSelection();
-            if (sel.rangeCount) {
-                var range = sel.getRangeAt(0);
-                range.deleteContents();
-                range.insertNode(document.createTextNode(text));
-            } else {
-                this.insertText(text);
-            }
-        } else {
-            this.insertText(text);
+        var sel = window.getSelection();
+        if (sel.rangeCount) {
+            var range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(text));
         }
     }
 
@@ -670,6 +662,13 @@ function MaiaConsole(container, language, callBack, options) {
                 var historyItem = maiaterminal.getNextHistoryItem();
                 if (historyItem) {
                     maiaterminal.moveCursorToEnd();
+                    /*
+                     * Firefox and Chrome-based browsers, do not select the current line
+                     * if it does not contain at least one character.
+                     */
+                    if (isChrome || isFirefox) {
+                        document.execCommand('insertText', false, ' ');
+                    }
                     maiaterminal.selectLineAtCursor();
                     maiaterminal.replaceSelectedText(historyItem);
                     maiaterminal.moveCursorToEnd();
@@ -680,6 +679,13 @@ function MaiaConsole(container, language, callBack, options) {
                 var historyItem = maiaterminal.getPreviousHistoryItem();
                 if (historyItem) {
                     maiaterminal.moveCursorToEnd();
+                    /*
+                     * Firefox and Chrome-based browsers, do not select the current line
+                     * if it does not contain at least one character.
+                     */
+                    if (isChrome || isFirefox) {
+                        document.execCommand('insertText', false, ' ');
+                    }
                     maiaterminal.selectLineAtCursor();
                     maiaterminal.replaceSelectedText(historyItem);
                     maiaterminal.moveCursorToEnd();

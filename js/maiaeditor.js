@@ -510,11 +510,8 @@ function MaiaEditor(container, language, options) {
      * @return {string}  The selected text.
      */
     this.getSelectedText = function() {
-        var res;
-        if (window.getSelection) {
-            res = window.getSelection().toString();
-        }
-        return res;
+        var sel = window.getSelection();
+        return sel.toString();
     }
 
     /**
@@ -523,17 +520,11 @@ function MaiaEditor(container, language, options) {
      * @return          The selected text replaced.
      */
     this.replaceSelectedText = function(text) {
-        var sel, range;
-        if (window.getSelection) {
-            sel = window.getSelection();
-            if (sel.rangeCount) {
-                range = sel.getRangeAt(0);
-                range.deleteContents();
-                range.insertNode(document.createTextNode(text));
-            }
-        } else if (document.selection && document.selection.createRange) {
-            range = document.selection.createRange();
-            range.text = text;
+        var sel = window.getSelection();
+        if (sel.rangeCount) {
+            var range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(text));
         }
     }
 
