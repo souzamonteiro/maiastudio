@@ -136,6 +136,7 @@ function MaiaConsole(container, language, callBack, options) {
         command = this.trim(text, '\n');
         command = this.trim(text, '\r');
         command = this.trim(text, '\n');
+        command = this.trim(text, '\r');
         command = this.trim(text);
         commandHistoryPosition = -1;
         commandHistory.unshift(command);
@@ -463,7 +464,7 @@ function MaiaConsole(container, language, callBack, options) {
         var offsetAfterCursor = textAfterCursor.length;
         pos.start = pos.start - offsetBeforeCursor;
         pos.end = pos.end - offsetAfterCursor;
-        // Sets the range start to the begin of the line.
+        // Sets the range start to the beginning and ending of this line.
         this.setCursorPosition(pos);
     }
 
@@ -485,17 +486,17 @@ function MaiaConsole(container, language, callBack, options) {
      * @return          The selected text replaced.
      */
     this.replaceSelectedText = function(text) {
-        var sel, range;
         if (window.getSelection) {
-            sel = window.getSelection();
+            var sel = window.getSelection();
             if (sel.rangeCount) {
-                range = sel.getRangeAt(0);
+                var range = sel.getRangeAt(0);
                 range.deleteContents();
                 range.insertNode(document.createTextNode(text));
+            } else {
+                this.insertText(text);
             }
-        } else if (document.selection && document.selection.createRange) {
-            range = document.selection.createRange();
-            range.text = text;
+        } else {
+            this.insertText(text);
         }
     }
 
@@ -649,7 +650,7 @@ function MaiaConsole(container, language, callBack, options) {
                             if (isFirefox) {
                                 event.preventDefault();
                                 maiaterminal.insertText(opts.lineBreak + opts.lineBreak);
-                                //maiaterminal.moveCursorToEnd();
+                                maiaterminal.moveCursorToEnd();
                             } else {
                                 maiaterminal.moveCursorToEnd();
                             }
