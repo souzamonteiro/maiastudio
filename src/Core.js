@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.6.0";
+    this.version = "1.6.1";
 
     this.testResult = {
         "expected": {},
@@ -441,11 +441,16 @@ function Core() {
     /**
      * Creates a new instance of an object.
      * @param {object}   obj - The object that will be used as a template.
+     * @param {object}   properties - The object properties.
      * @return {number}  A new instance of an object.
      */
     this.new = function(obj)
     {
-        var newObject = Object.create(obj);
+        if (typeof properties == 'undefined') {
+            var newObject = Object.create(obj);
+        } else {
+            var newObject = Object.create(obj, properties);
+        }
         return newObject;
     }
 
