@@ -5523,7 +5523,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.6.1";
+    this.version = "1.6.2";
 
     this.testResult = {
         "expected": {},
@@ -6933,7 +6933,7 @@ function ANN() {
      * @param {number}   numVertices - Number of vertices.
      * @param {number}   numEdges - Number of edges.
      * @param {number}   edgeProbability - Edge probability.
-     * @param {number}   averageDegree - Number of input neurons.
+     * @param {number}   averageDegree - Average degree.
      * @param {number}   ni - Number of input neurons.
      * @param {number}   no - Number of output neurons.
      * @param {number}   nl - Number of layers.
