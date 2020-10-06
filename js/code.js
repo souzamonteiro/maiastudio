@@ -197,7 +197,7 @@ function downloadHtml() {
     if (editorMode == 'md') {
         var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked(editor.getText()) + '</body></html>';
     } else {
-        var html = '<!DOCTYPE html><html lang="en"><head><meta charset=UTF-8"><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet"/></head><body><pre>' + newLineToBr(editor.getHtml()) + '</pre></body></html>';
+        var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet"/></head><body><pre>' + newLineToBr(editor.getHtml()) + '</pre></body></html>';
     }
     system.downloadFile(fileName + '.html', html, 'text/html');
 }

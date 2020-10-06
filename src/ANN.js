@@ -12,7 +12,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software;
  * distributed under the License is distributed on an 'AS IS' BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eitherMath.express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eithermath.express or implied.
  * See the License for the specific language governing permissions and;
  * limitations under the License.
  */
@@ -97,20 +97,21 @@ function ANN() {
         if (topology == 'random') {
             // Calculate the edge probability.
             if (d > 0) {
-                p = d / (n - 1.0);
+                p = d / (n - 1);
             }
             // Calculate the number of edge.
             if ((m == 0) && (p > 0)) {
-                e = n / 2.0 * (n - 1) * p;
+                e = n / 2 * (n - 1) * p;
             } else {
                 e = m;
             }
             while (e > 0) {
-                i = Math.round(Math.random() * n);
-                j = Math.round(Math.random() * n);
+                i = math.round(math.random() * n);
+                j = math.round(math.random() * n);
                 if (!((i == j) || (i == 0) || (j == 0))) {
                     if ((ANN[i][j] == 0) && (ANN[j][i] == 0)) {
                         ANN[i][j] = 1;
+                        ANN[j][i] = 1;
                         e--;
                     }
                 }
@@ -119,11 +120,11 @@ function ANN() {
         } else if (topology == 'smallworld') {
             // Create the initial random network.
             for (i = 1; i < dimANN[0]; i = i + 1) {
-                while (TRUE) {
+                while (true) {
                     ki = matrix.count(ANN, i, 1, i, dimANN[1] - 1);
                     if (ki < d) {
-                        j = Math.round(Math.random() * n);
-                        if ((j != 0) && (i != j)) {
+                        j = math.round(math.random() * n);
+                        if ((i != j) && (j != 0)) {
                             ANN[i][j] = 1;
                             ANN[j][i] = 1;
                         }
@@ -136,10 +137,10 @@ function ANN() {
             for (i = 1; i < dimANN[0]; i = i + 1) {
                 for (j = 1; j < dimANN[1]; j = j + 1) {
                     if (ANN[i][j] == 1) {
-                        pij = Math.random();
+                        pij = math.random();
                         if (pij < p) {
-                            while (TRUE) {
-                                k = Math.round(Math.random() * n);
+                            while (true) {
+                                k = math.round(math.random() * n);
                                 if ((k != 0) && (i != k) && (ANN[i][k] == 0)) {
                                     ANN[i][j] = 0;
                                     ANN[j][i] = 0;
@@ -156,10 +157,10 @@ function ANN() {
         } else if (topology == 'scalefree') {
             // Create the initial random network.
             for (i = 1; i < dimANN[0]; i = i + 1) {
-                while (TRUE) {
-                    ki = count(ANN, i, 1, i, dimANN[1] - 1);
+                while (true) {
+                    ki = matrix.count(ANN, i, 1, i, dimANN[1] - 1);
                     if (ki == 0) {
-                        j = Math.round(Math.random() * n);
+                        j = math.round(math.random() * n);
                         if ((j != 0) && (i != j)) {
                             ANN[i][j] = 1;
                             ANN[j][i] = 1;
@@ -177,7 +178,7 @@ function ANN() {
                         ki = matrix.count(ANN, i, 1, i, dimANN[1] - 1);
                         if (ki < d) {
                             sk = matrix.sum(ANN, 1, 1, dimANN[0] - 1, dimANN[1] - 1);
-                            p = Math.random();
+                            p = math.random();
                             pi = ki / sk;
                             if (pi < p) {
                                 ANN[i][j] = 1;
@@ -194,10 +195,10 @@ function ANN() {
             // Create the small world network.
             // Create the initial random network.
             for (i = 1; i < dimANN[0]; i = i + 1) {
-                while (TRUE) {
+                while (true) {
                     ki = matrix.count(ANN, i, 1, i, dimANN[1] - 1);
                     if (ki < d) {
-                        j = Math.round(Math.random() * n);
+                        j = math.round(math.random() * n);
                         if ((j != 0) && (i != j)) {
                             ANN[i][j] = 1;
                             ANN[j][i] = 1;
@@ -211,10 +212,10 @@ function ANN() {
             for (i = 1; i < dimANN[0]; i = i + 1) {
                 for (j = 1; j < dimANN[1]; j = j + 1) {
                     if (ANN[i][j] == 1) {
-                        pij = Math.random();
+                        pij = math.random();
                         if (pij < p) {
-                            while (TRUE) {
-                                k = Math.round(Math.random() * n);
+                            while (true) {
+                                k = math.round(math.random() * n);
                                 if ((k != 0) && (i != k) && (ANN[i][k] == 0)) {
                                     ANN[i][j] = 0;
                                     ANN[j][i] = 0;
@@ -235,7 +236,7 @@ function ANN() {
                         ki = matrix.count(ANN, i, 1, i, dimANN[1] - 1);
                         if (ki < d) {
                             sk = matrix.sum(ANN, 1, 1, dimANN[0] - 1, dimANN[1] - 1);
-                            p = Math.random();
+                            p = math.random();
                             pi = ki / sk;
                             if (pi < p) {
                                 ANN[i][j] = 1;
@@ -440,21 +441,21 @@ function ANN() {
                 //          df(x)/dx = f(x) * (1 - f(x))
                 } else if (AF == 'logistic') {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 1.0 / (1.0 + Math.exp(-1.0 * ANNMatrix[0][j]));
+                    ANNMatrix[j][0] = 1.0 / (1.0 + math.exp(-1.0 * ANNMatrix[0][j]));
                     // Calculate df(x)/dx for backpropagation.
                     ANNMatrix[j][dimANN[1] - 1] = ANNMatrix[j][0] * (1.0 - ANNMatrix[j][0]);
                 // Hyperbolic tangent: f(x) = 2 / (1 + e^(-2x)) - 1
                 //                     df(x)/dx = 1 - f(x)^2
                 } else if (AF == 'tanh') {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 2.0 / (1.0 + Math.exp(-2.0 * ANNMatrix[0][j])) - 1.0;
+                    ANNMatrix[j][0] = 2.0 / (1.0 + math.exp(-2.0 * ANNMatrix[0][j])) - 1.0;
                     // Calculate df(x)/dx for backpropagation.
                     ANNMatrix[j][dimANN[1] - 1] = 1.0 - ANNMatrix[j][0] * ANNMatrix[j][0];
                 // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
                 //          df(x)/dx = f(x) * (1 - f(x))
                 } else {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 1.0 / (1.0 + Math.exp(-1.0 * ANNMatrix[0][j]));
+                    ANNMatrix[j][0] = 1.0 / (1.0 + math.exp(-1.0 * ANNMatrix[0][j]));
                     // Calculate df(x)/dx for backpropagation.
                     ANNMatrix[j][dimANN[1] - 1] = ANNMatrix[j][0] * (1.0 - ANNMatrix[j][0]);
                 }
@@ -470,21 +471,21 @@ function ANN() {
                 //          df(x)/dx = f(x) * (1 - f(x))
                 } else if (OAF == 'logistic') {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 1.0 / (1.0 + Math.exp(-1.0 * ANNMatrix[0][j]));
+                    ANNMatrix[j][0] = 1.0 / (1.0 + math.exp(-1.0 * ANNMatrix[0][j]));
                     // Calculate df(x)/dx for backpropagation.
                     ANNMatrix[j][dimANN[1] - 1] = ANNMatrix[j][0] * (1.0 - ANNMatrix[j][0]);
                 // Hyperbolic tangent: f(x) = 2 / (1 + e^(-2x)) - 1
                 //                     df(x)/dx = 1 - f(x)^2
                 } else if (OAF == 'tanh') {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 2.0 / (1.0 + Math.exp(-2.0 * ANNMatrix[0][j])) - 1.0;
+                    ANNMatrix[j][0] = 2.0 / (1.0 + math.exp(-2.0 * ANNMatrix[0][j])) - 1.0;
                     // Calculate df(x)/dx for backpropagation.
                     ANNMatrix[j][dimANN[1] - 1] = 1.0 - ANNMatrix[j][0] * ANNMatrix[j][0];
                 // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
                 //          df(x)/dx = f(x) * (1 - f(x))
                 } else {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 1.0 / (1.0 + Math.exp(-1.0 * ANNMatrix[0][j]));
+                    ANNMatrix[j][0] = 1.0 / (1.0 + math.exp(-1.0 * ANNMatrix[0][j]));
                     // Calculate df(x)/dx for backpropagation.
                     ANNMatrix[j][dimANN[1] - 1] = ANNMatrix[j][0] * (1.0 - ANNMatrix[j][0]);
                 }
@@ -573,9 +574,9 @@ function ANN() {
                 for (j = 1; j < (dimANN[1] - 1); j++) {
                     if (ANNMatrix[i][j] == 1) {
                         if (negativeWeights) {
-                            ANNMatrix[i][j] = 2.0 * Math.random() - 1.0;
+                            ANNMatrix[i][j] = 2.0 * math.random() - 1.0;
                         } else {
-                            ANNMatrix[i][j] = Math.random();
+                            ANNMatrix[i][j] = math.random();
                         }
                     }
                 }
@@ -674,15 +675,15 @@ function ANN() {
                 // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
                 } else if (AF == 'logistic') {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 1.0 / (1.0 + Math.exp(-1.0 * ANNMatrix[0][j]));
+                    ANNMatrix[j][0] = 1.0 / (1.0 + math.exp(-1.0 * ANNMatrix[0][j]));
                 // Hyperbolic tangent: f(x) = 2 / (1 + e^(-2x)) - 1
                 } else if (AF == 'tanh') {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 2.0 / (1.0 + Math.exp(-2.0 * ANNMatrix[0][j])) - 1.0;
+                    ANNMatrix[j][0] = 2.0 / (1.0 + math.exp(-2.0 * ANNMatrix[0][j])) - 1.0;
                 // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
                 } else {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 1.0 / (1.0 + Math.exp(-1.0 * ANNMatrix[0][j]));
+                    ANNMatrix[j][0] = 1.0 / (1.0 + math.exp(-1.0 * ANNMatrix[0][j]));
                 }
             } else {
                 // Linear: f(x) = x
@@ -692,15 +693,15 @@ function ANN() {
                 // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
                 } else if (OAF == 'logistic') {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 1.0 / (1.0 + Math.exp(-1.0 * ANNMatrix[0][j]));
+                    ANNMatrix[j][0] = 1.0 / (1.0 + math.exp(-1.0 * ANNMatrix[0][j]));
                 // Hyperbolic tangent: f(x) = 2 / (1 + e^(-2x)) - 1
                 } else if (OAF == 'tanh') {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 2.0 / (1.0 + Math.exp(-2.0 * ANNMatrix[0][j])) - 1.0;
+                    ANNMatrix[j][0] = 2.0 / (1.0 + math.exp(-2.0 * ANNMatrix[0][j])) - 1.0;
                 // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
                 } else {
                     // Calculate y = f(x)
-                    ANNMatrix[j][0] = 1.0 / (1.0 + Math.exp(-1.0 * ANNMatrix[0][j]));
+                    ANNMatrix[j][0] = 1.0 / (1.0 + math.exp(-1.0 * ANNMatrix[0][j]));
                 }
             }
         }
