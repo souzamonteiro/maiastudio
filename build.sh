@@ -13,6 +13,7 @@ cp build/maiascript.js examples/js/
 chmod 755 bin/*
 
 jsdoc -d ./doc ./package.json ./src
+jsdoc -c ./maia/cna/jsdoc.json -d ./doc ./maia/cna/package.json ./maia/cna
 
 mkdir doc/grammar
 cp -r grammar/diagram.xhtml doc/grammar
