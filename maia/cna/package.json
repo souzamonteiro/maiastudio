@@ -1,7 +1,7 @@
 {
-  "name": "cnatool",
-  "version": "1.2.2",
-  "description": "Complex Network Analysis Tool.",
+  "name": "cna",
+  "version": "1.2.3",
+  "description": "Complex Network Analysis Library.",
   "keywords": [
     "maia",
     "maiascript",
@@ -16,19 +16,5 @@
   ],
   "author": "The MaiaScript Team (https://www.maiascript.com)",
   "license": "Apache-2.0",
-  "homepage": "https://www.maiascript.com",
-  "bugs": {
-    "url": "https://github.com/souzamonteiro/cnatool/issues"
-  },
-  "scripts": {
-    "build": "./build.sh",
-    "test": "./test.sh"
-  },
-  "directories": {
-    "example": "examples"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/souzamonteiro/cnatool.git"
-  }
+  "homepage": "https://www.maiascript.com"
 }
