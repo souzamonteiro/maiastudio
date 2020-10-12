@@ -5523,7 +5523,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.7.3";
+    this.version = "1.8.0";
 
     this.testResult = {
         "expected": {},
@@ -9595,7 +9595,7 @@ function MaiaVM() {
             var justCompile = false;
             var inputFile;
             var outputFile;
-            if (argv.length > 1) {
+            if (argv.length > 2) {
                 var i = 2;
                 while (i < argv.length) {
                     if (argv[i] == '-c') {
@@ -9641,16 +9641,15 @@ function MaiaVM() {
                     var compiler = new MaiaCompiler();
                     compiledCode.js = compiler.compile(xml);
                     if (justCompile) {
-                        if (typeof outputFile != 'undefined') {
-                            fs.writeFile(outputFile, compiledCode.js, function (err) {
-                                if (err) {
-                                    throw err;
-                                }
-                            });
-                        } else {
-                            system.log('MaiaScript Command Line Interface (CLI)');
-                            system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
+                        if (typeof outputFile == 'undefined') {
+                            fileName = inputFile.split('.').shift();
+                            outputFile = fileName + '.js';
                         }
+                        fs.writeFile(outputFile, compiledCode.js, function (err) {
+                            if (err) {
+                                throw err;
+                            }
+                        });
                     } else {
                         try {
                             const vm = require('vm');
@@ -9666,8 +9665,37 @@ function MaiaVM() {
                     system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
                 }
             } else {
-                system.log('MaiaScript Command Line Interface (CLI)');
-                system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
+                var options = {
+                    input: process.stdin,
+                    output: process.stdout
+                }
+
+                // Command prompt.
+                const readline = require('readline');
+                const rl = readline.createInterface(options);
+
+                rl.setPrompt(': ');
+                rl.prompt();
+
+                function runCommand (commandLine) {
+                    var res;
+                    if (commandLine.trim() == 'exit') {
+                        process.exit(0);
+                    }
+                    try {
+                        res = core.eval(commandLine);
+                    } catch (e) {
+                        var evalError = e.message;
+                        system.log(evalError);
+                        system.showMessageDialog(evalError);
+                    }
+                    if (typeof res != 'undefined') {
+                        system.log(res);
+                    }
+                    rl.prompt();
+                }
+                
+                rl.on('line', runCommand);
             }
         }
     }
@@ -9680,13 +9708,15 @@ maiavm = new MaiaVM();
  * from the command line.
  */
 if (typeof process !== 'undefined') {
+    // Emulate DOM.
     const jsdom = require("jsdom");
     const { JSDOM } = jsdom;
     var doc = new JSDOM();
     var DOMParser = doc.window.DOMParser;
     
+    // Emulate Web SQL.
     const openDatabase = require('websql');
-    
+
     var alert = system.log;
 
     maiavm.run();
