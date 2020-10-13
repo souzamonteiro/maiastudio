@@ -123,7 +123,7 @@ To launch MaiaStudio open the file `index.html`, in the main directory of the pa
 
 To try MaiaStudio on-line go to [http://www.maiastudio.com.br](http://www.maiastudio.com.br)
 
-Lauro de Freitas, August 2020.
+Lauro de Freitas, October 2020.
 
 Roberto Luiz Souza Monteiro
 

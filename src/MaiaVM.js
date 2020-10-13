@@ -222,7 +222,7 @@ function MaiaVM() {
                     compiledCode.js = compiler.compile(xml);
                     if (justCompile) {
                         if (typeof outputFile == 'undefined') {
-                            fileName = inputFile.split('.').shift();
+                            var fileName = inputFile.split('.').shift();
                             outputFile = fileName + '.js';
                         }
                         fs.writeFile(outputFile, compiledCode.js, function (err) {
