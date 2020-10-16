@@ -575,7 +575,7 @@ function Matrix() {
             var m = dim[0];
             var n = dim[1];
             // Convert to the triangular equivalent matrix.
-            var cpy = mtx.slice();
+            var cpy = core.copyMatrix(mtx);
             for (k = 0; k < m - 1; k++) {
                 for (i = k + 1; i < m; i++) {
                     var scale = -cpy[i][k] / cpy[k][k]

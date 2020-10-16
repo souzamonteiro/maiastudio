@@ -791,7 +791,7 @@ function ANN() {
         if (typeof interval == 'undefined') {
             interval = 0;
         }
-        var ANN = ANNMatrix.slice();
+        var ANN = core.copyMatrix(ANNMatrix);
         var dimIn = core.dim(inMatrix);
         var dimOut = core.dim(outMatrix);
         var input = core.matrix(0.0, 1, dimIn[1]);
@@ -840,12 +840,12 @@ function ANN() {
                 correctnessMatrix[epochs][0] = RSS;
                 correctnessMatrix[epochs][1] = correctness;
                 if (hits == dimIn[0]) {
-                    ANNMatrix = ANN.slice();
+                    ANNMatrix = core.copyMatrix(ANN);
                     result = [epochs, RSS, correctnessMatrix];
                     return result;
                 }
                 if (correctness >= minimumCorrectness) {
-                    ANNMatrix = ANN.slice();
+                    ANNMatrix = core.copyMatrix(ANN);
                     result = [epochs, RSS, correctnessMatrix];
                     return result;
                 }

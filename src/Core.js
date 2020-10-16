@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.8.4";
+    this.version = "1.8.5";
 
     this.testResult = {
         "expected": {},
@@ -50,6 +50,22 @@ function Core() {
     /*
      * The following functions allow you to manipulate MaiaScript objects.
      */
+
+     /**
+     * Copies a matrix.
+     * @param {array}  obj - Matrix to be copied.
+     * @return {array}  A copy of the matrix.
+     */
+    this.copyMatrix = function(obj)
+    {
+        var newMatrix = [];
+
+        for (var i = 0; i < obj.length; i++) {
+            newMatrix[i] = obj[i].slice();
+        }
+
+        return newMatrix;
+    }
 
     /**
      * Returns the character at the indicated position.
@@ -142,7 +158,7 @@ function Core() {
             var m = dim[0];
             var n = dim[1];
             // Convert to the diagonal equivalent matrix.
-            var cpy = obj.slice();
+            var cpy = this.copyMatrix(obj);
             mtx = core.ident(m);
             for (var j = 0; j < m; j++) {
                 if (cpy[j][j] != 0) {
@@ -187,7 +203,7 @@ function Core() {
             var m = dim[0];
             var n = dim[1];
             // Convert to the diagonal equivalent matrix.
-            var cpy = obj.slice();
+            var cpy = this.copyMatrix(obj);
             for (var j = 0; j < m; j++) {
                 if (cpy[j][j] != 0) {
                     for (var i = 0; i < m; i++) {
@@ -342,7 +358,7 @@ function Core() {
             var m = dim[0];
             var n = dim[1];
             // Convert to the diagonal equivalent matrix.
-            var cpy = obj.slice();
+            var cpy = this.copyMatrix(obj);
             mtx = core.ident(m);
             for (var j = 0; j < m; j++) {
                 if (cpy[j][j] != 0) {
