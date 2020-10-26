@@ -3,10 +3,11 @@ maiascript               ::= expression*
 
 operation                ::= variableAssignment
 variableAssignment       ::= logicalORExpression ('=' logicalORExpression)*
-logicalORExpression      ::= logicalANDExpression ('||' logicalANDExpression)*
+logicalORExpression      ::= logicalXORExpression ('||' logicalXORExpression)*
+logicalXORExpression     ::= logicalANDExpression ('||||' logicalANDExpression)*
 logicalANDExpression     ::= bitwiseORExpression ('&&' bitwiseORExpression)*
 bitwiseORExpression      ::= bitwiseXORExpression ('|' bitwiseXORExpression)*
-bitwiseXORExpression     ::= bitwiseANDExpression ('`' bitwiseANDExpression)*
+bitwiseXORExpression     ::= bitwiseANDExpression ('|||' bitwiseANDExpression)*
 bitwiseANDExpression     ::= equalityExpression ('&' equalityExpression)*
 equalityExpression       ::= relationalExpression (('==' | '!=') relationalExpression)*
 relationalExpression     ::= shiftExpression (('<' | '>' | '<=' | '>=') shiftExpression)*

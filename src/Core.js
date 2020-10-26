@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "1.8.5";
+    this.version = "1.9.0";
 
     this.testResult = {
         "expected": {},
@@ -900,6 +900,17 @@ function Core() {
     this.logicalOR = function(left, right)
     {
         return left || right;
+    }
+
+    /**
+     * Performs the logical XOR operation between two objects.
+     * @param {object}   left - The left operand.
+     * @param {object}   right - The right operand.
+     * @return {string}  An string represening the result of the operation.
+     */
+    this.logicalXOR = function(left, right)
+    {
+        return left ? !right : right;
     }
 
     /**

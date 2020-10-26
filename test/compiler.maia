@@ -189,7 +189,7 @@ test (tries; "1 0 1 0 1 0 1 0 1 0 1 1 1 1 1 1 1 1"; 0) {
     system.print("      But got " + core.testResult.obtained)
 }
 
-system.println("Testing binary operators \"&\", \"`\" and \"|\"...")
+system.println("Testing binary operators \"&\", \"|||\" and \"|\"...")
 
 test (tries; "1 6 7"; 0) {
     # a = 101
@@ -200,36 +200,33 @@ test (tries; "1 6 7"; 0) {
     a = 5
     b = 3
     c = a & b
-    d = a ` b
+    d = a ||| b
     e = a | b
     string.sprintf("%d %d %d", c, d, e)
 } catch (v) {
-    system.print("TEST: Fail testing binary operators \"&\", \"`\" and \"|\".")
+    system.print("TEST: Fail testing binary operators \"&\", \"|||\" and \"|\".")
     system.print("      Expected result " + core.testResult.expected)
     system.print("      But got " + core.testResult.obtained)
 }
 
-system.println("Testing logic operators '&&' and '||'...")
+system.println("Testing logic operators \"&&\", \"||||\" and \"||\"...")
 
-test (tries; "1 1 [[0,1],[0,1]]"; 0) {
+test (tries; "1 1 true false"; 0) {
     a = 1
     b = 0
     c = 1
-    d = [1,1;0,1]
-    e = [0,1;0,1]
-    f = [0,0;1,1]
-    g = a && b || c
-    h = a || b && c
-    j = d && e || f
-    string.sprintf("%d %d %s", g, h, core.toString(j))
+    d = a && b || c
+    e = a || b && c
+    f = a |||| b
+    g = a |||| c
+    string.sprintf("%d %d %s %s", d, e, f, g)
 } catch (v) {
-    system.print("TEST: Fail testing logic operators '&&' and '||'.")
+    system.print("TEST: Fail testing logic operators \"&&\", \"||||\" and \"||\".")
     system.print("      Expected result " + core.testResult.expected)
     system.print("      But got " + core.testResult.obtained)
 }
 
 system.println("Testing the expression compiler...")
-
 test (tries; 13; 0) {
     x = 2
     y = 2 * x ^ 2 + 2 * x + 1
