@@ -4,8 +4,8 @@ rm -rf build/*
 rm -rf doc/*
 
 # Creates uncompressed versions of the library.
-cat src/Shebang.js src/MaiaScript.js src/ComplexNumber.js src/MaiaCompiler.js src/Core.js src/ANN.js src/CAS.js src/Math.js src/Matrix.js src/String.js src/System.js src/MaiaVM.js > build/maiascript.js
-cat src/MaiaScript.js src/ComplexNumber.js src/MaiaCompiler.js src/Core.js src/ANN.js src/CAS.js src/Math.js src/Matrix.js src/String.js src/System.js > build/libmaia.js
+cat src/Shebang.js src/MaiaScript.js src/ComplexNumber.js src/MaiaCompiler.js src/ANN.js src/CAS.js src/Core.js src/Math.js src/Matrix.js src/String.js src/System.js src/Task.js src/MaiaVM.js > build/maiascript.js
+cat src/MaiaScript.js src/ComplexNumber.js src/MaiaCompiler.js src/ANN.js src/CAS.js src/Core.js src/Math.js src/Matrix.js src/String.js src/System.js src/Task.js > build/libmaia.js
 
 cp build/maiascript.js bin/
 cp build/maiascript.js js/
