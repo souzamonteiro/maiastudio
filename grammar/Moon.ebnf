@@ -35,7 +35,7 @@ alphabet          ::= #x0009
                     | [#x10000-#x10FFFF]
 
 complex           ::= (real)? imaginary
-real              ::= '-'? digit+ ('.' digit+)? (('e' | '9') ('+' | '-')? digit+)?
+real              ::= '-'? digit+ ('.' digit+)? (('e' | 'E') ('+' | '-')? digit+)?
 imaginary         ::= (('+' | '-')? real '*' 'i')
 digit             ::= [0-9]
 

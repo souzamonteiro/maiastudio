@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: cna</title>
+    <title>JSDoc: Class: Mathematics</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: cna</h1>
+    <h1 class="page-title">Class: Mathematics</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2>cna</h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Mathematics<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -37,10 +37,31 @@
     <div class="container-overview">
     
         
-            <div class="description">MaiaScript Social and Complex Network Analysis library.</div>
-        
 
-        
+    
+
+    
+    <h4 class="name" id="Mathematics"><span class="type-signature"></span>new Mathematics<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    MaiaScript math library.
+</div>
+
+
+
+
+
+
+
+
+
+
+
 
 
 <dl class="details">
@@ -72,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line21">line 21</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -84,7 +105,24 @@
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     </div>
 
@@ -111,7 +149,7 @@
     
 
     
-    <h4 class="name" id=".createNetwork"><span class="type-signature">(static) </span>createNetwork<span class="signature">(topology, numVertices, numEdges, edgeProbability, averageDegree)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="abs"><span class="type-signature"></span>abs<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -119,7 +157,7 @@
 
 
 <div class="description">
-    Creates an artificial network.
+    Returns the positive value of x.
 </div>
 
 
@@ -155,13 +193,13 @@
 
         <tr>
             
-                <td class="name"><code>topology</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">object</span>
 
 
             
@@ -171,101 +209,7 @@
 
             
 
-            <td class="description last">Graph topology. It can be:
-                              complete, random, small world,
-                              scale-free or hybrid.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>numVertices</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Number of vertices.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>numEdges</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Number of edges.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>edgeProbability</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Edge probability.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>averageDegree</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Average degree.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -306,7 +250,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line27">line 27</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line72">line 72</a>
     </li></ul></dd>
     
 
@@ -335,553 +279,7 @@
 
         
 <div class="param-desc">
-    An artificial network.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".createPajekFile"><span class="type-signature">(static) </span>createPajekFile<span class="signature">(adj, type)</span><span class="type-signature"> &rarr; {string}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Creates a Pajek file.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>adj</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Adjascence matrix.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">File type (edges, arcs or matrix).</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line46">line 46</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    A Pajek file.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".doShortestPathWalk"><span class="type-signature">(static) </span>doShortestPathWalk<span class="signature">(path, i, j)</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Do a shortest parh walk in the network and returns the path.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>path</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Paths matrix.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>i</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Element index.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>j</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Element index.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line886">line 886</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Returns an array containing the shortest parh walk between two vetice in the matrix.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".getAverageClustering"><span class="type-signature">(static) </span>getAverageClustering<span class="signature">(clustering)</span><span class="type-signature"> &rarr; {number}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Calculates average clustering coefficient of the network.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>clustering</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Array containing the clustering coefficients of the vertices.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line727">line 727</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Returns the average clustering coefficient of the network.
+    The positive value of x.
 </div>
 
 
@@ -910,7 +308,7 @@
     
 
     
-    <h4 class="name" id=".getAverageDegree"><span class="type-signature">(static) </span>getAverageDegree<span class="signature">(degrees)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="acos"><span class="type-signature"></span>acos<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -918,7 +316,7 @@
 
 
 <div class="description">
-    Calculates average degree of the network.
+    Returns the arccosine value of x.
 </div>
 
 
@@ -954,7 +352,7 @@
 
         <tr>
             
-                <td class="name"><code>degrees</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -970,7 +368,7 @@
 
             
 
-            <td class="description last">Array containing degrees of the vertices.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -1011,7 +409,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line650">line 650</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line88">line 88</a>
     </li></ul></dd>
     
 
@@ -1040,7 +438,7 @@
 
         
 <div class="param-desc">
-    Returns the average degree of the network.
+    The arccosine value of x.
 </div>
 
 
@@ -1069,7 +467,7 @@
     
 
     
-    <h4 class="name" id=".getAverageShortestPath"><span class="type-signature">(static) </span>getAverageShortestPath<span class="signature">(geodesic)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="acosh"><span class="type-signature"></span>acosh<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -1077,7 +475,7 @@
 
 
 <div class="description">
-    Calculates average shortest path of the network.
+    Returns the hyperbolic arccosine value of x.
 </div>
 
 
@@ -1113,7 +511,7 @@
 
         <tr>
             
-                <td class="name"><code>geodesic</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -1129,7 +527,7 @@
 
             
 
-            <td class="description last">Array the shortest parh between each two vetices in the matrix.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -1170,7 +568,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line791">line 791</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line102">line 102</a>
     </li></ul></dd>
     
 
@@ -1199,7 +597,7 @@
 
         
 <div class="param-desc">
-    Returns the average shortest path of the network.
+    The hyperbolic arccosine value of x.
 </div>
 
 
@@ -1228,7 +626,7 @@
     
 
     
-    <h4 class="name" id=".getBooleanOr"><span class="type-signature">(static) </span>getBooleanOr<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="arg"><span class="type-signature"></span>arg<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -1236,7 +634,7 @@
 
 
 <div class="description">
-    Boolean OR between two matrices (A and B).
+    Returns the complex number argument.
 </div>
 
 
@@ -1272,7 +670,7 @@
 
         <tr>
             
-                <td class="name"><code>a</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -1288,30 +686,7 @@
 
             
 
-            <td class="description last">Matrix A.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>b</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Matrix B.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -1352,7 +727,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line509">line 509</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line115">line 115</a>
     </li></ul></dd>
     
 
@@ -1381,917 +756,7 @@
 
         
 <div class="param-desc">
-    Boolean OR between two matrices.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".getCentrality"><span class="type-signature">(static) </span>getCentrality<span class="signature">(adj, geodesic, directed)</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Returns an array containing the centralities of each pair of the network's vertices.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>adj</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Adjascence matrix.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>geodesic</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Vector including the geodesics of the network.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>directed</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">True if the network is directed. False otherwise.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line945">line 945</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Returns an array containing the centralities of each pair of the network's vertices
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".getClustering"><span class="type-signature">(static) </span>getClustering<span class="signature">(adj, directed)</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Calculates the clustering coefficients of the vertices.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>adj</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Adjascence matrix.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>directed</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">True if the network is directed.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line664">line 664</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Returns an array containing the clustering coefficients of the vertices.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".getDegreeDistribution"><span class="type-signature">(static) </span>getDegreeDistribution<span class="signature">(degrees)</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Calculates the degrees distribution in the network.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>degrees</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Array containing degrees of the vertices.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line597">line 597</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Returns an array containing the degrees distribution in the network.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".getDegrees"><span class="type-signature">(static) </span>getDegrees<span class="signature">(adj, directed)</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Calculates the degrees of the vertices of the matrix.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>adj</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Adjascence matrix.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>directed</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">True if the network is directed.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line564">line 564</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Returns a array containing the degrees of the vertices.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".getDensity"><span class="type-signature">(static) </span>getDensity<span class="signature">(adj, directed)</span><span class="type-signature"> &rarr; {number}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Calculates the network density.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>adj</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Adjascence matrix.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>directed</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">True if the network is directed.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line534">line 534</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The network density.
+    The complex number argument.
 </div>
 
 
@@ -2320,7 +785,7 @@
     
 
     
-    <h4 class="name" id=".getDiameter"><span class="type-signature">(static) </span>getDiameter<span class="signature">(geodesic)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="asin"><span class="type-signature"></span>asin<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -2328,7 +793,7 @@
 
 
 <div class="description">
-    Calculates the network diameter.
+    Returns the arcsine value of x.
 </div>
 
 
@@ -2364,7 +829,7 @@
 
         <tr>
             
-                <td class="name"><code>geodesic</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -2380,7 +845,7 @@
 
             
 
-            <td class="description last">Array the shortest parh between each two vetices in the matrix.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -2421,7 +886,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line812">line 812</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line130">line 130</a>
     </li></ul></dd>
     
 
@@ -2450,7 +915,7 @@
 
         
 <div class="param-desc">
-    Returns the network diameter.
+    The arcsine value of x.
 </div>
 
 
@@ -2479,7 +944,7 @@
     
 
     
-    <h4 class="name" id=".getFloydWarshallShortestPath"><span class="type-signature">(static) </span>getFloydWarshallShortestPath<span class="signature">(adj, path)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="asinh"><span class="type-signature"></span>asinh<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -2487,7 +952,7 @@
 
 
 <div class="description">
-    Calculates the shortest parh between each two vetices in the matrix using Floyd Warshall method.
+    Returns the hyperbolic arcsine value of x.
 </div>
 
 
@@ -2523,7 +988,7 @@
 
         <tr>
             
-                <td class="name"><code>adj</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -2539,30 +1004,7 @@
 
             
 
-            <td class="description last">Adjascence matrix.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>path</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Matrix to store paths.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -2603,7 +1045,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line825">line 825</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line144">line 144</a>
     </li></ul></dd>
     
 
@@ -2632,166 +1074,7 @@
 
         
 <div class="param-desc">
-    Returns an array containing the shortest parh between each two vetice in the matrix.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".getGlobalEfficiency"><span class="type-signature">(static) </span>getGlobalEfficiency<span class="signature">(efficiency)</span><span class="type-signature"> &rarr; {number}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Returns the network's global efficiency.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>efficiency</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Array containing the vertex efficiency of each vertex of the network.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line1019">line 1019</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Returns the network's global efficiency.
+    The hyperbolic arcsine value of x.
 </div>
 
 
@@ -2820,7 +1103,7 @@
     
 
     
-    <h4 class="name" id=".getLabels"><span class="type-signature">(static) </span>getLabels<span class="signature">(adj)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="atan"><span class="type-signature"></span>atan<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -2828,7 +1111,7 @@
 
 
 <div class="description">
-    Returns the network vertices labels.
+    Returns the arctangent value of x.
 </div>
 
 
@@ -2864,7 +1147,7 @@
 
         <tr>
             
-                <td class="name"><code>adj</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -2880,7 +1163,7 @@
 
             
 
-            <td class="description last">Adjascence matrix.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -2921,7 +1204,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line1034">line 1034</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line158">line 158</a>
     </li></ul></dd>
     
 
@@ -2950,166 +1233,7 @@
 
         
 <div class="param-desc">
-    Returns the network vertices labels.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".getLabels"><span class="type-signature">(static) </span>getLabels<span class="signature">(adj)</span><span class="type-signature"> &rarr; {number}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Removes the network vertices labels.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>adj</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Adjascence matrix.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line1071">line 1071</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Removes the network vertices labels.
+    The arctangent value of x.
 </div>
 
 
@@ -3138,7 +1262,7 @@
     
 
     
-    <h4 class="name" id=".getNumberOfGeodesics"><span class="type-signature">(static) </span>getNumberOfGeodesics<span class="signature">(adj, geodesic, directed)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="atan2"><span class="type-signature"></span>atan2<span class="signature">(x, y)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -3146,7 +1270,7 @@
 
 
 <div class="description">
-    Return the number os geodesics in the network.
+    Returns the arctangent of the quotient of x and y.
 </div>
 
 
@@ -3182,7 +1306,7 @@
 
         <tr>
             
-                <td class="name"><code>adj</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -3198,14 +1322,14 @@
 
             
 
-            <td class="description last">Adjascence matrix.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>geodesic</code></td>
+                <td class="name"><code>y</code></td>
             
 
             <td class="type">
@@ -3221,30 +1345,7 @@
 
             
 
-            <td class="description last">Vector including the geodesics of the network.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>directed</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">True if the network is directed. False otherwise.</td>
+            <td class="description last">Value of Y.</td>
         </tr>
 
     
@@ -3285,7 +1386,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line908">line 908</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line173">line 173</a>
     </li></ul></dd>
     
 
@@ -3314,7 +1415,7 @@
 
         
 <div class="param-desc">
-    Returns the number os geodesics in the network.
+    The arctangent value of x.
 </div>
 
 
@@ -3343,7 +1444,7 @@
     
 
     
-    <h4 class="name" id=".getShortestPath"><span class="type-signature">(static) </span>getShortestPath<span class="signature">(adj)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="atanh"><span class="type-signature"></span>atanh<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -3351,7 +1452,7 @@
 
 
 <div class="description">
-    Calculates the shortest parh between each two vetices in the matrix.
+    Returns the hyperbolic arctangent value of x.
 </div>
 
 
@@ -3387,7 +1488,7 @@
 
         <tr>
             
-                <td class="name"><code>adj</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -3403,7 +1504,7 @@
 
             
 
-            <td class="description last">Adjascence matrix.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -3444,7 +1545,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line742">line 742</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line187">line 187</a>
     </li></ul></dd>
     
 
@@ -3473,7 +1574,7 @@
 
         
 <div class="param-desc">
-    Returns an array containing the shortest parh between each two vetice in the matrix.
+    The hyperbolic arctangent value of x.
 </div>
 
 
@@ -3484,7 +1585,7 @@
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">number</span>
 
 
     </dd>
@@ -3502,7 +1603,7 @@
     
 
     
-    <h4 class="name" id=".getTransitiveClosure"><span class="type-signature">(static) </span>getTransitiveClosure<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="cbrt"><span class="type-signature"></span>cbrt<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -3510,7 +1611,7 @@
 
 
 <div class="description">
-    Transitive closure between two matrices (A and B).
+    Returns the cubic root of x.
 </div>
 
 
@@ -3546,7 +1647,7 @@
 
         <tr>
             
-                <td class="name"><code>a</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -3562,30 +1663,7 @@
 
             
 
-            <td class="description last">Matrix A.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>b</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Matrix B.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -3626,7 +1704,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line480">line 480</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line201">line 201</a>
     </li></ul></dd>
     
 
@@ -3655,7 +1733,7 @@
 
         
 <div class="param-desc">
-    Transitive closure between two matrices.
+    The cubic root of x.
 </div>
 
 
@@ -3666,7 +1744,7 @@
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">number</span>
 
 
     </dd>
@@ -3684,7 +1762,7 @@
     
 
     
-    <h4 class="name" id=".getVertexEfficiency"><span class="type-signature">(static) </span>getVertexEfficiency<span class="signature">(geodesic)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="ceil"><span class="type-signature"></span>ceil<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -3692,7 +1770,7 @@
 
 
 <div class="description">
-    Returns an array containing the vertex efficiency of each pair of the network's vertices.
+    Returns the value of x rounded up.
 </div>
 
 
@@ -3728,7 +1806,7 @@
 
         <tr>
             
-                <td class="name"><code>geodesic</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -3744,7 +1822,7 @@
 
             
 
-            <td class="description last">Vector including the geodesics of the network.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -3785,7 +1863,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line996">line 996</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line249">line 249</a>
     </li></ul></dd>
     
 
@@ -3814,7 +1892,7 @@
 
         
 <div class="param-desc">
-    Returns an array containing the vertex efficiency of each pair of the network's vertices
+    Value of x rounded up.
 </div>
 
 
@@ -3825,7 +1903,7 @@
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">number</span>
 
 
     </dd>
@@ -3843,7 +1921,7 @@
     
 
     
-    <h4 class="name" id=".jsonToPajekFile"><span class="type-signature">(static) </span>jsonToPajekFile<span class="signature">(network)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="cos"><span class="type-signature"></span>cos<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -3851,7 +1929,7 @@
 
 
 <div class="description">
-    Create a Pajek file from JSON.
+    Returns the cosine value of x.
 </div>
 
 
@@ -3887,7 +1965,7 @@
 
         <tr>
             
-                <td class="name"><code>network</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -3903,7 +1981,7 @@
 
             
 
-            <td class="description last">JSON containing the network.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -3944,7 +2022,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line409">line 409</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line215">line 215</a>
     </li></ul></dd>
     
 
@@ -3973,7 +2051,7 @@
 
         
 <div class="param-desc">
-    A Pajek file.
+    The cosine value of x.
 </div>
 
 
@@ -3984,7 +2062,7 @@
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">number</span>
 
 
     </dd>
@@ -4002,7 +2080,7 @@
     
 
     
-    <h4 class="name" id=".pajekFileToJson"><span class="type-signature">(static) </span>pajekFileToJson<span class="signature">(fileContents, properties)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="cosh"><span class="type-signature"></span>cosh<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -4010,7 +2088,7 @@
 
 
 <div class="description">
-    Convert a file in Pajek format to JSON.
+    Returns the hyperbolic cosine value of x.
 </div>
 
 
@@ -4046,30 +2124,7 @@
 
         <tr>
             
-                <td class="name"><code>fileContents</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Pajek file contents.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>properties</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -4085,7 +2140,7 @@
 
             
 
-            <td class="description last">Network properties (n, m and directed).</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -4126,7 +2181,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line232">line 232</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line232">line 232</a>
     </li></ul></dd>
     
 
@@ -4155,7 +2210,7 @@
 
         
 <div class="param-desc">
-    A JSON containing the network.
+    The hyperbolic cosine value of x.
 </div>
 
 
@@ -4166,7 +2221,7 @@
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">number</span>
 
 
     </dd>
@@ -4184,7 +2239,7 @@
     
 
     
-    <h4 class="name" id=".parsePajekFile"><span class="type-signature">(static) </span>parsePajekFile<span class="signature">(fileContents, properties)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="exp"><span class="type-signature"></span>exp<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -4192,7 +2247,7 @@
 
 
 <div class="description">
-    Parses a Pajek file.
+    Returns the value of E^x
 </div>
 
 
@@ -4228,30 +2283,7 @@
 
         <tr>
             
-                <td class="name"><code>fileContents</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Pajek file contents.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>properties</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -4267,7 +2299,7 @@
 
             
 
-            <td class="description last">Network properties (n, m and directed).</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -4308,7 +2340,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line102">line 102</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line263">line 263</a>
     </li></ul></dd>
     
 
@@ -4337,7 +2369,7 @@
 
         
 <div class="param-desc">
-    An adjascence matrix.
+    Value of E^x.
 </div>
 
 
@@ -4348,7 +2380,7 @@
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">number</span>
 
 
     </dd>
@@ -4366,7 +2398,7 @@
     
 
     
-    <h4 class="name" id=".setLabels"><span class="type-signature">(static) </span>setLabels<span class="signature">(adj, labels)</span><span class="type-signature"> &rarr; {obj}</span></h4>
+    <h4 class="name" id="floor"><span class="type-signature"></span>floor<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -4374,7 +2406,7 @@
 
 
 <div class="description">
-    Sets the network vertices labels.
+    Returns the value of x rounded down.
 </div>
 
 
@@ -4410,7 +2442,7 @@
 
         <tr>
             
-                <td class="name"><code>adj</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -4426,30 +2458,7 @@
 
             
 
-            <td class="description last">Adjascence matrix.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>labels</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Array containing the vertices labels.</td>
+            <td class="description last">Value of X.</td>
         </tr>
 
     
@@ -4490,7 +2499,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cna.maia.html">cna.maia</a>, <a href="cna.maia.html#line1052">line 1052</a>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line280">line 280</a>
     </li></ul></dd>
     
 
@@ -4519,7 +2528,7 @@
 
         
 <div class="param-desc">
-    Matrix with vertex labels set.
+    Value of x rounded down.
 </div>
 
 
@@ -4530,13 +2539,2029 @@
     </dt>
     <dd>
         
-<span class="param-type">obj</span>
+<span class="param-type">number</span>
 
 
     </dd>
 </dl>
 
     
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="log"><span class="type-signature"></span>log<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the value of the natural logarithm of x.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line294">line 294</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The value of the natural logarithm of x.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="max"><span class="type-signature"></span>max<span class="signature">(x, y)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the largest value between x and y.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of y.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line316">line 316</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The largest value between x and y.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="min"><span class="type-signature"></span>min<span class="signature">(x, y)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the smallest value between x and y.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of y.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line331">line 331</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The smallest value between x and y.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="pow"><span class="type-signature"></span>pow<span class="signature">(x, y)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the value of x to the power of y.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of y.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line346">line 346</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Value of x to the power of y.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="random"><span class="type-signature"></span>random<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns a random number between 0 and 1.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line356">line 356</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A random number.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="round"><span class="type-signature"></span>round<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the value of x rounding to the nearest value.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line367">line 367</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Value of x rounding to the nearest value.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="sin"><span class="type-signature"></span>sin<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the sine value of x.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line381">line 381</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The sine value of x.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="sinh"><span class="type-signature"></span>sinh<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the hyperbolic sine value of x.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line398">line 398</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The hyperbolic sine value of x.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="sqrt"><span class="type-signature"></span>sqrt<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the square root of x.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line415">line 415</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Value of the square root of x.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="tan"><span class="type-signature"></span>tan<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the tangent value of x.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line436">line 436</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The tangent value of x.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="tanh"><span class="type-signature"></span>tanh<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the hyperbolic tangent value of x.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line453">line 453</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The hyperbolic tangent value of x.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="trunc"><span class="type-signature"></span>trunc<span class="signature">(x)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the integer part of a number.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value of X.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line470">line 470</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The integer part of a number
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~init"><span class="type-signature">(inner) </span>init<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Creates the attributes of the class.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Math.js.html">Math.js</a>, <a href="Math.js.html#line39">line 39</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4558,13 +4583,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="cna.html">cna</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ANN.html">ANN</a></li><li><a href="CAS.html">CAS</a></li><li><a href="Core.html">Core</a></li><li><a href="MaiaCompiler.html">MaiaCompiler</a></li><li><a href="MaiaString.html">MaiaString</a></li><li><a href="MaiaVM.html">MaiaVM</a></li><li><a href="Mathematics.html">Mathematics</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="System.html">System</a></li><li><a href="Task.html">Task</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Mon Nov 23 2020 19:26:52 GMT-0300 (Brasilia Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Wed Nov 25 2020 16:06:40 GMT-0300 (Brasilia Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

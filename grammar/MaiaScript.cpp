@@ -1,5 +1,5 @@
-// This file was generated on Mon Oct 26, 2020 10:04 (UTC-03) by REx v5.52 which is Copyright (c) 1979-2020 by Gunther Rademacher <grd@gmx.net>
-// REx command line: MaiaScript.ebnf -backtrack -tree -trace -main -cpp
+// This file was generated on Wed Nov 25, 2020 15:55 (UTC-03) by REx v5.52 which is Copyright (c) 1979-2020 by Gunther Rademacher <grd@gmx.net>
+// REx command line: MaiaScript.ebnf -ll 3 -backtrack -main -cpp
 
 #include <string.h>
 #include <stdlib.h>
@@ -14,275 +14,14 @@
 class MaiaScript
 {
 public:
-  class EventHandler;
-
-  MaiaScript(const wchar_t *string, EventHandler *t)
+  MaiaScript(const wchar_t *string)
   {
-    initialize(string, t);
+    initialize(string);
   }
 
   virtual ~MaiaScript()
   {
   }
-
-  class EventHandler
-  {
-  public:
-    virtual ~EventHandler() {}
-
-    virtual void reset(const wchar_t *string) = 0;
-    virtual void startNonterminal(const wchar_t *name, int begin) = 0;
-    virtual void endNonterminal(const wchar_t *name, int end) = 0;
-    virtual void terminal(const wchar_t *name, int begin, int end) = 0;
-    virtual void whitespace(int begin, int end) = 0;
-  };
-
-  class XmlSerializer : public EventHandler
-  {
-  public:
-    XmlSerializer(bool indent)
-    : input(0)
-    , delayedTag(0)
-    , indent(indent)
-    , hasChildElement(false)
-    , depth(0)
-    {
-    }
-
-    void reset(const wchar_t *input)
-    {
-      fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", stdout);
-
-      this->input = input;
-      delayedTag = 0;
-      hasChildElement = false;
-      depth = 0;
-    }
-
-    void startNonterminal(const wchar_t *tag, int b)
-    {
-      if (delayedTag != 0)
-      {
-        fputc('<', stdout);
-        fputs(Utf8Encoder::encode(delayedTag).c_str(), stdout);
-        fputc('>', stdout);
-      }
-      delayedTag = tag;
-      if (indent)
-      {
-        fputc('\n', stdout);
-        for (int i = 0; i < depth; ++i)
-        {
-          fputs("  ", stdout);
-        }
-      }
-      hasChildElement = false;
-      ++depth;
-    }
-
-    void endNonterminal(const wchar_t *tag, int e)
-    {
-      --depth;
-      if (delayedTag != 0)
-      {
-        delayedTag = 0;
-        fputc('<', stdout);
-        fputs(Utf8Encoder::encode(tag).c_str(), stdout);
-        fputs("/>", stdout);
-      }
-      else
-      {
-        if (indent)
-        {
-          if (hasChildElement)
-          {
-            fputc('\n', stdout);
-            for (int i = 0; i < depth; ++i)
-            {
-              fputs("  ", stdout);
-            }
-          }
-        }
-        fputs("</", stdout);
-        fputs(Utf8Encoder::encode(tag).c_str(), stdout);
-        fputc('>', stdout);
-      }
-      hasChildElement = true;
-    }
-
-    void whitespace(int b, int e)
-    {
-      characters(b, e);
-    }
-
-    void characters(int b, int e)
-    {
-      if (b < e)
-      {
-        if (delayedTag != 0)
-        {
-          fputc('<', stdout);
-          fputs(Utf8Encoder::encode(delayedTag).c_str(), stdout);
-          fputc('>', stdout);
-          delayedTag = 0;
-        }
-        std::string encoded = Utf8Encoder::encode(input + b, e - b);
-        int size = encoded.size();
-        for (int i = 0; i < size; ++i)
-        {
-          char c = encoded[i];
-          switch (c)
-          {
-          case 0: break;
-          case L'&': fputs("&amp;", stdout); break;
-          case L'<': fputs("&lt;", stdout); break;
-          case L'>': fputs("&gt;", stdout); break;
-          default: fputc(c, stdout);
-          }
-        }
-      }
-    }
-
-    void terminal(const wchar_t *tag, int b, int e)
-    {
-      if (tag[0] == L'\'') tag = L"TOKEN";
-      startNonterminal(tag, b);
-      characters(b, e);
-      endNonterminal(tag, e);
-    }
-
-  private:
-    const wchar_t *input;
-    const wchar_t *delayedTag;
-    bool indent;
-    bool hasChildElement;
-    int depth;
-  };
-
-  class Symbol
-  {
-  public:
-    virtual ~Symbol() {}
-
-    const wchar_t *name;
-    int begin;
-    int end;
-
-    virtual void send(EventHandler *e) = 0;
-
-  protected:
-    Symbol(const wchar_t *name, int begin, int end)
-    {
-      this->name = name;
-      this->begin = begin;
-      this->end = end;
-    }
-  };
-
-  class Terminal : public Symbol
-  {
-  public:
-    Terminal(const wchar_t *name, int begin, int end)
-    : Symbol(name, begin, end)
-    {}
-
-    void send(EventHandler *e)
-    {
-      e->terminal(name, begin, end);
-    }
-  };
-
-  class Nonterminal : public Symbol
-  {
-  public:
-    std::vector<Symbol *> *children;
-
-    Nonterminal(const wchar_t *name, int begin, int end, std::vector<Symbol *> *children)
-    : Symbol(name, begin, end)
-    {
-      this->children = children;
-    }
-
-    ~Nonterminal()
-    {
-      for (std::vector<Symbol *>::iterator child = children->begin(); child != children->end(); ++child)
-        delete *child;
-      delete children;
-    }
-
-    void send(EventHandler *e)
-    {
-      e->startNonterminal(name, begin);
-      int pos = begin;
-      for (std::vector<Symbol *>::iterator i = children->begin(); i != children->end(); ++i)
-      {
-        Symbol *c = *i;
-        if (pos < c->begin) e->whitespace(pos, c->begin);
-        c->send(e);
-        pos = c->end;
-      }
-      if (pos < end) e->whitespace(pos, end);
-      e->endNonterminal(name, end);
-    }
-  };
-
-  class TopDownTreeBuilder : public EventHandler
-  {
-  public:
-    TopDownTreeBuilder()
-    {
-      input = 0;
-      stack.clear();
-      top = -1;
-    }
-
-    void reset(const wchar_t *input)
-    {
-      this->input = input;
-      top = -1;
-    }
-
-    void startNonterminal(const wchar_t *name, int begin)
-    {
-      Nonterminal *nonterminal = new Nonterminal(name, begin, begin, new std::vector<Symbol *>());
-      if (top++ >= 0) addChild(nonterminal);
-      if ((size_t) top >= stack.size())
-        stack.resize(stack.size() == 0 ? 64 : stack.size() << 1);
-      stack[top] = nonterminal;
-    }
-
-    void endNonterminal(const wchar_t *name, int end)
-    {
-      stack[top]->end = end;
-      if (top > 0) --top;
-    }
-
-    void terminal(const wchar_t *name, int begin, int end)
-    {
-      addChild(new Terminal(name, begin, end));
-    }
-
-    void whitespace(int begin, int end)
-    {
-    }
-
-    void serialize(EventHandler *e)
-    {
-      e->reset(input);
-      stack[0]->send(e);
-    }
-
-  private:
-    void addChild(Symbol *s)
-    {
-      Nonterminal *current = stack[top];
-      current->children->push_back(s);
-    }
-
-    const wchar_t *input;
-    std::vector<Nonterminal *> stack;
-    int top;
-  };
 
   static int main(int argc, char **argv)
   {
@@ -290,12 +29,9 @@ public:
 
     if (argc < 2)
     {
-      fprintf(stderr, "Usage: %s [-i] INPUT...\n", argv[0]);
+      fprintf(stderr, "Usage: %s INPUT...\n", argv[0]);
       fprintf(stderr, "\n");
       fprintf(stderr, "  parse INPUT, which is either a filename or literal text enclosed in curly braces\n");
-      fprintf(stderr, "\n");
-      fprintf(stderr, "  Option:\n");
-      fprintf(stderr, "    -i     indented parse tree\n");
     }
     else
     {
@@ -303,29 +39,18 @@ public:
       setmode(fileno(stdout), O_BINARY);
 #endif
 
-      bool indent = false;
       for (int i = 1; i < argc; ++i)
       {
-        if (strcmp(argv[i], "-i") == 0)
-        {
-          indent = true;
-          continue;
-        }
         try
         {
-          XmlSerializer s(indent);
           std::wstring input = read(argv[i]);
-          MaiaScript parser(input.c_str(), &s);
+          MaiaScript parser(input.c_str());
           try
           {
-            fprintf(stderr, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            fprintf(stderr, "<trace>\n");
             parser.parse_maiascript();
-            fprintf(stderr, "</trace>\n");
           }
           catch (ParseException &pe)
           {
-            fprintf(stderr, "\n");
             fprintf(stderr, "%s\n", Utf8Encoder::encode(parser.getErrorMessage(pe).c_str()).c_str());
             returnCode = 1;
             break;
@@ -376,9 +101,8 @@ public:
     int getExpected() const {return expected;}
   };
 
-  void initialize(const wchar_t *source, EventHandler *parsingEventHandler)
+  void initialize(const wchar_t *source)
   {
-    eventHandler = parsingEventHandler;
     input = source;
     reset(0, 0, 0);
   }
@@ -407,7 +131,6 @@ public:
     end = e;
     ex = -1;
     memo.clear();
-    eventHandler->reset(input);
   }
 
   void reset()
@@ -498,8 +221,6 @@ public:
 
   void parse_maiascript()
   {
-    traceNonterminal(L"parse", L"start", L"maiascript");
-    eventHandler->startNonterminal(L"maiascript", e0);
     lookahead1W(21);                // END | eof | identifier | null | true | false | string | complex | real |
                                     // comment | whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' |
                                     // 'for' | 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' |
@@ -520,37 +241,26 @@ public:
         {
           break;
         }
-        whitespace();
         parse_expression();
       }
       break;
     }
-    eventHandler->endNonterminal(L"maiascript", e0);
-    traceNonterminal(L"parse", L"end", L"maiascript");
   }
 
 private:
 
   void parse_operation()
   {
-    traceNonterminal(L"parse", L"start", L"operation");
-    eventHandler->startNonterminal(L"operation", e0);
     parse_variableAssignment();
-    eventHandler->endNonterminal(L"operation", e0);
-    traceNonterminal(L"parse", L"end", L"operation");
   }
 
   void try_operation()
   {
-    traceNonterminal(L"try", L"start", L"operation");
     try_variableAssignment();
-    traceNonterminal(L"try", L"end", L"operation");
   }
 
   void parse_variableAssignment()
   {
-    traceNonterminal(L"parse", L"start", L"variableAssignment");
-    eventHandler->startNonterminal(L"variableAssignment", e0);
     parse_logicalORExpression();
     for (;;)
     {
@@ -561,16 +271,12 @@ private:
       consume(30);                  // '='
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_logicalORExpression();
     }
-    eventHandler->endNonterminal(L"variableAssignment", e0);
-    traceNonterminal(L"parse", L"end", L"variableAssignment");
   }
 
   void try_variableAssignment()
   {
-    traceNonterminal(L"try", L"start", L"variableAssignment");
     try_logicalORExpression();
     for (;;)
     {
@@ -583,13 +289,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_logicalORExpression();
     }
-    traceNonterminal(L"try", L"end", L"variableAssignment");
   }
 
   void parse_logicalORExpression()
   {
-    traceNonterminal(L"parse", L"start", L"logicalORExpression");
-    eventHandler->startNonterminal(L"logicalORExpression", e0);
     parse_logicalXORExpression();
     for (;;)
     {
@@ -600,16 +303,12 @@ private:
       consume(56);                  // '||'
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_logicalXORExpression();
     }
-    eventHandler->endNonterminal(L"logicalORExpression", e0);
-    traceNonterminal(L"parse", L"end", L"logicalORExpression");
   }
 
   void try_logicalORExpression()
   {
-    traceNonterminal(L"try", L"start", L"logicalORExpression");
     try_logicalXORExpression();
     for (;;)
     {
@@ -622,13 +321,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_logicalXORExpression();
     }
-    traceNonterminal(L"try", L"end", L"logicalORExpression");
   }
 
   void parse_logicalXORExpression()
   {
-    traceNonterminal(L"parse", L"start", L"logicalXORExpression");
-    eventHandler->startNonterminal(L"logicalXORExpression", e0);
     parse_logicalANDExpression();
     for (;;)
     {
@@ -639,16 +335,12 @@ private:
       consume(58);                  // '||||'
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_logicalANDExpression();
     }
-    eventHandler->endNonterminal(L"logicalXORExpression", e0);
-    traceNonterminal(L"parse", L"end", L"logicalXORExpression");
   }
 
   void try_logicalXORExpression()
   {
-    traceNonterminal(L"try", L"start", L"logicalXORExpression");
     try_logicalANDExpression();
     for (;;)
     {
@@ -661,13 +353,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_logicalANDExpression();
     }
-    traceNonterminal(L"try", L"end", L"logicalXORExpression");
   }
 
   void parse_logicalANDExpression()
   {
-    traceNonterminal(L"parse", L"start", L"logicalANDExpression");
-    eventHandler->startNonterminal(L"logicalANDExpression", e0);
     parse_bitwiseORExpression();
     for (;;)
     {
@@ -678,16 +367,12 @@ private:
       consume(16);                  // '&&'
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_bitwiseORExpression();
     }
-    eventHandler->endNonterminal(L"logicalANDExpression", e0);
-    traceNonterminal(L"parse", L"end", L"logicalANDExpression");
   }
 
   void try_logicalANDExpression()
   {
-    traceNonterminal(L"try", L"start", L"logicalANDExpression");
     try_bitwiseORExpression();
     for (;;)
     {
@@ -700,13 +385,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_bitwiseORExpression();
     }
-    traceNonterminal(L"try", L"end", L"logicalANDExpression");
   }
 
   void parse_bitwiseORExpression()
   {
-    traceNonterminal(L"parse", L"start", L"bitwiseORExpression");
-    eventHandler->startNonterminal(L"bitwiseORExpression", e0);
     parse_bitwiseXORExpression();
     for (;;)
     {
@@ -717,16 +399,12 @@ private:
       consume(55);                  // '|'
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_bitwiseXORExpression();
     }
-    eventHandler->endNonterminal(L"bitwiseORExpression", e0);
-    traceNonterminal(L"parse", L"end", L"bitwiseORExpression");
   }
 
   void try_bitwiseORExpression()
   {
-    traceNonterminal(L"try", L"start", L"bitwiseORExpression");
     try_bitwiseXORExpression();
     for (;;)
     {
@@ -739,13 +417,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_bitwiseXORExpression();
     }
-    traceNonterminal(L"try", L"end", L"bitwiseORExpression");
   }
 
   void parse_bitwiseXORExpression()
   {
-    traceNonterminal(L"parse", L"start", L"bitwiseXORExpression");
-    eventHandler->startNonterminal(L"bitwiseXORExpression", e0);
     parse_bitwiseANDExpression();
     for (;;)
     {
@@ -756,16 +431,12 @@ private:
       consume(57);                  // '|||'
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_bitwiseANDExpression();
     }
-    eventHandler->endNonterminal(L"bitwiseXORExpression", e0);
-    traceNonterminal(L"parse", L"end", L"bitwiseXORExpression");
   }
 
   void try_bitwiseXORExpression()
   {
-    traceNonterminal(L"try", L"start", L"bitwiseXORExpression");
     try_bitwiseANDExpression();
     for (;;)
     {
@@ -778,13 +449,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_bitwiseANDExpression();
     }
-    traceNonterminal(L"try", L"end", L"bitwiseXORExpression");
   }
 
   void parse_bitwiseANDExpression()
   {
-    traceNonterminal(L"parse", L"start", L"bitwiseANDExpression");
-    eventHandler->startNonterminal(L"bitwiseANDExpression", e0);
     parse_equalityExpression();
     for (;;)
     {
@@ -795,16 +463,12 @@ private:
       consume(15);                  // '&'
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_equalityExpression();
     }
-    eventHandler->endNonterminal(L"bitwiseANDExpression", e0);
-    traceNonterminal(L"parse", L"end", L"bitwiseANDExpression");
   }
 
   void try_bitwiseANDExpression()
   {
-    traceNonterminal(L"try", L"start", L"bitwiseANDExpression");
     try_equalityExpression();
     for (;;)
     {
@@ -817,13 +481,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_equalityExpression();
     }
-    traceNonterminal(L"try", L"end", L"bitwiseANDExpression");
   }
 
   void parse_equalityExpression()
   {
-    traceNonterminal(L"parse", L"start", L"equalityExpression");
-    eventHandler->startNonterminal(L"equalityExpression", e0);
     parse_relationalExpression();
     for (;;)
     {
@@ -843,16 +504,12 @@ private:
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_relationalExpression();
     }
-    eventHandler->endNonterminal(L"equalityExpression", e0);
-    traceNonterminal(L"parse", L"end", L"equalityExpression");
   }
 
   void try_equalityExpression()
   {
-    traceNonterminal(L"try", L"start", L"equalityExpression");
     try_relationalExpression();
     for (;;)
     {
@@ -874,13 +531,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_relationalExpression();
     }
-    traceNonterminal(L"try", L"end", L"equalityExpression");
   }
 
   void parse_relationalExpression()
   {
-    traceNonterminal(L"parse", L"start", L"relationalExpression");
-    eventHandler->startNonterminal(L"relationalExpression", e0);
     parse_shiftExpression();
     for (;;)
     {
@@ -908,16 +562,12 @@ private:
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_shiftExpression();
     }
-    eventHandler->endNonterminal(L"relationalExpression", e0);
-    traceNonterminal(L"parse", L"end", L"relationalExpression");
   }
 
   void try_relationalExpression()
   {
-    traceNonterminal(L"try", L"start", L"relationalExpression");
     try_shiftExpression();
     for (;;)
     {
@@ -947,13 +597,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_shiftExpression();
     }
-    traceNonterminal(L"try", L"end", L"relationalExpression");
   }
 
   void parse_shiftExpression()
   {
-    traceNonterminal(L"parse", L"start", L"shiftExpression");
-    eventHandler->startNonterminal(L"shiftExpression", e0);
     parse_additiveExpression();
     for (;;)
     {
@@ -973,16 +620,12 @@ private:
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_additiveExpression();
     }
-    eventHandler->endNonterminal(L"shiftExpression", e0);
-    traceNonterminal(L"parse", L"end", L"shiftExpression");
   }
 
   void try_shiftExpression()
   {
-    traceNonterminal(L"try", L"start", L"shiftExpression");
     try_additiveExpression();
     for (;;)
     {
@@ -1004,13 +647,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_additiveExpression();
     }
-    traceNonterminal(L"try", L"end", L"shiftExpression");
   }
 
   void parse_additiveExpression()
   {
-    traceNonterminal(L"parse", L"start", L"additiveExpression");
-    eventHandler->startNonterminal(L"additiveExpression", e0);
     parse_multiplicativeExpression();
     for (;;)
     {
@@ -1030,16 +670,12 @@ private:
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_multiplicativeExpression();
     }
-    eventHandler->endNonterminal(L"additiveExpression", e0);
-    traceNonterminal(L"parse", L"end", L"additiveExpression");
   }
 
   void try_additiveExpression()
   {
-    traceNonterminal(L"try", L"start", L"additiveExpression");
     try_multiplicativeExpression();
     for (;;)
     {
@@ -1061,13 +697,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_multiplicativeExpression();
     }
-    traceNonterminal(L"try", L"end", L"additiveExpression");
   }
 
   void parse_multiplicativeExpression()
   {
-    traceNonterminal(L"parse", L"start", L"multiplicativeExpression");
-    eventHandler->startNonterminal(L"multiplicativeExpression", e0);
     parse_powerExpression();
     for (;;)
     {
@@ -1091,16 +724,12 @@ private:
       }
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_powerExpression();
     }
-    eventHandler->endNonterminal(L"multiplicativeExpression", e0);
-    traceNonterminal(L"parse", L"end", L"multiplicativeExpression");
   }
 
   void try_multiplicativeExpression()
   {
-    traceNonterminal(L"try", L"start", L"multiplicativeExpression");
     try_powerExpression();
     for (;;)
     {
@@ -1126,13 +755,10 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_powerExpression();
     }
-    traceNonterminal(L"try", L"end", L"multiplicativeExpression");
   }
 
   void parse_powerExpression()
   {
-    traceNonterminal(L"parse", L"start", L"powerExpression");
-    eventHandler->startNonterminal(L"powerExpression", e0);
     parse_unaryExpression();
     for (;;)
     {
@@ -1149,16 +775,12 @@ private:
       consume(37);                  // '^'
       lookahead1W(12);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '!' | '(' | '[' | '{' | '~'
-      whitespace();
       parse_unaryExpression();
     }
-    eventHandler->endNonterminal(L"powerExpression", e0);
-    traceNonterminal(L"parse", L"end", L"powerExpression");
   }
 
   void try_powerExpression()
   {
-    traceNonterminal(L"try", L"start", L"powerExpression");
     try_unaryExpression();
     for (;;)
     {
@@ -1177,40 +799,32 @@ private:
                                     // '!' | '(' | '[' | '{' | '~'
       try_unaryExpression();
     }
-    traceNonterminal(L"try", L"end", L"powerExpression");
   }
 
   void parse_unaryExpression()
   {
-    traceNonterminal(L"parse", L"start", L"unaryExpression");
-    eventHandler->startNonterminal(L"unaryExpression", e0);
     switch (l1)
     {
     case 60:                        // '~'
       consume(60);                  // '~'
       lookahead1W(11);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '(' | '[' | '{'
-      whitespace();
       parse_primary();
       break;
     case 12:                        // '!'
       consume(12);                  // '!'
       lookahead1W(11);              // identifier | null | true | false | string | complex | real | whitespace^token |
                                     // '(' | '[' | '{'
-      whitespace();
       parse_primary();
       break;
     default:
       parse_primary();
       break;
     }
-    eventHandler->endNonterminal(L"unaryExpression", e0);
-    traceNonterminal(L"parse", L"end", L"unaryExpression");
   }
 
   void try_unaryExpression()
   {
-    traceNonterminal(L"try", L"start", L"unaryExpression");
     switch (l1)
     {
     case 60:                        // '~'
@@ -1229,13 +843,10 @@ private:
       try_primary();
       break;
     }
-    traceNonterminal(L"try", L"end", L"unaryExpression");
   }
 
   void parse_primary()
   {
-    traceNonterminal(L"parse", L"start", L"primary");
-    eventHandler->startNonterminal(L"primary", e0);
     switch (l1)
     {
     case 3:                         // identifier
@@ -1248,13 +859,10 @@ private:
       parse_value();
       break;
     }
-    eventHandler->endNonterminal(L"primary", e0);
-    traceNonterminal(L"parse", L"end", L"primary");
   }
 
   void try_primary()
   {
-    traceNonterminal(L"try", L"start", L"primary");
     switch (l1)
     {
     case 3:                         // identifier
@@ -1267,13 +875,10 @@ private:
       try_value();
       break;
     }
-    traceNonterminal(L"try", L"end", L"primary");
   }
 
   void parse_statement()
   {
-    traceNonterminal(L"parse", L"start", L"statement");
-    eventHandler->startNonterminal(L"statement", e0);
     switch (l1)
     {
     case 48:                        // 'namespace'
@@ -1316,13 +921,10 @@ private:
       parse_throw();
       break;
     }
-    eventHandler->endNonterminal(L"statement", e0);
-    traceNonterminal(L"parse", L"end", L"statement");
   }
 
   void try_statement()
   {
-    traceNonterminal(L"try", L"start", L"statement");
     switch (l1)
     {
     case 48:                        // 'namespace'
@@ -1365,13 +967,10 @@ private:
       try_throw();
       break;
     }
-    traceNonterminal(L"try", L"end", L"statement");
   }
 
   void parse_namespace()
   {
-    traceNonterminal(L"parse", L"start", L"namespace");
-    eventHandler->startNonterminal(L"namespace", e0);
     consume(48);                    // 'namespace'
     lookahead1W(0);                 // identifier | whitespace^token
     consume(3);                     // identifier
@@ -1387,17 +986,13 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
-    eventHandler->endNonterminal(L"namespace", e0);
-    traceNonterminal(L"parse", L"end", L"namespace");
   }
 
   void try_namespace()
   {
-    traceNonterminal(L"try", L"start", L"namespace");
     consumeT(48);                   // 'namespace'
     lookahead1W(0);                 // identifier | whitespace^token
     consumeT(3);                    // identifier
@@ -1416,13 +1011,10 @@ private:
       try_expression();
     }
     consumeT(59);                   // '}'
-    traceNonterminal(L"try", L"end", L"namespace");
   }
 
   void parse_function()
   {
-    traceNonterminal(L"parse", L"start", L"function");
-    eventHandler->startNonterminal(L"function", e0);
     consume(46);                    // 'function'
     lookahead1W(0);                 // identifier | whitespace^token
     consume(3);                     // identifier
@@ -1434,7 +1026,6 @@ private:
                                     // 'try' | 'while' | '{' | '~'
     if (l1 != 18)                   // ')'
     {
-      whitespace();
       parse_arguments();
     }
     consume(18);                    // ')'
@@ -1450,17 +1041,13 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
-    eventHandler->endNonterminal(L"function", e0);
-    traceNonterminal(L"parse", L"end", L"function");
   }
 
   void try_function()
   {
-    traceNonterminal(L"try", L"start", L"function");
     consumeT(46);                   // 'function'
     lookahead1W(0);                 // identifier | whitespace^token
     consumeT(3);                    // identifier
@@ -1490,13 +1077,10 @@ private:
       try_expression();
     }
     consumeT(59);                   // '}'
-    traceNonterminal(L"try", L"end", L"function");
   }
 
   void parse_if()
   {
-    traceNonterminal(L"parse", L"start", L"if");
-    eventHandler->startNonterminal(L"if", e0);
     consume(47);                    // 'if'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1504,7 +1088,6 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-    whitespace();
     parse_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
@@ -1520,7 +1103,6 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
@@ -1534,21 +1116,16 @@ private:
       {
         break;
       }
-      whitespace();
       parse_elseif();
     }
     if (l1 == 42)                   // 'else'
     {
-      whitespace();
       parse_else();
     }
-    eventHandler->endNonterminal(L"if", e0);
-    traceNonterminal(L"parse", L"end", L"if");
   }
 
   void try_if()
   {
-    traceNonterminal(L"try", L"start", L"if");
     consumeT(47);                   // 'if'
     lookahead1W(1);                 // whitespace^token | '('
     consumeT(17);                   // '('
@@ -1590,13 +1167,10 @@ private:
     {
       try_else();
     }
-    traceNonterminal(L"try", L"end", L"if");
   }
 
   void parse_elseif()
   {
-    traceNonterminal(L"parse", L"start", L"elseif");
-    eventHandler->startNonterminal(L"elseif", e0);
     consume(43);                    // 'elseif'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1604,7 +1178,6 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-    whitespace();
     parse_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
@@ -1620,17 +1193,13 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
-    eventHandler->endNonterminal(L"elseif", e0);
-    traceNonterminal(L"parse", L"end", L"elseif");
   }
 
   void try_elseif()
   {
-    traceNonterminal(L"try", L"start", L"elseif");
     consumeT(43);                   // 'elseif'
     lookahead1W(1);                 // whitespace^token | '('
     consumeT(17);                   // '('
@@ -1656,13 +1225,10 @@ private:
       try_expression();
     }
     consumeT(59);                   // '}'
-    traceNonterminal(L"try", L"end", L"elseif");
   }
 
   void parse_else()
   {
-    traceNonterminal(L"parse", L"start", L"else");
-    eventHandler->startNonterminal(L"else", e0);
     consume(42);                    // 'else'
     lookahead1W(6);                 // whitespace^token | '{'
     consume(54);                    // '{'
@@ -1676,17 +1242,13 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
-    eventHandler->endNonterminal(L"else", e0);
-    traceNonterminal(L"parse", L"end", L"else");
   }
 
   void try_else()
   {
-    traceNonterminal(L"try", L"start", L"else");
     consumeT(42);                   // 'else'
     lookahead1W(6);                 // whitespace^token | '{'
     consumeT(54);                   // '{'
@@ -1703,13 +1265,10 @@ private:
       try_expression();
     }
     consumeT(59);                   // '}'
-    traceNonterminal(L"try", L"end", L"else");
   }
 
   void parse_do()
   {
-    traceNonterminal(L"parse", L"start", L"do");
-    eventHandler->startNonterminal(L"do", e0);
     consume(41);                    // 'do'
     lookahead1W(6);                 // whitespace^token | '{'
     consume(54);                    // '{'
@@ -1723,7 +1282,6 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
@@ -1735,17 +1293,13 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-    whitespace();
     parse_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
-    eventHandler->endNonterminal(L"do", e0);
-    traceNonterminal(L"parse", L"end", L"do");
   }
 
   void try_do()
   {
-    traceNonterminal(L"try", L"start", L"do");
     consumeT(41);                   // 'do'
     lookahead1W(6);                 // whitespace^token | '{'
     consumeT(54);                   // '{'
@@ -1773,13 +1327,10 @@ private:
     try_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consumeT(18);                   // ')'
-    traceNonterminal(L"try", L"end", L"do");
   }
 
   void parse_while()
   {
-    traceNonterminal(L"parse", L"start", L"while");
-    eventHandler->startNonterminal(L"while", e0);
     consume(53);                    // 'while'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1787,7 +1338,6 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-    whitespace();
     parse_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
@@ -1803,17 +1353,13 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
-    eventHandler->endNonterminal(L"while", e0);
-    traceNonterminal(L"parse", L"end", L"while");
   }
 
   void try_while()
   {
-    traceNonterminal(L"try", L"start", L"while");
     consumeT(53);                   // 'while'
     lookahead1W(1);                 // whitespace^token | '('
     consumeT(17);                   // '('
@@ -1839,13 +1385,10 @@ private:
       try_expression();
     }
     consumeT(59);                   // '}'
-    traceNonterminal(L"try", L"end", L"while");
   }
 
   void parse_for()
   {
-    traceNonterminal(L"parse", L"start", L"for");
-    eventHandler->startNonterminal(L"for", e0);
     consume(44);                    // 'for'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1855,7 +1398,6 @@ private:
                                     // 'try' | 'while' | '{' | '~'
     if (l1 != 26)                   // ';'
     {
-      whitespace();
       parse_expression();
     }
     lookahead1W(4);                 // whitespace^token | ';'
@@ -1866,7 +1408,6 @@ private:
                                     // 'try' | 'while' | '{' | '~'
     if (l1 != 26)                   // ';'
     {
-      whitespace();
       parse_expression();
     }
     lookahead1W(4);                 // whitespace^token | ';'
@@ -1877,7 +1418,6 @@ private:
                                     // 'try' | 'while' | '{' | '~'
     if (l1 != 18)                   // ')'
     {
-      whitespace();
       parse_expression();
     }
     lookahead1W(2);                 // whitespace^token | ')'
@@ -1894,17 +1434,13 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
-    eventHandler->endNonterminal(L"for", e0);
-    traceNonterminal(L"parse", L"end", L"for");
   }
 
   void try_for()
   {
-    traceNonterminal(L"try", L"start", L"for");
     consumeT(44);                   // 'for'
     lookahead1W(1);                 // whitespace^token | '('
     consumeT(17);                   // '('
@@ -1953,13 +1489,10 @@ private:
       try_expression();
     }
     consumeT(59);                   // '}'
-    traceNonterminal(L"try", L"end", L"for");
   }
 
   void parse_foreach()
   {
-    traceNonterminal(L"parse", L"start", L"foreach");
-    eventHandler->startNonterminal(L"foreach", e0);
     consume(45);                    // 'foreach'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -1969,7 +1502,6 @@ private:
                                     // 'try' | 'while' | '{' | '~'
     if (l1 != 26)                   // ';'
     {
-      whitespace();
       parse_expression();
     }
     lookahead1W(4);                 // whitespace^token | ';'
@@ -1980,7 +1512,6 @@ private:
                                     // 'try' | 'while' | '{' | '~'
     if (l1 != 26)                   // ';'
     {
-      whitespace();
       parse_expression();
     }
     lookahead1W(4);                 // whitespace^token | ';'
@@ -1991,7 +1522,6 @@ private:
                                     // 'try' | 'while' | '{' | '~'
     if (l1 != 18)                   // ')'
     {
-      whitespace();
       parse_expression();
     }
     lookahead1W(2);                 // whitespace^token | ')'
@@ -2008,17 +1538,13 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
-    eventHandler->endNonterminal(L"foreach", e0);
-    traceNonterminal(L"parse", L"end", L"foreach");
   }
 
   void try_foreach()
   {
-    traceNonterminal(L"try", L"start", L"foreach");
     consumeT(45);                   // 'foreach'
     lookahead1W(1);                 // whitespace^token | '('
     consumeT(17);                   // '('
@@ -2067,13 +1593,10 @@ private:
       try_expression();
     }
     consumeT(59);                   // '}'
-    traceNonterminal(L"try", L"end", L"foreach");
   }
 
   void parse_try()
   {
-    traceNonterminal(L"parse", L"start", L"try");
-    eventHandler->startNonterminal(L"try", e0);
     consume(52);                    // 'try'
     lookahead1W(6);                 // whitespace^token | '{'
     consume(54);                    // '{'
@@ -2087,7 +1610,6 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
@@ -2097,16 +1619,12 @@ private:
                                     // 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '}' | '~'
     if (l1 == 39)                   // 'catch'
     {
-      whitespace();
       parse_catch();
     }
-    eventHandler->endNonterminal(L"try", e0);
-    traceNonterminal(L"parse", L"end", L"try");
   }
 
   void try_try()
   {
-    traceNonterminal(L"try", L"start", L"try");
     consumeT(52);                   // 'try'
     lookahead1W(6);                 // whitespace^token | '{'
     consumeT(54);                   // '{'
@@ -2131,13 +1649,10 @@ private:
     {
       try_catch();
     }
-    traceNonterminal(L"try", L"end", L"try");
   }
 
   void parse_test()
   {
-    traceNonterminal(L"parse", L"start", L"test");
-    eventHandler->startNonterminal(L"test", e0);
     consume(50);                    // 'test'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -2148,7 +1663,6 @@ private:
     if (l1 != 18                    // ')'
      && l1 != 26)                   // ';'
     {
-      whitespace();
       parse_expression();
     }
     lookahead1W(8);                 // whitespace^token | ')' | ';'
@@ -2162,7 +1676,6 @@ private:
       if (l1 != 18                  // ')'
        && l1 != 26)                 // ';'
       {
-        whitespace();
         parse_expression();
       }
       lookahead1W(8);               // whitespace^token | ')' | ';'
@@ -2175,7 +1688,6 @@ private:
                                     // 'try' | 'while' | '{' | '~'
         if (l1 != 18)               // ')'
         {
-          whitespace();
           parse_expression();
         }
       }
@@ -2194,7 +1706,6 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
@@ -2204,16 +1715,12 @@ private:
                                     // 'return' | 'test' | 'throw' | 'try' | 'while' | '{' | '}' | '~'
     if (l1 == 39)                   // 'catch'
     {
-      whitespace();
       parse_catch();
     }
-    eventHandler->endNonterminal(L"test", e0);
-    traceNonterminal(L"parse", L"end", L"test");
   }
 
   void try_test()
   {
-    traceNonterminal(L"try", L"start", L"test");
     consumeT(50);                   // 'test'
     lookahead1W(1);                 // whitespace^token | '('
     consumeT(17);                   // '('
@@ -2278,13 +1785,10 @@ private:
     {
       try_catch();
     }
-    traceNonterminal(L"try", L"end", L"test");
   }
 
   void parse_catch()
   {
-    traceNonterminal(L"parse", L"start", L"catch");
-    eventHandler->startNonterminal(L"catch", e0);
     consume(39);                    // 'catch'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -2292,7 +1796,6 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-    whitespace();
     parse_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
@@ -2308,17 +1811,13 @@ private:
       {
         break;
       }
-      whitespace();
       parse_expression();
     }
     consume(59);                    // '}'
-    eventHandler->endNonterminal(L"catch", e0);
-    traceNonterminal(L"parse", L"end", L"catch");
   }
 
   void try_catch()
   {
-    traceNonterminal(L"try", L"start", L"catch");
     consumeT(39);                   // 'catch'
     lookahead1W(1);                 // whitespace^token | '('
     consumeT(17);                   // '('
@@ -2344,45 +1843,30 @@ private:
       try_expression();
     }
     consumeT(59);                   // '}'
-    traceNonterminal(L"try", L"end", L"catch");
   }
 
   void parse_break()
   {
-    traceNonterminal(L"parse", L"start", L"break");
-    eventHandler->startNonterminal(L"break", e0);
     consume(38);                    // 'break'
-    eventHandler->endNonterminal(L"break", e0);
-    traceNonterminal(L"parse", L"end", L"break");
   }
 
   void try_break()
   {
-    traceNonterminal(L"try", L"start", L"break");
     consumeT(38);                   // 'break'
-    traceNonterminal(L"try", L"end", L"break");
   }
 
   void parse_continue()
   {
-    traceNonterminal(L"parse", L"start", L"continue");
-    eventHandler->startNonterminal(L"continue", e0);
     consume(40);                    // 'continue'
-    eventHandler->endNonterminal(L"continue", e0);
-    traceNonterminal(L"parse", L"end", L"continue");
   }
 
   void try_continue()
   {
-    traceNonterminal(L"try", L"start", L"continue");
     consumeT(40);                   // 'continue'
-    traceNonterminal(L"try", L"end", L"continue");
   }
 
   void parse_return()
   {
-    traceNonterminal(L"parse", L"start", L"return");
-    eventHandler->startNonterminal(L"return", e0);
     consume(49);                    // 'return'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -2392,18 +1876,14 @@ private:
                                     // 'try' | 'while' | '{' | '~'
     if (l1 != 18)                   // ')'
     {
-      whitespace();
       parse_expression();
     }
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
-    eventHandler->endNonterminal(L"return", e0);
-    traceNonterminal(L"parse", L"end", L"return");
   }
 
   void try_return()
   {
-    traceNonterminal(L"try", L"start", L"return");
     consumeT(49);                   // 'return'
     lookahead1W(1);                 // whitespace^token | '('
     consumeT(17);                   // '('
@@ -2417,13 +1897,10 @@ private:
     }
     lookahead1W(2);                 // whitespace^token | ')'
     consumeT(18);                   // ')'
-    traceNonterminal(L"try", L"end", L"return");
   }
 
   void parse_throw()
   {
-    traceNonterminal(L"parse", L"start", L"throw");
-    eventHandler->startNonterminal(L"throw", e0);
     consume(51);                    // 'throw'
     lookahead1W(1);                 // whitespace^token | '('
     consume(17);                    // '('
@@ -2433,18 +1910,14 @@ private:
                                     // 'try' | 'while' | '{' | '~'
     if (l1 != 18)                   // ')'
     {
-      whitespace();
       parse_expression();
     }
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
-    eventHandler->endNonterminal(L"throw", e0);
-    traceNonterminal(L"parse", L"end", L"throw");
   }
 
   void try_throw()
   {
-    traceNonterminal(L"try", L"start", L"throw");
     consumeT(51);                   // 'throw'
     lookahead1W(1);                 // whitespace^token | '('
     consumeT(17);                   // '('
@@ -2458,13 +1931,10 @@ private:
     }
     lookahead1W(2);                 // whitespace^token | ')'
     consumeT(18);                   // ')'
-    traceNonterminal(L"try", L"end", L"throw");
   }
 
   void parse_expression()
   {
-    traceNonterminal(L"parse", L"start", L"expression");
-    eventHandler->startNonterminal(L"expression", e0);
     switch (l1)
     {
     case 3:                         // identifier
@@ -2488,13 +1958,10 @@ private:
       parse_statement();
       break;
     }
-    eventHandler->endNonterminal(L"expression", e0);
-    traceNonterminal(L"parse", L"end", L"expression");
   }
 
   void try_expression()
   {
-    traceNonterminal(L"try", L"start", L"expression");
     switch (l1)
     {
     case 3:                         // identifier
@@ -2518,13 +1985,10 @@ private:
       try_statement();
       break;
     }
-    traceNonterminal(L"try", L"end", L"expression");
   }
 
   void parse_arguments()
   {
-    traceNonterminal(L"parse", L"start", L"arguments");
-    eventHandler->startNonterminal(L"arguments", e0);
     parse_expression();
     for (;;)
     {
@@ -2541,16 +2005,12 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-      whitespace();
       parse_expression();
     }
-    eventHandler->endNonterminal(L"arguments", e0);
-    traceNonterminal(L"parse", L"end", L"arguments");
   }
 
   void try_arguments()
   {
-    traceNonterminal(L"try", L"start", L"arguments");
     try_expression();
     for (;;)
     {
@@ -2569,13 +2029,10 @@ private:
                                     // 'try' | 'while' | '{' | '~'
       try_expression();
     }
-    traceNonterminal(L"try", L"end", L"arguments");
   }
 
   void parse_member()
   {
-    traceNonterminal(L"parse", L"start", L"member");
-    eventHandler->startNonterminal(L"member", e0);
     switch (l1)
     {
     case 3:                         // identifier
@@ -2705,7 +2162,6 @@ private:
         {
           break;
         }
-        whitespace();
         parse_arguments();
       }
       consume(18);                  // ')'
@@ -2909,19 +2365,15 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-        whitespace();
         parse_arguments();
         consume(36);                // ']'
       }
       break;
     }
-    eventHandler->endNonterminal(L"member", e0);
-    traceNonterminal(L"parse", L"end", L"member");
   }
 
   void try_member()
   {
-    traceNonterminal(L"try", L"start", L"member");
     switch (l1)
     {
     case 3:                         // identifier
@@ -3263,19 +2715,15 @@ private:
       }
       break;
     }
-    traceNonterminal(L"try", L"end", L"member");
   }
 
   void parse_array()
   {
-    traceNonterminal(L"parse", L"start", L"array");
-    eventHandler->startNonterminal(L"array", e0);
     consume(54);                    // '{'
     lookahead1W(15);                // identifier | null | true | false | string | complex | real | comment |
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-    whitespace();
     parse_element();
     for (;;)
     {
@@ -3289,17 +2737,13 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-      whitespace();
       parse_element();
     }
     consume(59);                    // '}'
-    eventHandler->endNonterminal(L"array", e0);
-    traceNonterminal(L"parse", L"end", L"array");
   }
 
   void try_array()
   {
-    traceNonterminal(L"try", L"start", L"array");
     consumeT(54);                   // '{'
     lookahead1W(15);                // identifier | null | true | false | string | complex | real | comment |
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
@@ -3321,13 +2765,10 @@ private:
       try_element();
     }
     consumeT(59);                   // '}'
-    traceNonterminal(L"try", L"end", L"array");
   }
 
   void parse_matrix()
   {
-    traceNonterminal(L"parse", L"start", L"matrix");
-    eventHandler->startNonterminal(L"matrix", e0);
     consume(35);                    // '['
     lookahead1W(23);                // identifier | null | true | false | string | complex | real | comment |
                                     // whitespace^token | '!' | '(' | ';' | '[' | ']' | 'break' | 'continue' | 'do' |
@@ -3336,7 +2777,6 @@ private:
     if (l1 != 26                    // ';'
      && l1 != 36)                   // ']'
     {
-      whitespace();
       parse_row();
     }
     for (;;)
@@ -3350,17 +2790,13 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-      whitespace();
       parse_row();
     }
     consume(36);                    // ']'
-    eventHandler->endNonterminal(L"matrix", e0);
-    traceNonterminal(L"parse", L"end", L"matrix");
   }
 
   void try_matrix()
   {
-    traceNonterminal(L"try", L"start", L"matrix");
     consumeT(35);                   // '['
     lookahead1W(23);                // identifier | null | true | false | string | complex | real | comment |
                                     // whitespace^token | '!' | '(' | ';' | '[' | ']' | 'break' | 'continue' | 'do' |
@@ -3385,13 +2821,10 @@ private:
       try_row();
     }
     consumeT(36);                   // ']'
-    traceNonterminal(L"try", L"end", L"matrix");
   }
 
   void parse_element()
   {
-    traceNonterminal(L"parse", L"start", L"element");
-    eventHandler->startNonterminal(L"element", e0);
     switch (l1)
     {
     case 7:                         // string
@@ -3413,15 +2846,11 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-    whitespace();
     parse_expression();
-    eventHandler->endNonterminal(L"element", e0);
-    traceNonterminal(L"parse", L"end", L"element");
   }
 
   void try_element()
   {
-    traceNonterminal(L"try", L"start", L"element");
     switch (l1)
     {
     case 7:                         // string
@@ -3444,29 +2873,20 @@ private:
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
     try_expression();
-    traceNonterminal(L"try", L"end", L"element");
   }
 
   void parse_key()
   {
-    traceNonterminal(L"parse", L"start", L"key");
-    eventHandler->startNonterminal(L"key", e0);
     consume(7);                     // string
-    eventHandler->endNonterminal(L"key", e0);
-    traceNonterminal(L"parse", L"end", L"key");
   }
 
   void try_key()
   {
-    traceNonterminal(L"try", L"start", L"key");
     consumeT(7);                    // string
-    traceNonterminal(L"try", L"end", L"key");
   }
 
   void parse_row()
   {
-    traceNonterminal(L"parse", L"start", L"row");
-    eventHandler->startNonterminal(L"row", e0);
     parse_column();
     for (;;)
     {
@@ -3480,16 +2900,12 @@ private:
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-      whitespace();
       parse_column();
     }
-    eventHandler->endNonterminal(L"row", e0);
-    traceNonterminal(L"parse", L"end", L"row");
   }
 
   void try_row()
   {
-    traceNonterminal(L"try", L"start", L"row");
     try_column();
     for (;;)
     {
@@ -3505,45 +2921,32 @@ private:
                                     // 'try' | 'while' | '{' | '~'
       try_column();
     }
-    traceNonterminal(L"try", L"end", L"row");
   }
 
   void parse_column()
   {
-    traceNonterminal(L"parse", L"start", L"column");
-    eventHandler->startNonterminal(L"column", e0);
     parse_expression();
-    eventHandler->endNonterminal(L"column", e0);
-    traceNonterminal(L"parse", L"end", L"column");
   }
 
   void try_column()
   {
-    traceNonterminal(L"try", L"start", L"column");
     try_expression();
-    traceNonterminal(L"try", L"end", L"column");
   }
 
   void parse_parenthesizedExpression()
   {
-    traceNonterminal(L"parse", L"start", L"parenthesizedExpression");
-    eventHandler->startNonterminal(L"parenthesizedExpression", e0);
     consume(17);                    // '('
     lookahead1W(15);                // identifier | null | true | false | string | complex | real | comment |
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
                                     // 'foreach' | 'function' | 'if' | 'namespace' | 'return' | 'test' | 'throw' |
                                     // 'try' | 'while' | '{' | '~'
-    whitespace();
     parse_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consume(18);                    // ')'
-    eventHandler->endNonterminal(L"parenthesizedExpression", e0);
-    traceNonterminal(L"parse", L"end", L"parenthesizedExpression");
   }
 
   void try_parenthesizedExpression()
   {
-    traceNonterminal(L"try", L"start", L"parenthesizedExpression");
     consumeT(17);                   // '('
     lookahead1W(15);                // identifier | null | true | false | string | complex | real | comment |
                                     // whitespace^token | '!' | '(' | '[' | 'break' | 'continue' | 'do' | 'for' |
@@ -3552,13 +2955,10 @@ private:
     try_expression();
     lookahead1W(2);                 // whitespace^token | ')'
     consumeT(18);                   // ')'
-    traceNonterminal(L"try", L"end", L"parenthesizedExpression");
   }
 
   void parse_value()
   {
-    traceNonterminal(L"parse", L"start", L"value");
-    eventHandler->startNonterminal(L"value", e0);
     switch (l1)
     {
     case 9:                         // real
@@ -3586,13 +2986,10 @@ private:
       consume(6);                   // false
       break;
     }
-    eventHandler->endNonterminal(L"value", e0);
-    traceNonterminal(L"parse", L"end", L"value");
   }
 
   void try_value()
   {
-    traceNonterminal(L"try", L"start", L"value");
     switch (l1)
     {
     case 9:                         // real
@@ -3620,27 +3017,15 @@ private:
       consumeT(6);                  // false
       break;
     }
-    traceNonterminal(L"try", L"end", L"value");
-  }
-
-  void traceNonterminal(const wchar_t *method, const wchar_t *occasion, const wchar_t *name)
-  {
-    fprintf(stderr, "  <%s %snonterminal=\"%s\"", Utf8Encoder::encode(method).c_str(), Utf8Encoder::encode(occasion).c_str(), Utf8Encoder::encode(name).c_str());
-    if (l1 != 0)
-      fprintf(stderr, " input=\"%s\"", Utf8Encoder::encode(xmlEscape(lookaheadString().c_str(), 0).c_str()).c_str());
-    fprintf(stderr, "/>\n");
   }
 
   void consume(int t)
   {
     if (l1 == t)
     {
-      whitespace();
-      eventHandler->terminal(TOKEN[l1], b1, e1);
       b0 = b1; e0 = e1; l1 = l2; if (l1 != 0) {
       b1 = b2; e1 = e2; l2 = l3; if (l2 != 0) {
       b2 = b3; e2 = e3; l3 = 0; }}
-      fprintf(stderr, "  <parse terminal=\"%s\"%s%s%s/>\n", Utf8Encoder::encode(xmlEscape(TOKEN[t], 0).c_str()).c_str(), (l1 == 0 ? "" : " input=\""),  (l1 == 0 ? "" : Utf8Encoder::encode(xmlEscape(lookaheadString().c_str(), 0).c_str()).c_str()), (l1 == 0 ? "" : "\""));
     }
     else
     {
@@ -3655,20 +3040,10 @@ private:
       b0 = b1; e0 = e1; l1 = l2; if (l1 != 0) {
       b1 = b2; e1 = e2; l2 = l3; if (l2 != 0) {
       b2 = b3; e2 = e3; l3 = 0; }}
-      fprintf(stderr, "  <parse terminal=\"%s\"%s%s%s/>\n", Utf8Encoder::encode(xmlEscape(TOKEN[t], 0).c_str()).c_str(), (l1 == 0 ? "" : " input=\""),  (l1 == 0 ? "" : Utf8Encoder::encode(xmlEscape(lookaheadString().c_str(), 0).c_str()).c_str()), (l1 == 0 ? "" : "\""));
     }
     else
     {
       error(b1, e1, 0, l1, t);
-    }
-  }
-
-  void whitespace()
-  {
-    if (e0 != b1)
-    {
-      eventHandler->whitespace(e0, b1);
-      e0 = b1;
     }
   }
 
@@ -3736,7 +3111,6 @@ private:
   int l2, b2, e2;
   int l3, b3, e3;
   int bx, ex, sx, lx, tx;
-  EventHandler *eventHandler;
   std::map<int, int> memo;
 
   void memoize(int i, int e, int v)
@@ -3756,27 +3130,18 @@ private:
 
   int match(int tokenSetId)
   {
-    fprintf(stderr, "  <tokenize tokenset=\"%d\">\n", tokenSetId);
-
     begin = end;
     int current = end;
     int result = INITIAL[tokenSetId];
     int state = 0;
 
-    fprintf(stderr, "    <next state=\"%d\"", result & 255);
     for (int code = result & 255; code != 0; )
     {
       int charclass;
       int c0 = input[current];
-      fprintf(stderr, " offset=\"%d\"", current);
       ++current;
       if (c0 < 0x80)
       {
-        if (c0 >= 32 && c0 <= 126)
-        {
-          wchar_t c = (wchar_t) c0;
-          fprintf(stderr, " char=\"%s\"", Utf8Encoder::encode(xmlEscape(&c, 1).c_str()).c_str());
-        }
         charclass = MAP0[c0];
       }
       else if (c0 < 0xd800)
@@ -3804,7 +3169,6 @@ private:
           if (lo > hi) {charclass = 0; break;}
         }
       }
-      fprintf(stderr, " codepoint=\"%d\" class=\"%d\"", c0, charclass);
 
       state = code;
       int i0 = (charclass << 8) + code - 1;
@@ -3812,14 +3176,8 @@ private:
       if (code > 255)
       {
         result = code;
-        fprintf(stderr, " result=\"%s\"", Utf8Encoder::encode(xmlEscape(TOKEN[((result >> 8) & 63) - 1], 0).c_str()).c_str());
         code &= 255;
         end = current;
-      }
-      fprintf(stderr, "/>\n");
-      if (code != 0)
-      {
-        fprintf(stderr, "    <next state=\"%d\"", code);
       }
     }
 
@@ -3829,35 +3187,11 @@ private:
       end = current - 1;
       int c1 = input[end];
       if (c1 >= 0xdc00 && c1 < 0xe000) --end;
-      fprintf(stderr, "    <fail begin=\"%d\" end=\"%d\" state=\"%d\"/>\n", begin, end, state);
-      fprintf(stderr, "  </tokenize>\n");
       return error(begin, end, state, -1, -1);
     }
 
     if (input[begin] == 0) end = begin;
-    fprintf(stderr, "    <done result=\"%s\" begin=\"%d\" end=\"%d\"/>\n", Utf8Encoder::encode(xmlEscape(TOKEN[(result & 63) - 1], 0).c_str()).c_str(), begin, end);
-    fprintf(stderr, "  </tokenize>\n");
     return (result & 63) - 1;
-  }
-
-  std::wstring lookaheadString()
-  {
-    std::wstring result;
-    if (l1 > 0)
-    {
-      result += TOKEN[l1];
-      if (l2 > 0)
-      {
-        result += L" ";
-        result += TOKEN[l2];
-        if (l3 > 0)
-        {
-          result += L" ";
-          result += TOKEN[l3];
-        }
-      }
-    }
-    return result;
   }
 
   class FileNotFound
@@ -4075,25 +3409,6 @@ private:
     }
   }
 
-  static std::wstring xmlEscape(const wchar_t *string, size_t size)
-  {
-    std::wstring result;
-    if (size == 0) size = wcslen(string);
-    for (size_t i = 0; i < size; ++i)
-    {
-      const wchar_t c = string[i];
-      switch (c)
-      {
-      case 0: break;
-      case '&': result += L"&amp;"; break;
-      case '<': result += L"&lt;"; break;
-      case '"': result += L"&quot;"; break;
-      default: result += c;
-      }
-    }
-    return result;
-  }
-
   static void getTokenSet(int tokenSetId, const wchar_t **set, int size)
   {
     int s = tokenSetId < 0 ? - tokenSetId : INITIAL[tokenSetId] & 255;
@@ -4121,7 +3436,7 @@ private:
 
   static int ec(int t, int s)
   {
-    int i0 = t * 192 + s - 1;
+    int i0 = t * 187 + s - 1;
     return EXPECTED[(i0 & 3) + EXPECTED[i0 >> 2]];
   }
 
@@ -4137,8 +3452,8 @@ private:
 const int MaiaScript::MAP0[] =
 {
 /*   0 */ 54, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 4, 5,
-/*  36 */ 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 24, 9, 9,
-/*  65 */ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 25, 26, 27, 28, 6, 9, 29, 30,
+/*  36 */ 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 9, 9,
+/*  65 */ 6, 6, 6, 6, 24, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 25, 26, 27, 28, 6, 9, 29, 30,
 /*  99 */ 31, 32, 33, 34, 6, 35, 36, 6, 37, 38, 39, 40, 41, 42, 6, 43, 44, 45, 46, 6, 47, 6, 48, 6, 49, 50, 51, 52, 9
 };
 
@@ -4150,11 +3465,11 @@ const int MaiaScript::MAP1[] =
 /*  76 */ 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 245, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 /*  98 */ 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 54,
 /* 120 */ 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 4, 5, 6, 7,
-/* 157 */ 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 24, 9, 6, 6, 6,
-/* 186 */ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 25, 26, 27, 28, 6, 9, 29, 30, 31, 32, 33,
-/* 220 */ 34, 6, 35, 36, 6, 37, 38, 39, 40, 41, 42, 6, 43, 44, 45, 46, 6, 47, 6, 48, 6, 49, 50, 51, 52, 9, 9, 9, 9, 9,
-/* 250 */ 9, 9, 9, 53, 53, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
-/* 286 */ 9
+/* 157 */ 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 9, 6, 6, 6,
+/* 186 */ 6, 24, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 25, 26, 27, 28, 6, 9, 29, 30, 31, 32,
+/* 219 */ 33, 34, 6, 35, 36, 6, 37, 38, 39, 40, 41, 42, 6, 43, 44, 45, 46, 6, 47, 6, 48, 6, 49, 50, 51, 52, 9, 9, 9, 9,
+/* 249 */ 9, 9, 9, 9, 53, 53, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+/* 285 */ 9, 9
 };
 
 const int MaiaScript::MAP2[] =
@@ -4170,196 +3485,193 @@ const int MaiaScript::INITIAL[] =
 
 const int MaiaScript::TRANSITION[] =
 {
-/*    0 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*   18 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 1760, 1760, 1760, 1763,
-/*   36 */ 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*   54 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 1760, 1760, 1760, 1763, 2460, 1932, 2460, 2460,
-/*   72 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*   90 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 1890, 1771, 1777, 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460,
-/*  108 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  126 */ 2460, 2460, 2460, 1926, 1792, 1796, 2460, 1811, 2512, 2460, 2460, 2460, 1931, 2460, 2460, 2460, 2460, 2460,
-/*  144 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2511,
-/*  162 */ 1821, 1825, 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  180 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2459, 2671, 2785, 2784, 2732, 1837,
-/*  198 */ 2512, 2732, 2732, 2732, 2459, 1841, 2732, 2732, 2733, 1901, 2786, 2732, 2733, 1902, 2732, 2783, 2732, 2732,
-/*  216 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2612, 3257, 2615, 2460, 1932, 2512, 2460, 2460, 2460,
-/*  234 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  252 */ 2460, 2460, 2460, 2460, 2460, 2690, 1858, 2693, 2460, 1932, 1851, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  270 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  288 */ 2460, 2460, 2460, 2460, 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  306 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 1870, 1874, 1882, 1886,
-/*  324 */ 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  342 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 1898, 1900, 1913, 1910, 2460, 1932, 2512, 2460,
-/*  360 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  378 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2744, 2007, 2747, 2460, 1921, 2512, 2460, 2460, 2460, 2439, 2460,
-/*  396 */ 2460, 2460, 2460, 1940, 2460, 2460, 2460, 1946, 2460, 2438, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  414 */ 2460, 2460, 2460, 1983, 1960, 1966, 2460, 1978, 2512, 2460, 2460, 2460, 2461, 1991, 2460, 2460, 2460, 2000,
-/*  432 */ 2460, 2460, 2460, 2054, 2460, 2582, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2075,
-/*  450 */ 2069, 2019, 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  468 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2308, 2031, 2037, 2460, 2049,
-/*  486 */ 2512, 2460, 2460, 2460, 2461, 1991, 2460, 2460, 2460, 2062, 2460, 2460, 2460, 2054, 2460, 2582, 2460, 2460,
-/*  504 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2537, 2460, 2303, 2303, 2460, 2083, 2512, 2460, 2460, 2460,
-/*  522 */ 3261, 2460, 2460, 2460, 2460, 2096, 2460, 2460, 2460, 2088, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  540 */ 2460, 2460, 2460, 2460, 2460, 2904, 2106, 2112, 2460, 1932, 2098, 2460, 2460, 2460, 1931, 2460, 2460, 2460,
-/*  558 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  576 */ 2460, 2773, 2176, 2180, 2732, 2125, 2512, 2732, 2732, 2732, 2169, 2150, 2732, 2732, 2733, 2162, 2786, 2732,
-/*  594 */ 2733, 2192, 2732, 2883, 2732, 2732, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2773, 2176, 2180,
-/*  612 */ 2732, 2210, 2512, 2732, 2732, 2732, 2244, 2150, 2732, 2732, 2733, 2237, 2786, 2732, 2733, 2252, 2732, 2971,
-/*  630 */ 2732, 2732, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 3069, 3067, 2460, 2460, 2460, 1932, 2512, 2460,
-/*  648 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  666 */ 2460, 2460, 2460, 2460, 2460, 2460, 2011, 2270, 2275, 2283, 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460,
-/*  684 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  702 */ 2460, 2460, 2460, 3136, 2336, 3139, 2460, 1932, 2296, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  720 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 3316,
-/*  738 */ 2316, 3319, 2460, 1932, 2329, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  756 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 3333, 2349, 3336, 2460, 1932,
-/*  774 */ 1970, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  792 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2362, 2369, 2373, 2460, 1932, 2512, 2460, 2460, 2460,
-/*  810 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  828 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2381, 2512, 2460, 2460, 2460, 1931, 2460, 2460, 2460,
-/*  846 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  864 */ 2460, 2391, 2394, 2402, 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  882 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 1781, 2415, 1784,
-/*  900 */ 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  918 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2459, 2671, 2785, 3234, 3213, 2428, 2512, 2447,
-/*  936 */ 2469, 2732, 2459, 1841, 2732, 2479, 2733, 1901, 2225, 2732, 3002, 1902, 2489, 2783, 3024, 2499, 2460, 2460,
-/*  954 */ 2460, 2460, 2460, 2460, 2460, 2460, 2510, 2117, 2520, 2524, 2732, 1837, 2512, 2732, 2732, 2732, 2435, 1841,
-/*  972 */ 2732, 2732, 2733, 1901, 2786, 2732, 2733, 1902, 2732, 2783, 2732, 2732, 2460, 2460, 2460, 2460, 2460, 2460,
-/*  990 */ 2460, 2460, 2536, 2288, 2545, 2553, 2732, 1837, 2512, 2732, 2732, 2732, 2459, 1841, 2732, 2571, 2733, 1901,
-/* 1008 */ 1843, 3218, 2733, 1902, 2732, 2502, 2732, 2960, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2579, 2341,
-/* 1026 */ 2590, 2594, 2732, 1837, 2512, 2732, 2732, 2732, 2459, 1841, 2732, 2732, 2733, 1901, 2786, 2732, 2733, 1902,
-/* 1044 */ 2732, 2783, 2732, 2732, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2609, 2321, 2602, 2623, 2982, 2641,
-/* 1062 */ 2512, 2836, 2813, 2732, 2655, 2528, 2732, 2817, 2649, 2667, 2679, 2861, 3243, 2659, 3045, 2872, 2732, 2563,
-/* 1080 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2687, 3305, 2701, 2705, 2140, 1837, 2512, 2628, 2732, 2732,
-/* 1098 */ 2435, 1841, 2732, 2732, 2733, 1901, 2786, 2732, 2733, 1902, 2732, 2783, 3112, 2732, 2460, 2460, 2460, 2460,
-/* 1116 */ 2460, 2460, 2460, 2460, 2459, 2671, 2785, 2784, 2481, 2713, 2512, 2795, 2721, 2732, 2459, 1841, 2732, 2732,
-/* 1134 */ 2733, 1901, 2786, 2722, 2733, 1902, 2935, 2783, 2732, 2731, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1152 */ 2741, 2354, 2755, 2759, 2732, 1837, 2512, 2732, 2732, 2732, 2767, 1841, 2926, 2732, 2733, 1901, 2786, 2732,
-/* 1170 */ 2781, 1902, 2794, 2803, 2825, 2732, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2459, 2671, 2785, 2784,
-/* 1188 */ 2732, 1837, 2512, 2732, 2732, 2732, 2459, 1841, 2732, 2732, 2733, 1901, 2786, 2471, 2733, 1813, 2732, 2783,
-/* 1206 */ 2732, 2732, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2459, 2671, 2785, 2784, 2834, 1837, 2512, 2732,
-/* 1224 */ 2844, 2857, 2459, 2852, 2732, 2732, 2142, 1901, 2869, 2258, 2733, 1902, 2732, 2783, 2732, 2732, 2460, 2460,
-/* 1242 */ 2460, 2460, 2460, 2460, 2460, 2460, 2459, 2671, 2785, 2784, 2732, 1837, 2512, 2732, 2732, 2880, 2459, 1841,
-/* 1260 */ 2891, 2732, 2733, 1901, 2786, 2732, 2733, 1902, 2732, 2783, 2732, 2732, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1278 */ 2460, 2460, 2901, 3349, 2912, 2916, 2732, 1837, 2512, 2732, 3035, 2924, 2435, 2154, 2934, 2732, 2733, 1901,
-/* 1296 */ 2786, 2732, 2733, 1902, 2732, 2943, 2968, 2262, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2459, 2671,
-/* 1314 */ 2785, 2229, 2979, 2990, 2512, 3010, 3022, 2732, 2459, 1841, 2732, 2732, 2220, 1901, 2786, 3032, 2733, 1902,
-/* 1332 */ 2732, 2783, 3116, 3043, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2459, 2671, 2785, 2784, 2732, 1837,
-/* 1350 */ 2512, 2732, 2732, 2732, 2459, 1841, 2732, 2732, 2733, 1901, 2786, 2732, 2733, 1902, 2732, 2950, 3053, 2732,
-/* 1368 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 3064, 2407, 3077, 3081, 2491, 3089, 2512, 3097, 2732, 3105,
-/* 1386 */ 2435, 2184, 2215, 2732, 2733, 1901, 2786, 2732, 3181, 1902, 2558, 2783, 2732, 2732, 2460, 2460, 2460, 2460,
-/* 1404 */ 2460, 2460, 2460, 2460, 2459, 2671, 2785, 2784, 2732, 1837, 2512, 2732, 2893, 3056, 2459, 1841, 3194, 3124,
-/* 1422 */ 2733, 1992, 2786, 2732, 3223, 1902, 2996, 2783, 2732, 2732, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1440 */ 3133, 1952, 3147, 3151, 2732, 1837, 2512, 2732, 3000, 2202, 2435, 1841, 3159, 2198, 2130, 1901, 2135, 3167,
-/* 1458 */ 2453, 1902, 3178, 2783, 2732, 2732, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2459, 2671, 2785, 2784,
-/* 1476 */ 3189, 3206, 2512, 2633, 2732, 2826, 2459, 2955, 3170, 2732, 3231, 1901, 2786, 3242, 2733, 1902, 2732, 2783,
-/* 1494 */ 3125, 2732, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 3251, 2420, 3269, 3273, 2732, 1837, 2512, 2732,
-/* 1512 */ 2732, 2732, 2459, 1841, 2732, 2732, 2733, 1901, 2786, 2732, 2723, 1902, 3014, 2783, 2732, 2732, 2460, 2460,
-/* 1530 */ 2460, 2460, 2460, 2460, 2460, 2460, 2459, 2671, 2785, 2784, 2732, 1837, 2512, 2732, 2732, 2722, 2459, 2808,
-/* 1548 */ 3198, 2732, 2733, 1901, 2786, 2732, 2733, 1902, 2732, 2783, 2732, 2732, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1566 */ 2460, 2460, 2383, 3281, 3288, 3292, 2460, 1932, 2512, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1584 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 1800,
-/* 1602 */ 3300, 1803, 2460, 1932, 1829, 2460, 2460, 2460, 2460, 2023, 2460, 2460, 2460, 2460, 3313, 2460, 2460, 2460,
-/* 1620 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 3327, 3330, 3344, 2460, 1932,
-/* 1638 */ 2512, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1656 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2041, 3357, 3361, 2460, 1932, 2512, 2460, 2460, 2460,
-/* 1674 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1692 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 1932, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1710 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1728 */ 2460, 2460, 1862, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460,
-/* 1746 */ 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 2460, 3101, 3101, 3101, 3101,
-/* 1764 */ 3101, 3101, 3101, 3101, 0, 0, 0, 3328, 3328, 3328, 49, 3328, 3328, 3328, 3328, 3377, 3377, 0, 0, 0, 0, 0,
-/* 1786 */ 9728, 9728, 0, 0, 0, 0, 42, 42, 42, 0, 42, 42, 42, 42, 0, 0, 0, 0, 0, 14390, 14390, 0, 0, 0, 0, 0, 2048, 0,
-/* 1814 */ 0, 0, 0, 0, 0, 1054, 10014, 2871, 2871, 2871, 0, 2871, 2871, 2871, 2871, 0, 0, 0, 0, 0, 14685, 2871, 0, 0,
-/* 1838 */ 42, 0, 0, 0, 1054, 1054, 1054, 0, 1054, 1054, 1054, 1187, 1054, 0, 4352, 0, 0, 0, 0, 2871, 0, 0, 0, 4146, 0,
-/* 1863 */ 0, 0, 0, 768, 0, 0, 0, 0, 4608, 0, 0, 0, 0, 0, 4608, 4608, 0, 0, 4608, 4608, 4608, 4608, 4608, 4608, 4608,
-/* 1888 */ 4608, 4608, 0, 0, 0, 0, 3328, 49, 49, 3328, 0, 0, 4864, 0, 0, 0, 0, 0, 0, 0, 1054, 1054, 4864, 4864, 4864,
-/* 1913 */ 4864, 0, 0, 0, 0, 4864, 0, 4864, 0, 42, 0, 0, 86, 0, 0, 0, 42, 42, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0, 86, 0, 86,
-/* 1944 */ 0, 0, 86, 0, 86, 86, 86, 86, 0, 0, 0, 1072, 1072, 0, 0, 1088, 43, 43, 43, 5376, 43, 43, 43, 43, 5419, 5419,
-/* 1970 */ 0, 0, 0, 0, 8960, 0, 2871, 0, 0, 42, 0, 0, 43, 0, 0, 0, 43, 43, 5376, 5376, 43, 126, 0, 0, 0, 0, 0, 0, 0,
-/* 1999 */ 1183, 0, 154, 154, 43, 0, 0, 43, 0, 0, 0, 5120, 0, 0, 0, 0, 6912, 0, 0, 0, 5632, 5632, 5632, 5632, 0, 0, 0,
-/* 2026 */ 0, 14979, 0, 0, 0, 44, 44, 44, 5888, 44, 44, 44, 44, 5932, 5932, 0, 0, 0, 0, 15616, 0, 0, 15616, 0, 42, 84,
-/* 2052 */ 84, 43, 0, 0, 0, 43, 125, 43, 0, 0, 0, 154, 154, 43, 84, 0, 43, 0, 0, 0, 5632, 0, 0, 0, 5632, 5632, 0, 0,
-/* 2080 */ 5632, 5632, 0, 0, 42, 0, 0, 87, 0, 0, 0, 121, 121, 121, 0, 0, 0, 121, 0, 0, 0, 0, 0, 0, 2871, 2871, 56, 56,
-/* 2108 */ 56, 6400, 56, 56, 56, 56, 6456, 6456, 0, 0, 0, 0, 1055, 1055, 0, 0, 1081, 0, 42, 85, 2605, 2605, 1054, 1054,
-/* 2132 */ 1054, 30, 1054, 1054, 1054, 0, 1054, 1185, 1054, 1054, 1054, 30, 1054, 1054, 1054, 1054, 1142, 152, 2687,
-/* 2151 */ 1054, 1054, 1054, 0, 1054, 1054, 1054, 0, 1054, 1157, 1054, 153, 85, 155, 2716, 2718, 2687, 2718, 1054, 0, 0,
-/* 2172 */ 85, 85, 0, 2684, 2605, 2605, 2605, 0, 2605, 2605, 2605, 2605, 0, 1054, 1054, 1054, 0, 1054, 1054, 11654, 153,
-/* 2193 */ 155, 155, 2716, 2716, 2718, 1054, 1054, 1054, 1169, 1054, 1054, 1054, 1054, 1139, 1054, 1054, 1054, 0, 42,
-/* 2212 */ 85, 2605, 2648, 1054, 1054, 1054, 1054, 1163, 1054, 1054, 1054, 1054, 1175, 1054, 1054, 0, 1184, 1054, 1054,
-/* 2231 */ 1054, 1054, 0, 1054, 1054, 1094, 153, 122, 155, 2717, 2718, 2687, 2718, 1054, 0, 0, 85, 122, 0, 2684, 2648,
-/* 2252 */ 174, 155, 155, 2717, 2717, 2718, 1054, 1054, 1054, 1191, 1054, 1054, 1054, 1054, 1054, 12062, 1054, 1054,
-/* 2270 */ 6912, 0, 6912, 0, 0, 0, 6912, 0, 6912, 0, 6912, 6912, 0, 6912, 6912, 6912, 6912, 0, 0, 0, 0, 1056, 1056, 0,
-/* 2294 */ 0, 1082, 0, 0, 7424, 0, 0, 0, 2871, 0, 0, 0, 6144, 0, 0, 0, 0, 44, 44, 5888, 5888, 44, 0, 0, 0, 7988, 0, 0,
-/* 2322 */ 0, 0, 1058, 1058, 0, 0, 1058, 3584, 0, 7680, 8192, 8704, 0, 2871, 0, 0, 0, 7219, 0, 0, 0, 0, 1057, 1057, 0,
-/* 2347 */ 0, 1083, 0, 0, 0, 8501, 0, 0, 0, 0, 1060, 1060, 0, 0, 1085, 0, 0, 0, 9216, 9216, 0, 0, 9216, 9216, 9216,
-/* 2372 */ 9216, 9216, 9216, 9216, 9216, 0, 0, 0, 0, 0, 83, 0, 0, 0, 0, 0, 0, 14080, 0, 0, 0, 9472, 0, 0, 0, 9472, 0, 0,
-/* 2400 */ 9472, 9472, 9472, 9472, 9472, 9472, 0, 0, 0, 0, 1062, 1062, 0, 0, 1087, 0, 0, 0, 9728, 0, 0, 0, 0, 1064,
-/* 2424 */ 1064, 0, 0, 1089, 0, 42, 0, 0, 0, 1114, 1099, 1054, 0, 42, 0, 0, 0, 0, 0, 86, 0, 0, 86, 1054, 1093, 1054,
-/* 2450 */ 1114, 1054, 1122, 1054, 1054, 1054, 1195, 1054, 1054, 1054, 0, 0, 0, 0, 0, 0, 0, 0, 125, 1054, 1128, 1054,
-/* 2472 */ 1054, 1054, 1054, 1054, 1054, 30, 1054, 1054, 1167, 1054, 1054, 1054, 1054, 1054, 1054, 1103, 1105, 1054,
-/* 2490 */ 1200, 1054, 1054, 1054, 1054, 1054, 1054, 1104, 1054, 1054, 1054, 1215, 1054, 1054, 1054, 1054, 1054, 0,
-/* 2508 */ 1054, 1209, 1055, 0, 0, 0, 0, 0, 0, 0, 2871, 0, 1081, 1081, 1081, 0, 1081, 1081, 1081, 1081, 0, 1054, 1054,
-/* 2531 */ 1054, 0, 1156, 1054, 1054, 1056, 0, 0, 0, 0, 0, 0, 0, 6144, 1082, 1082, 1082, 0, 1082, 1082, 1082, 1082,
-/* 2553 */ 1090, 1082, 1082, 1082, 0, 1054, 1054, 1054, 1054, 1203, 1054, 1054, 1054, 1054, 10526, 1054, 1054, 12574,
-/* 2571 */ 1054, 1054, 1168, 1054, 1054, 1054, 1054, 1172, 1057, 0, 0, 0, 0, 0, 0, 0, 154, 0, 0, 1083, 1083, 1083, 0,
-/* 2594 */ 1083, 1083, 1083, 1083, 0, 1054, 1054, 1054, 1058, 1058, 1058, 0, 1058, 1058, 1058, 1058, 0, 0, 0, 0, 0, 0,
-/* 2616 */ 0, 3840, 3840, 0, 0, 0, 0, 1058, 1091, 1058, 1058, 0, 1054, 1054, 1054, 1054, 12318, 1054, 1054, 1054, 1121,
-/* 2637 */ 1054, 1115, 1054, 1054, 0, 42, 0, 0, 89, 1054, 1054, 1102, 1173, 1054, 1054, 1054, 1054, 30, 1054, 0, 0, 0,
-/* 2659 */ 123, 0, 0, 89, 89, 123, 1822, 1054, 0, 123, 0, 89, 0, 0, 0, 1054, 1054, 0, 0, 1054, 1054, 1566, 0, 1054,
-/* 2683 */ 1054, 1186, 1054, 1188, 1059, 0, 0, 0, 0, 0, 0, 0, 4146, 4146, 0, 0, 0, 0, 1084, 1084, 1084, 0, 1084, 1084,
-/* 2707 */ 1084, 1084, 0, 1054, 1054, 1054, 82, 42, 0, 0, 0, 1054, 1054, 1103, 1127, 1054, 1054, 1054, 1054, 1054, 1054,
-/* 2728 */ 1054, 30, 0, 11806, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 0, 1060, 0, 0, 0, 0, 0, 0, 0, 5120, 5120,
-/* 2751 */ 0, 0, 0, 0, 1085, 1085, 1085, 0, 1085, 1085, 1085, 1085, 0, 1054, 1054, 1054, 1143, 120, 0, 0, 0, 2304, 0, 0,
-/* 2775 */ 0, 2605, 2605, 0, 0, 2605, 1194, 1060, 1054, 1054, 1054, 1054, 1054, 0, 1054, 1054, 1054, 1054, 1054, 1199,
-/* 2795 */ 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1125, 1204, 1054, 1206, 1054, 1054, 0, 1054, 1054, 30, 0, 1054,
-/* 2814 */ 1054, 1054, 1130, 1054, 1054, 1054, 1054, 146, 1054, 1171, 1054, 1210, 1054, 1054, 1054, 1054, 1054, 1054,
-/* 2832 */ 1054, 1142, 1054, 1095, 1054, 1054, 1054, 1054, 1054, 1054, 1123, 1124, 1054, 1054, 1129, 1054, 1054, 1054,
-/* 2850 */ 1054, 1134, 0, 1152, 1153, 1054, 0, 1054, 1054, 1054, 1138, 1054, 1054, 1054, 1054, 1054, 11177, 1054, 1054,
-/* 2869 */ 1310, 1054, 0, 1054, 1054, 1054, 1054, 1054, 123, 1054, 1054, 1054, 1054, 1137, 1054, 1054, 1054, 1054, 1054,
-/* 2888 */ 153, 1054, 1054, 1054, 1160, 1054, 1054, 1054, 1054, 1054, 1054, 1133, 1054, 1061, 0, 0, 0, 0, 0, 0, 0, 6400,
-/* 2910 */ 6400, 56, 1086, 1086, 1086, 0, 1086, 1086, 1086, 1086, 0, 1054, 1054, 1054, 1054, 1136, 1054, 1054, 1054,
-/* 2929 */ 1054, 1054, 1054, 1164, 1054, 1159, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 10270, 1054, 1205, 1054, 1054,
-/* 2947 */ 30, 0, 1208, 1054, 1054, 1054, 1207, 1054, 0, 1054, 1054, 1154, 0, 1054, 1054, 1054, 1142, 1054, 1054, 1216,
-/* 2967 */ 1054, 1054, 1054, 12830, 1054, 1054, 1054, 1054, 1054, 174, 1054, 1054, 30, 1054, 1097, 1054, 1054, 1054,
-/* 2985 */ 1054, 1054, 1101, 1102, 1054, 0, 42, 0, 0, 0, 1097, 1054, 1054, 1054, 1202, 1054, 1054, 1054, 1054, 1131,
-/* 3005 */ 1054, 1054, 1054, 1054, 0, 1054, 1119, 10782, 1120, 1054, 1054, 1054, 1054, 1054, 13342, 1054, 1054, 1054,
-/* 3023 */ 1119, 1054, 1054, 1054, 1054, 1054, 1054, 1212, 1054, 1054, 1054, 1190, 1054, 1054, 1054, 1054, 1054, 1132,
-/* 3041 */ 1054, 1054, 1054, 1214, 1054, 1054, 1054, 1054, 1054, 1054, 13854, 1054, 1054, 1211, 1054, 1054, 1054, 1054,
-/* 3059 */ 1054, 1054, 1140, 1054, 1054, 1062, 0, 0, 0, 0, 0, 0, 0, 6656, 0, 0, 0, 0, 1087, 1087, 1087, 0, 1087, 1087,
-/* 3083 */ 1087, 1087, 0, 1054, 1092, 1054, 0, 42, 0, 0, 0, 1054, 1054, 1116, 1118, 1054, 1054, 1054, 1054, 1054, 1054,
-/* 3104 */ 1126, 111, 1054, 1054, 1054, 1054, 1054, 1141, 1054, 1054, 1054, 11294, 1054, 1054, 1054, 1054, 1054, 1197,
-/* 3122 */ 1054, 1054, 1166, 1054, 1054, 1054, 1054, 1142, 1054, 1054, 1213, 1063, 0, 0, 0, 0, 0, 0, 0, 7219, 7219, 0,
-/* 3144 */ 0, 0, 0, 1088, 1088, 1088, 0, 1088, 1088, 1088, 1088, 0, 1054, 1054, 1054, 1054, 1054, 1161, 1054, 1054,
-/* 3164 */ 1054, 1054, 1165, 1054, 13086, 1054, 1054, 1054, 1054, 1054, 1054, 1154, 1054, 1054, 1054, 1054, 1201, 1054,
-/* 3182 */ 1054, 1054, 1054, 1054, 1197, 1054, 0, 1054, 1054, 1098, 1054, 1100, 1054, 1054, 1054, 1162, 1054, 1054,
-/* 3200 */ 1054, 1054, 1054, 13598, 1054, 1054, 0, 42, 0, 0, 0, 1098, 1115, 1054, 1054, 1096, 1054, 1099, 1054, 1054,
-/* 3220 */ 1054, 1054, 1192, 1054, 1054, 1054, 1054, 1196, 1054, 1054, 0, 1054, 1054, 1174, 1054, 1054, 1054, 1054, 0,
-/* 3239 */ 1054, 1054, 1093, 1189, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 13824, 1064, 0, 0, 0, 0, 41, 0, 0, 0, 3840,
-/* 3261 */ 0, 0, 0, 0, 121, 0, 0, 87, 1089, 1089, 1089, 0, 1089, 1089, 1089, 1089, 0, 1054, 1054, 1054, 0, 0, 0, 14080,
-/* 3285 */ 14080, 0, 0, 14080, 14080, 14080, 0, 14080, 14080, 14080, 14080, 0, 0, 0, 0, 0, 0, 0, 14390, 0, 0, 0, 0,
-/* 3308 */ 1070, 1070, 0, 0, 1084, 0, 0, 15104, 0, 0, 0, 0, 0, 7988, 7988, 0, 0, 0, 0, 0, 15360, 0, 0, 0, 15360, 0, 0,
-/* 3335 */ 0, 0, 0, 8501, 8501, 0, 0, 0, 0, 15360, 15360, 15360, 15360, 0, 0, 0, 0, 1071, 1071, 0, 0, 1086, 15616,
-/* 3358 */ 15616, 15616, 0, 15616, 15616, 15616, 15616, 0, 0, 0, 0
+/*    0 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*   18 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 1760, 1760, 1760, 1763,
+/*   36 */ 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*   54 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 1760, 1760, 1760, 1763, 2542, 1934, 2542, 2542,
+/*   72 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*   90 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 3083, 1771, 1777, 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542,
+/*  108 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  126 */ 2542, 2542, 2542, 1928, 1789, 1793, 2542, 1805, 1904, 2542, 2542, 2542, 1933, 2542, 2542, 2542, 2542, 2542,
+/*  144 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 1903,
+/*  162 */ 1815, 1819, 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  180 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603, 2407, 1831,
+/*  198 */ 1904, 2407, 2407, 2407, 2541, 2604, 2407, 2407, 1836, 3212, 2407, 2407, 1838, 1834, 2407, 2407, 2407, 1839,
+/*  216 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2109, 3208, 2112, 2542, 1934, 1904, 2542, 2542, 2542,
+/*  234 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  252 */ 2542, 2542, 2542, 2542, 2542, 2323, 3053, 2326, 2542, 1934, 1847, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  270 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  288 */ 2542, 2542, 2542, 2542, 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  306 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 1872, 1876, 1884, 1888,
+/*  324 */ 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  342 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 1900, 1902, 1915, 1912, 2542, 1934, 1904, 2542,
+/*  360 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  378 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2236, 3079, 2239, 2542, 1923, 1904, 2542, 2542, 2542, 1781, 2542,
+/*  396 */ 2542, 2542, 2542, 1942, 2542, 2542, 1973, 1954, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  414 */ 2542, 2542, 2542, 1998, 1964, 1981, 2542, 1993, 1904, 2542, 2542, 2542, 2543, 2542, 2542, 2542, 2542, 2006,
+/*  432 */ 2542, 2542, 2542, 1970, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2018,
+/*  450 */ 3096, 2043, 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  468 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2048, 2056, 2062, 2542, 2080,
+/*  486 */ 1904, 2542, 2542, 2542, 2543, 2542, 2542, 2542, 2542, 2006, 2542, 2542, 2542, 1970, 2542, 2542, 2542, 2542,
+/*  504 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2444, 2542, 3169, 3169, 2542, 2093, 1904, 2542, 2542, 2542,
+/*  522 */ 1797, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2106, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  540 */ 2542, 2542, 2542, 2542, 2542, 2554, 2120, 2126, 2542, 1934, 1807, 2542, 2542, 2542, 1933, 2542, 2542, 2542,
+/*  558 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  576 */ 2542, 2350, 2139, 2143, 2407, 2151, 1904, 2407, 2407, 2407, 2265, 2604, 2407, 2407, 2183, 2169, 2407, 2407,
+/*  594 */ 2185, 2181, 2407, 2407, 2407, 1839, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2586, 2584, 2542, 2542,
+/*  612 */ 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  630 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 1946, 2193, 2198, 2206, 2542, 1934, 1904, 2542,
+/*  648 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  666 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2697, 1859, 2700, 2542, 1934, 2219, 2542, 2542, 2542, 2542, 2542,
+/*  684 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  702 */ 2542, 2542, 2542, 2711, 2030, 2714, 2542, 1934, 2247, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  720 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2754,
+/*  738 */ 3302, 2757, 2542, 1934, 1985, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  756 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603, 2407, 2273,
+/*  774 */ 1904, 2407, 2407, 2407, 2981, 2604, 2407, 2407, 1836, 2286, 2407, 2407, 2510, 2298, 2407, 2407, 2407, 1839,
+/*  792 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2783, 2308, 2312, 2542, 1934, 1904, 2542, 2542, 2542,
+/*  810 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  828 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2320, 1904, 2542, 2542, 2542, 1933, 2542, 2542, 2542,
+/*  846 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  864 */ 2542, 2334, 2337, 2345, 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  882 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2855, 3203, 2858,
+/*  900 */ 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  918 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2898, 2365, 2358, 1904, 2378,
+/*  936 */ 2396, 2407, 2541, 2604, 2407, 2406, 1836, 3212, 2416, 2743, 1838, 2254, 2407, 2407, 2425, 1839, 2542, 2542,
+/*  954 */ 2542, 2542, 2542, 2542, 2542, 2542, 2443, 2085, 2452, 2456, 2407, 1831, 1904, 2407, 2407, 2407, 2233, 2604,
+/*  972 */ 2407, 2407, 1836, 3212, 2407, 2407, 1838, 1834, 2407, 2407, 2407, 1839, 2542, 2542, 2542, 2542, 2542, 2542,
+/*  990 */ 2542, 2542, 2464, 3174, 2473, 2481, 2407, 1831, 1904, 2407, 2407, 2407, 2541, 2604, 2407, 2494, 1836, 3212,
+/* 1008 */ 2506, 2518, 1838, 1834, 2407, 2528, 2835, 2539, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2551, 2098,
+/* 1026 */ 2562, 2566, 2407, 1831, 1904, 2407, 2407, 2407, 2541, 2604, 2407, 2407, 1836, 3212, 2407, 2407, 1838, 1834,
+/* 1044 */ 2407, 2407, 2407, 1839, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2581, 2131, 2574, 2594, 2531, 2612,
+/* 1062 */ 1904, 2793, 2599, 2407, 2981, 2290, 2407, 2278, 2435, 2620, 2644, 2661, 2370, 2672, 2683, 2407, 2300, 2694,
+/* 1080 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2708, 2035, 2722, 2726, 2825, 1831, 1904, 3266, 2407, 2407,
+/* 1098 */ 2233, 2604, 2407, 2407, 1836, 3212, 2407, 2407, 1838, 1834, 2407, 2963, 2407, 1839, 2542, 2542, 2542, 2542,
+/* 1116 */ 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603, 2398, 2734, 1904, 2417, 2742, 2407, 2541, 2604, 2407, 2407,
+/* 1134 */ 1836, 3212, 2407, 2824, 1838, 1834, 2894, 2407, 2937, 1839, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1152 */ 2751, 2161, 2765, 2769, 2407, 1831, 1904, 2407, 2407, 2407, 2777, 2604, 2686, 2407, 1836, 3212, 2407, 2923,
+/* 1170 */ 1838, 2627, 3156, 2431, 2407, 1839, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603,
+/* 1188 */ 2407, 1831, 1904, 2407, 2407, 2407, 2541, 2604, 2407, 2407, 1836, 3212, 2407, 2825, 1838, 2820, 2407, 2407,
+/* 1206 */ 2407, 1839, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603, 2791, 1831, 1904, 2407,
+/* 1224 */ 3040, 2649, 2541, 2801, 2407, 2407, 2813, 3057, 2407, 2833, 1838, 1834, 2407, 2407, 2407, 1839, 2542, 2542,
+/* 1242 */ 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603, 2407, 1831, 1904, 2407, 2407, 3123, 2541, 2604,
+/* 1260 */ 2843, 2407, 1836, 3212, 2407, 2407, 1838, 1834, 2407, 2407, 2407, 1839, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1278 */ 2542, 2542, 2852, 3307, 2866, 2870, 2407, 1831, 1904, 2407, 2664, 2878, 2233, 2173, 2407, 2407, 1836, 3212,
+/* 1296 */ 2407, 2407, 1838, 1834, 3137, 2888, 2407, 2906, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067,
+/* 1314 */ 2604, 2941, 2920, 2931, 1904, 2949, 2961, 2407, 2541, 2604, 2407, 2407, 2976, 3212, 2844, 2407, 1838, 1834,
+/* 1332 */ 2407, 2407, 2971, 1839, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603, 2407, 1831,
+/* 1350 */ 1904, 2407, 2407, 2407, 2541, 2604, 2407, 2407, 1836, 3212, 2407, 2407, 1838, 1834, 3066, 3228, 2407, 1839,
+/* 1368 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2994, 2211, 3005, 3009, 2520, 3017, 1904, 3025, 2407, 3033,
+/* 1386 */ 2233, 3216, 2632, 2407, 1836, 3212, 2407, 2407, 3048, 1834, 3065, 2407, 2407, 1839, 2542, 2542, 2542, 2542,
+/* 1404 */ 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603, 2407, 1831, 1904, 2407, 2880, 2675, 2541, 2604, 3189, 2953,
+/* 1422 */ 1836, 1892, 2407, 2407, 3074, 2072, 2407, 2407, 2407, 1839, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1440 */ 3091, 2986, 3104, 3108, 2407, 1831, 1904, 2407, 2653, 2805, 2233, 2604, 3116, 3134, 2260, 3212, 3145, 2407,
+/* 1458 */ 3164, 2226, 2407, 2407, 2407, 1839, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603,
+/* 1476 */ 2501, 3182, 1904, 2486, 2407, 2834, 2541, 3152, 2636, 2407, 3197, 3212, 3126, 2407, 1838, 1834, 2407, 2834,
+/* 1494 */ 3224, 1839, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 3236, 1864, 3250, 3254, 2407, 1831, 1904, 2407,
+/* 1512 */ 2407, 2407, 2541, 2604, 2407, 2407, 1836, 3212, 2407, 2407, 2156, 1834, 3262, 2407, 2407, 1839, 2542, 2542,
+/* 1530 */ 2542, 2542, 2542, 2542, 2542, 2542, 2541, 2067, 2604, 2603, 2407, 1831, 1904, 2407, 2407, 2408, 2541, 2384,
+/* 1548 */ 2388, 2407, 1836, 3212, 2407, 2407, 1838, 1834, 2407, 2407, 2407, 1839, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1566 */ 2542, 2542, 1956, 3242, 3274, 3278, 2542, 1934, 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1584 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2909,
+/* 1602 */ 1854, 2912, 2542, 1934, 2997, 2542, 2542, 2542, 2542, 2025, 2542, 2542, 2542, 2465, 2542, 2542, 2542, 2542,
+/* 1620 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 3286, 3289, 3297, 2542, 1934,
+/* 1638 */ 1904, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1656 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2010, 3315, 3319, 2542, 1934, 1904, 2542, 2542, 2542,
+/* 1674 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1692 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 1934, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1710 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1728 */ 2542, 2542, 1823, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542,
+/* 1746 */ 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 2542, 3101, 3101, 3101, 3101,
+/* 1764 */ 3101, 3101, 3101, 3101, 0, 0, 0, 3328, 3328, 3328, 49, 3328, 3328, 3328, 3328, 3377, 3377, 0, 0, 0, 0, 86, 0,
+/* 1787 */ 0, 0, 42, 42, 42, 0, 42, 42, 42, 42, 0, 0, 0, 0, 120, 0, 0, 0, 0, 2048, 0, 0, 0, 0, 0, 0, 2871, 2871, 2871,
+/* 1816 */ 2871, 2871, 0, 2871, 2871, 2871, 2871, 0, 0, 0, 0, 768, 0, 0, 0, 0, 42, 0, 0, 0, 1054, 1054, 1054, 1054,
+/* 1840 */ 1054, 1054, 0, 0, 0, 0, 0, 0, 4352, 0, 0, 0, 0, 2871, 0, 0, 0, 14390, 0, 0, 0, 0, 7219, 0, 0, 0, 0, 1064,
+/* 1868 */ 1064, 0, 0, 1089, 0, 4608, 0, 0, 0, 0, 0, 4608, 4608, 0, 0, 4608, 4608, 4608, 4608, 4608, 4608, 4608, 4608,
+/* 1891 */ 4608, 0, 0, 0, 0, 1179, 1054, 1054, 0, 0, 0, 4864, 0, 0, 0, 0, 0, 0, 0, 2871, 0, 4864, 4864, 4864, 4864, 0,
+/* 1917 */ 0, 0, 0, 4864, 0, 4864, 0, 42, 0, 0, 86, 0, 0, 0, 42, 42, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0, 86, 0, 86, 0, 0, 0,
+/* 1949 */ 0, 6912, 0, 0, 0, 86, 86, 0, 0, 0, 0, 0, 0, 14080, 0, 43, 43, 43, 5376, 43, 43, 43, 43, 0, 0, 0, 0, 0, 0, 86,
+/* 1979 */ 0, 86, 43, 43, 5419, 5419, 0, 0, 0, 0, 8960, 0, 2871, 0, 0, 42, 0, 0, 43, 0, 0, 0, 43, 43, 5376, 5376, 43,
+/* 2006 */ 151, 43, 0, 43, 0, 0, 0, 0, 15616, 0, 0, 15616, 0, 5632, 5632, 0, 0, 5632, 5632, 0, 0, 0, 14976, 0, 0, 0, 0,
+/* 2033 */ 7988, 0, 0, 0, 0, 1070, 1070, 0, 0, 1084, 5632, 5632, 5632, 5632, 0, 0, 0, 0, 44, 44, 5888, 5888, 44, 44, 44,
+/* 2058 */ 44, 5888, 44, 44, 44, 44, 5932, 5932, 0, 0, 0, 0, 1054, 1054, 0, 0, 1054, 1054, 1054, 1054, 1054, 1197, 0,
+/* 2081 */ 42, 84, 84, 43, 0, 0, 0, 1055, 1055, 0, 0, 1081, 0, 42, 0, 0, 87, 0, 0, 0, 1057, 1057, 0, 0, 1083, 120, 120,
+/* 2108 */ 0, 0, 0, 0, 0, 0, 3840, 3840, 0, 0, 0, 0, 56, 56, 56, 6400, 56, 56, 56, 56, 6456, 6456, 0, 0, 0, 0, 1058,
+/* 2135 */ 1058, 0, 0, 1058, 2605, 2605, 2605, 0, 2605, 2605, 2605, 2605, 0, 1054, 1054, 1054, 0, 42, 85, 2605, 2605,
+/* 2156 */ 1054, 1054, 1054, 30, 0, 0, 0, 0, 1060, 1060, 0, 0, 1085, 152, 2713, 2684, 2714, 1054, 1054, 1054, 0, 1054,
+/* 2178 */ 1154, 1054, 1156, 2713, 2714, 1054, 1054, 1054, 1054, 1054, 1054, 0, 150, 152, 152, 6912, 0, 6912, 0, 0, 0,
+/* 2199 */ 6912, 0, 6912, 0, 6912, 6912, 0, 6912, 6912, 6912, 6912, 0, 0, 0, 0, 1062, 1062, 0, 0, 1087, 0, 0, 7424, 0,
+/* 2223 */ 0, 0, 2871, 0, 0, 1054, 1054, 1054, 1054, 1196, 1054, 0, 42, 0, 0, 0, 0, 0, 5120, 5120, 0, 0, 0, 0, 3584, 0,
+/* 2249 */ 7680, 8192, 8704, 0, 2871, 0, 0, 1054, 1054, 1054, 1195, 1054, 1054, 30, 1054, 1054, 1054, 0, 0, 85, 85, 0,
+/* 2271 */ 2682, 2684, 0, 42, 0, 0, 88, 1054, 1054, 1054, 143, 1054, 1168, 1054, 1170, 0, 88, 0, 0, 1054, 1054, 1054, 0,
+/* 2294 */ 1153, 1054, 1054, 1054, 88, 121, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 10526, 9216, 9216, 9216, 9216,
+/* 2312 */ 9216, 9216, 9216, 9216, 0, 0, 0, 0, 0, 83, 0, 0, 0, 0, 0, 0, 4146, 4146, 0, 0, 0, 0, 0, 0, 9472, 0, 0, 0,
+/* 2340 */ 9472, 0, 0, 9472, 9472, 9472, 9472, 9472, 9472, 0, 0, 0, 0, 2605, 2605, 0, 0, 2605, 0, 42, 0, 0, 0, 1113,
+/* 2364 */ 1099, 1054, 1054, 1096, 1054, 1099, 1054, 1054, 1054, 1054, 13824, 121, 0, 0, 1054, 1093, 1054, 1113, 1054,
+/* 2383 */ 1121, 1054, 1054, 30, 0, 1054, 1054, 1054, 1054, 13598, 1054, 1054, 1054, 1054, 1127, 1054, 1054, 1054, 1054,
+/* 2402 */ 1054, 1054, 1103, 1105, 1164, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 30, 1180, 1054, 1054, 1054,
+/* 2420 */ 1054, 1054, 1054, 1054, 1124, 1054, 1207, 1054, 1054, 1054, 1210, 1054, 1054, 1054, 1205, 1054, 1054, 1054,
+/* 2438 */ 1054, 30, 1054, 0, 0, 1055, 0, 0, 0, 0, 0, 0, 0, 6144, 1081, 1081, 1081, 0, 1081, 1081, 1081, 1081, 0, 1054,
+/* 2462 */ 1054, 1054, 1056, 0, 0, 0, 0, 0, 0, 0, 15104, 1082, 1082, 1082, 0, 1082, 1082, 1082, 1082, 1090, 1082, 1082,
+/* 2484 */ 1082, 0, 1054, 1054, 1054, 1120, 1054, 1114, 1054, 1054, 1054, 1165, 1054, 1054, 1054, 1054, 1169, 1054,
+/* 2502 */ 1054, 1098, 1054, 1100, 1054, 1054, 1054, 1183, 1054, 1054, 1054, 1054, 0, 121, 0, 0, 1054, 1188, 1054, 1054,
+/* 2522 */ 1054, 1054, 1054, 1054, 1104, 1054, 1054, 1054, 1204, 1054, 1054, 1054, 1054, 1054, 1101, 1102, 1054, 1054,
+/* 2540 */ 1211, 1054, 0, 0, 0, 0, 0, 0, 0, 0, 123, 1057, 0, 0, 0, 0, 0, 0, 0, 6400, 6400, 56, 1083, 1083, 1083, 0,
+/* 2566 */ 1083, 1083, 1083, 1083, 0, 1054, 1054, 1054, 1058, 1058, 1058, 0, 1058, 1058, 1058, 1058, 0, 0, 0, 0, 0, 0,
+/* 2588 */ 0, 6656, 0, 0, 0, 0, 1058, 1091, 1058, 1058, 0, 1054, 1054, 1054, 1129, 1054, 1054, 1054, 1054, 0, 1054,
+/* 2609 */ 1054, 1054, 1054, 0, 42, 0, 0, 88, 1054, 1054, 1102, 0, 88, 0, 0, 1054, 1054, 1566, 0, 0, 1054, 1054, 1194,
+/* 2632 */ 1054, 1054, 1054, 1160, 1054, 1054, 1054, 1054, 1151, 1054, 1054, 1054, 1054, 1054, 1182, 1054, 1184, 1054,
+/* 2650 */ 1054, 1054, 1137, 1054, 1054, 1054, 1054, 1130, 1054, 1054, 1054, 1054, 1054, 11173, 1054, 1054, 1054, 1054,
+/* 2668 */ 1054, 1131, 1054, 1054, 88, 121, 1822, 1054, 1054, 1054, 1054, 1054, 1139, 1054, 1054, 1054, 1054, 13854,
+/* 2686 */ 1054, 1054, 1054, 1054, 1054, 1161, 1054, 1054, 1054, 1054, 12574, 0, 0, 0, 0, 0, 7219, 7219, 0, 0, 0, 0,
+/* 2708 */ 1059, 0, 0, 0, 0, 0, 0, 0, 7988, 7988, 0, 0, 0, 0, 1084, 1084, 1084, 0, 1084, 1084, 1084, 1084, 0, 1054,
+/* 2732 */ 1054, 1054, 82, 42, 0, 0, 0, 1054, 1054, 1103, 1126, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1130, 1060, 0,
+/* 2753 */ 0, 0, 0, 0, 0, 0, 8501, 8501, 0, 0, 0, 0, 1085, 1085, 1085, 0, 1085, 1085, 1085, 1085, 0, 1054, 1054, 1054,
+/* 2777 */ 1142, 119, 0, 0, 0, 2304, 0, 0, 0, 9216, 9216, 0, 0, 9216, 1054, 1095, 1054, 1054, 1054, 1054, 1054, 1054,
+/* 2799 */ 1122, 1123, 1149, 1150, 1054, 0, 1054, 1054, 1054, 1054, 1138, 1054, 1054, 1054, 30, 1054, 1054, 1054, 1054,
+/* 2818 */ 1141, 149, 0, 0, 1054, 10014, 1054, 1054, 1054, 1054, 30, 1054, 1054, 1054, 1054, 1187, 1054, 1054, 1054,
+/* 2837 */ 1054, 1054, 1054, 1054, 1141, 1054, 1157, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1186, 1061, 0, 0, 0, 0,
+/* 2857 */ 0, 0, 0, 9728, 9728, 0, 0, 0, 0, 1086, 1086, 1086, 0, 1086, 1086, 1086, 1086, 0, 1054, 1054, 1054, 1054,
+/* 2879 */ 1135, 1054, 1054, 1054, 1054, 1054, 1054, 1132, 1054, 30, 1203, 1054, 1054, 1054, 12830, 1054, 1054, 1054,
+/* 2897 */ 10270, 1054, 1054, 1054, 1054, 0, 1054, 1054, 1093, 12062, 1054, 1054, 0, 0, 0, 0, 0, 14390, 14390, 0, 0, 0,
+/* 2919 */ 0, 30, 1054, 1097, 1054, 1054, 1054, 1054, 1054, 1190, 1060, 1054, 0, 42, 0, 0, 0, 1097, 1054, 1054, 1054,
+/* 2940 */ 11806, 1054, 1054, 1054, 1054, 0, 1054, 1054, 1094, 1054, 1118, 10782, 1119, 1054, 1054, 1054, 1054, 1141,
+/* 2958 */ 1054, 1054, 1054, 1054, 1118, 1054, 1054, 1054, 1054, 1054, 1054, 11294, 1054, 1193, 1054, 1054, 1054, 1209,
+/* 2976 */ 1054, 1054, 1054, 1172, 1054, 1054, 0, 0, 0, 121, 0, 0, 0, 1072, 1072, 0, 0, 1088, 1062, 0, 0, 0, 0, 0, 0, 0,
+/* 3002 */ 14684, 2871, 0, 1087, 1087, 1087, 0, 1087, 1087, 1087, 1087, 0, 1054, 1092, 1054, 0, 42, 0, 0, 0, 1054, 1054,
+/* 3024 */ 1115, 1117, 1054, 1054, 1054, 1054, 1054, 1054, 1125, 110, 1054, 1054, 1054, 1054, 1054, 1140, 1054, 1054,
+/* 3042 */ 1128, 1054, 1054, 1054, 1054, 1133, 1054, 1054, 1193, 1054, 0, 0, 0, 0, 4146, 0, 0, 0, 0, 1054, 1310, 1054,
+/* 3064 */ 0, 1198, 1054, 1054, 1054, 1054, 1054, 1054, 1054, 1202, 1054, 1192, 1054, 1054, 0, 0, 0, 0, 5120, 0, 0, 0,
+/* 3086 */ 0, 3328, 49, 49, 3328, 1063, 0, 0, 0, 0, 0, 0, 0, 5632, 0, 0, 0, 5632, 1088, 1088, 1088, 0, 1088, 1088, 1088,
+/* 3111 */ 1088, 0, 1054, 1054, 1054, 1054, 1158, 1054, 1054, 1054, 1054, 1162, 1054, 1054, 1136, 1054, 1054, 1054,
+/* 3129 */ 1054, 1054, 1185, 1054, 1054, 1054, 1054, 1166, 1054, 1054, 1054, 1054, 1054, 1200, 1054, 1054, 1054, 1181,
+/* 3147 */ 1054, 1054, 1054, 1054, 13086, 1054, 1054, 1151, 0, 1054, 1054, 1054, 1054, 1199, 1054, 1201, 1054, 1191,
+/* 3165 */ 1054, 1054, 1054, 0, 0, 0, 0, 6144, 0, 0, 0, 0, 1056, 1056, 0, 0, 1082, 0, 42, 0, 0, 0, 1098, 1114, 1054,
+/* 3190 */ 1054, 1159, 1054, 1054, 1054, 1054, 1163, 1054, 1171, 1054, 1054, 1054, 1054, 0, 0, 0, 9728, 0, 0, 0, 0,
+/* 3211 */ 3840, 0, 0, 0, 0, 1054, 1054, 1054, 0, 1054, 1054, 11651, 1054, 1054, 1054, 1208, 1054, 1054, 1054, 1054,
+/* 3231 */ 1054, 1206, 1054, 1054, 1054, 1064, 0, 0, 0, 0, 41, 0, 0, 0, 14080, 14080, 0, 0, 14080, 1089, 1089, 1089, 0,
+/* 3254 */ 1089, 1089, 1089, 1089, 0, 1054, 1054, 1054, 1054, 13342, 1054, 1054, 1054, 1054, 1054, 1054, 12318, 1054,
+/* 3272 */ 1054, 1054, 14080, 14080, 14080, 0, 14080, 14080, 14080, 14080, 0, 0, 0, 0, 0, 15360, 0, 0, 0, 15360, 0, 0,
+/* 3294 */ 0, 0, 0, 15360, 15360, 15360, 15360, 0, 0, 0, 0, 8501, 0, 0, 0, 0, 1071, 1071, 0, 0, 1086, 15616, 15616,
+/* 3317 */ 15616, 0, 15616, 15616, 15616, 15616, 0, 0, 0, 0
 };
 
 const int MaiaScript::EXPECTED[] =
 {
-/*   0 */ 96, 100, 104, 108, 112, 116, 120, 124, 134, 134, 163, 129, 139, 198, 135, 143, 134, 134, 134, 134, 162, 150,
-/*  22 */ 129, 133, 134, 145, 134, 134, 134, 125, 149, 154, 131, 134, 134, 134, 134, 125, 149, 155, 134, 134, 134, 159,
-/*  44 */ 134, 134, 134, 134, 211, 167, 177, 181, 188, 184, 192, 211, 211, 211, 210, 211, 211, 196, 173, 202, 206, 211,
-/*  66 */ 211, 211, 209, 211, 211, 216, 220, 226, 230, 211, 211, 249, 211, 211, 170, 236, 222, 229, 211, 249, 211, 212,
-/*  88 */ 236, 241, 248, 232, 245, 231, 237, 253, 2056, 133120, 264192, 33556480, 67110912, 2048, 2048, 8521728,
-/* 104 */ 67373056, 2099200, 69208064, 134136, 138232, -75896832, -42342400, 139256, 401400, 67248120, 139256,
-/* 115 */ -33822720, 139260, 67510264, 67248120, 2498552, 69607416, 69607416, -41943048, -33554440, 2048, 8, 8, 8, 0,
-/* 129 */ 768, 72, 24, 40, 0, 8, 8, 8, 8, 72, 8192, 65536, 805306368, (int) 0x80000000, 8, 24, 8, 40, 8, 8, 256, 256,
-/* 151 */ 256, 768, 768, 768, 768, 768, 72, 8, 8, 256, 8, 8, 0, 128, 256, 768, 0, 2097152, 4194304, 0, 0, 67108864, 64,
-/* 174 */ 256, 512, 28672, 0, 134217728, 16, 4194312, 272629768, 260046887, 125829175, 276820808, 276820808, 276820824,
-/* 187 */ 276820824, 276820808, 276820808, 411038536, 125829183, 411038680, 411041624, 536867711, 536867711, 6,
-/* 197 */ 117440512, 0, 0, 1024, 1024, 32768, 65536, 131072, 1835008, 2097152, 384, 3072, 0, 2097152, 0, 0, 0, 0, 64,
-/* 216 */ 100663296, 64, 256, 12288, 16384, 65536, 131072, 262144, 524288, 2097152, 524288, 1048576, 2097152, 128, 3072,
-/* 231 */ 0, 0, 0, 256, 8192, 256, 8192, 16384, 65536, 0, 131072, 524288, 2097152, 128, 16384, 65536, 131072, 2048, 0,
-/* 250 */ 0, 0, 2097152, 256, 16384, 65536, 65536
+/*   0 */ 94, 98, 102, 106, 110, 114, 118, 122, 141, 141, 157, 128, 133, 205, 142, 137, 141, 141, 141, 141, 156, 148,
+/*  22 */ 129, 141, 141, 140, 141, 141, 141, 124, 149, 129, 141, 141, 141, 141, 141, 146, 153, 141, 141, 141, 141, 141,
+/*  44 */ 141, 141, 123, 167, 161, 172, 176, 183, 179, 187, 167, 167, 163, 167, 167, 168, 194, 199, 239, 203, 167, 167,
+/*  66 */ 167, 166, 167, 190, 209, 216, 242, 167, 167, 167, 165, 167, 228, 233, 220, 243, 167, 163, 167, 195, 234, 222,
+/*  88 */ 167, 233, 226, 232, 212, 238, 2056, 133120, 264192, 33556480, 67110912, 2048, 2048, 8521728, 67373056,
+/* 103 */ 2099200, 69208064, 134136, 138232, -75896832, -42342400, 139256, 401400, 67248120, 139256, -33822720, 139260,
+/* 115 */ 67510264, 67248120, 2498552, 69607416, 69607416, -41943048, -33554440, 2048, 8, 8, 8, 0, 256, 768, 72, 24, 40,
+/* 132 */ 0, 8192, 65536, 805306368, (int) 0x80000000, 8, 24, 8, 40, 8, 8, 8, 8, 72, 0, 256, 256, 256, 768, 768, 768,
+/* 153 */ 768, 768, 72, 8, 0, 128, 256, 768, 2097152, 4194304, 0, 0, 0, 2097152, 0, 0, 0, 0, 6, 134217728, 16, 4194312,
+/* 175 */ 272629768, 260046887, 125829175, 276820808, 276820808, 276820824, 276820824, 411038680, 276820808, 411038536,
+/* 185 */ 125829183, 276820808, 411041624, 536867711, 536867711, 0, 0, 100663296, 64, 117440512, 0, 0, 64, 256, 256,
+/* 200 */ 512, 28672, 32768, 384, 3072, 0, 0, 1024, 1024, 256, 12288, 16384, 65536, 0, 256, 16384, 131072, 262144,
+/* 218 */ 524288, 1048576, 131072, 262144, 524288, 2097152, 128, 2048, 131072, 2048, 0, 0, 67108864, 64, 0, 256, 8192,
+/* 235 */ 16384, 65536, 131072, 65536, 65536, 131072, 1835008, 2097152, 128, 3072, 0, 0
 };
 
 const wchar_t *MaiaScript::TOKEN[] =
