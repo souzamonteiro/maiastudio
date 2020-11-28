@@ -123,6 +123,20 @@ function System() {
     }
 
     /**
+     * Imports a native module.
+     * @param {string}   moduleName - Module name.
+     * @return {object}  The native module reference.
+     */
+    this.require = function(moduleName)
+    {
+        var moduleReference;
+        if (typeof process !== 'undefined') {
+            var moduleReference = require(moduleName);
+        }
+        return moduleReference;
+    }
+
+    /**
      * Displays a message in a dialog box asking for confirmation.
      * @param {string}   text - Text to display.
      * @return {string}  User choice.

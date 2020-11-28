@@ -1,6 +1,6 @@
 {
   "name": "maiascript-cli",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "MaiaStudio (The MaiaScript IDE)\n\nMaiaScript is a programming language aimed at developing adaptable and intelligent applications.",
   "keywords": [
     "maia",
@@ -22,9 +22,11 @@
     "maiascript": "./bin/maiascript.js"
   },
   "dependencies": {
+    "glob": "^7.1.6",
+    "jsdoc": "^3.6.5",
     "jsdom": "^16.2.2",
-    "websql": "^1.0.0",
-    "readline": "^1.3.0"
+    "readline": "^1.3.0",
+    "websql": "^1.0.0"
   },
   "scripts": {
     "build": "./build.sh",
