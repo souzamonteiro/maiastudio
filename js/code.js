@@ -462,12 +462,12 @@ function initApp() {
 
     if (editorMode == 'mil') {
         terminal = new MaiaConsole('terminal', 'json', callBack, {
-            'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n',
+            'greetingMessage': 'MaiaStudio (editorMode: ' + editorMode + ')\r\n',
             'promptMessage': ':'
         });
     } else {
         terminal = new MaiaConsole('terminal', editorMode, callBack, {
-            'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n',
+            'greetingMessage': 'MaiaStudio (editorMode = "' + editorMode + '")\r\n',
             'promptMessage': ':'
         });
     }
