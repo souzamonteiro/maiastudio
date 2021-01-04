@@ -125,7 +125,8 @@ function uploadCode() {
 function downloadMil() {
     var code = editor.getText();
     compiledCode.xml = '';
-    function getXml (data) {
+
+    function getXml(data) {
         compiledCode.xml += data;
     }
     var s = new MaiaScript.XmlSerializer(getXml, true);
@@ -142,11 +143,11 @@ function downloadMil() {
         }
     }
     var parser = new DOMParser();
-    var xml = parser.parseFromString(compiledCode.xml,'text/xml');
-    
+    var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
+
     var compiler = new MaiaCompiler();
     compiledCode.mil = compiler.xmlToMil(xml);
-         
+
     system.downloadFile(fileName + '.mil', JSON.stringify(compiledCode.mil, null, 4), 'text/json');
 }
 
@@ -156,7 +157,8 @@ function downloadMil() {
 function downloadJs() {
     var code = editor.getText();
     compiledCode.xml = '';
-    function getXml (data) {
+
+    function getXml(data) {
         compiledCode.xml += data;
     }
     var s = new MaiaScript.XmlSerializer(getXml, true);
@@ -173,11 +175,11 @@ function downloadJs() {
         }
     }
     var parser = new DOMParser();
-    var xml = parser.parseFromString(compiledCode.xml,'text/xml');
-    
+    var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
+
     var compiler = new MaiaCompiler();
     compiledCode.js = compiler.compile(xml);
-    
+
     system.downloadFile(fileName + '.js', compiledCode.js, 'text/js');
 }
 
@@ -186,7 +188,7 @@ function downloadJs() {
  * @param {string}   text - Text to replace line breaks with the <br /> tag.
  * @return {string}  Line breaks replaced by <br />..
  */
-function newLineToBr(text){
+function newLineToBr(text) {
     return text.replace(/(?:\r\n|\r|\n)/g, '<br />');
 }
 
@@ -209,6 +211,7 @@ function compileAndRun() {
     var code = editor.getText();
     if (editorMode == 'maia') {
         compiledCode.xml = '';
+
         function getXml(data) {
             compiledCode.xml += data;
         }
@@ -226,8 +229,8 @@ function compileAndRun() {
             }
         }
         var parser = new DOMParser();
-        var xml = parser.parseFromString(compiledCode.xml,'text/xml');
-        
+        var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
+
         var compiler = new MaiaCompiler();
         compiledCode.js = compiler.compile(xml);
     } else if (editorMode == 'mil') {
@@ -235,7 +238,7 @@ function compileAndRun() {
         var nodeInfo = {
             'parentNode': '',
             'childNode': 'maiascript',
-            'terminalNode' : ''
+            'terminalNode': ''
         };
         var compiler = new MaiaCompiler();
         compiledCode.js = compiler.parse(mil, nodeInfo);
@@ -322,7 +325,7 @@ function loadWorkspace() {
         if (typeof data['fileData'] != 'undefined') {
             fileData = data['fileData'];
         }
-    
+
         if (typeof data['language'] != 'undefined') {
             lang = data['language'];
             if (lang) {
@@ -335,7 +338,7 @@ function loadWorkspace() {
             lang = 'pt-BR';
             document.getElementById('language').value = lang;
         }
-    
+
         if (typeof data['editorMode'] != 'undefined') {
             editorMode = data['editorMode'];
             if (editorMode) {
@@ -348,7 +351,7 @@ function loadWorkspace() {
             editorMode = 'maia';
             document.getElementById('editorMode').value = editorMode;
         }
-    
+
         if (typeof data['terminalMode'] != 'undefined') {
             terminalMode = data['terminalMode'];
             if (terminalMode) {
@@ -405,7 +408,7 @@ function setEditorMode() {
  */
 function aboutApp() {
     var copyright = 'Copyright (C) Roberto Luiz Souza Monteiro,\nRenata Souza Barreto,\nHernane Barrros de Borges Pereira.\n\nwww.maiascript.com';
-    
+
     system.showMessageDialog(copyright);
 }
 
@@ -419,16 +422,22 @@ window.addEventListener('unload', function(event) {
 /**
  * Initializes the application.
  */
-function initApp() {  
+function initApp() {
     installLanguages(lang, 'language');
     loadWorkspace();
 
     if (editorMode == 'mil') {
-        editor = new MaiaEditor('editor', 'json', {'indentChars': '    ', 'commentChars': '//'});
+        editor = new MaiaEditor('editor', 'json', {
+            'indentChars': '    ',
+            'commentChars': '//'
+        });
     } else {
-        editor = new MaiaEditor('editor', editorMode, {'indentChars': '    ', 'commentChars': '//'});
+        editor = new MaiaEditor('editor', editorMode, {
+            'indentChars': '    ',
+            'commentChars': '//'
+        });
     }
-    
+
     if (fileData) {
         editor.setText(fileData);
     }
@@ -436,7 +445,11 @@ function initApp() {
     function callBack() {
         var res;
         try {
-            res = core.eval(terminal.getTextAtCursor());
+            if (editorMode == 'maia') {
+                res = core.eval(terminal.getTextAtCursor());
+            } else {
+                res = eval(terminal.getTextAtCursor());
+            }
         } catch (e) {
             var evalError = e.message;
             system.log(evalError);
@@ -448,9 +461,15 @@ function initApp() {
     }
 
     if (editorMode == 'mil') {
-        terminal = new MaiaConsole('terminal', 'json', callBack, {'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n', 'promptMessage': ':'});
+        terminal = new MaiaConsole('terminal', 'json', callBack, {
+            'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n',
+            'promptMessage': ':'
+        });
     } else {
-        terminal = new MaiaConsole('terminal', editorMode, callBack, {'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n', 'promptMessage': ':'});
+        terminal = new MaiaConsole('terminal', editorMode, callBack, {
+            'greetingMessage': 'MaiaStudio (The MaiaScript IDE)\r\n',
+            'promptMessage': ':'
+        });
     }
     terminal.setHistory(terminalHistory);
 
@@ -476,45 +495,85 @@ function initApp() {
 
     // Toolbar buttons event listeners.
     var aboutAppBtn = document.getElementById('aboutApp');
-    aboutAppBtn.addEventListener('click', function() {aboutApp();});
+    aboutAppBtn.addEventListener('click', function() {
+        aboutApp();
+    });
     var newWorkspaceBtn = document.getElementById('newWorkspace');
-    newWorkspaceBtn.addEventListener('click', function() {newWorkspace();});
+    newWorkspaceBtn.addEventListener('click', function() {
+        newWorkspace();
+    });
     var uploadCodeBtn = document.getElementById('uploadCode');
-    uploadCodeBtn.addEventListener('click', function() {uploadCode();});
+    uploadCodeBtn.addEventListener('click', function() {
+        uploadCode();
+    });
     var downloadCodeBtn = document.getElementById('downloadCode');
-    downloadCodeBtn.addEventListener('click', function() {downloadCode();});
+    downloadCodeBtn.addEventListener('click', function() {
+        downloadCode();
+    });
     var compileAndRunBtn = document.getElementById('compileAndRun');
-    compileAndRunBtn.addEventListener('click', function() {compileAndRun();});
+    compileAndRunBtn.addEventListener('click', function() {
+        compileAndRun();
+    });
     var downloadMilBtn = document.getElementById('downloadMil');
-    downloadMilBtn.addEventListener('click', function() {downloadMil();});
+    downloadMilBtn.addEventListener('click', function() {
+        downloadMil();
+    });
     var downloadJsBtn = document.getElementById('downloadJs');
-    downloadJsBtn.addEventListener('click', function() {downloadJs();});
+    downloadJsBtn.addEventListener('click', function() {
+        downloadJs();
+    });
     var downloadHtmlBtn = document.getElementById('downloadHtml');
-    downloadHtmlBtn.addEventListener('click', function() {downloadHtml();});
+    downloadHtmlBtn.addEventListener('click', function() {
+        downloadHtml();
+    });
     var copySelectionBtn = document.getElementById('copySelection');
-    copySelectionBtn.addEventListener('click', function() {editor.copySelection();});
+    copySelectionBtn.addEventListener('click', function() {
+        editor.copySelection();
+    });
     var cutSelectionBtn = document.getElementById('cutSelection');
-    cutSelectionBtn.addEventListener('click', function() {editor.cutSelection();});
+    cutSelectionBtn.addEventListener('click', function() {
+        editor.cutSelection();
+    });
     var pasteSelectionBtn = document.getElementById('pasteSelection');
-    pasteSelectionBtn.addEventListener('click', function() {editor.pasteSelection();});
+    pasteSelectionBtn.addEventListener('click', function() {
+        editor.pasteSelection();
+    });
     var uncommentSelectionBtn = document.getElementById('uncommentSelection');
-    uncommentSelectionBtn.addEventListener('click', function() {editor.uncommentSelection();});
+    uncommentSelectionBtn.addEventListener('click', function() {
+        editor.uncommentSelection();
+    });
     var commentSelectionBtn = document.getElementById('commentSelection');
-    commentSelectionBtn.addEventListener('click', function() {editor.commentSelection();});
+    commentSelectionBtn.addEventListener('click', function() {
+        editor.commentSelection();
+    });
     var unindentSelectionBtn = document.getElementById('unindentSelection');
-    unindentSelectionBtn.addEventListener('click', function() {editor.unindentSelection();});
+    unindentSelectionBtn.addEventListener('click', function() {
+        editor.unindentSelection();
+    });
     var indentSelectionBtn = document.getElementById('indentSelection');
-    indentSelectionBtn.addEventListener('click', function() {editor.indentSelection();});
+    indentSelectionBtn.addEventListener('click', function() {
+        editor.indentSelection();
+    });
     var restoreEditorContentBtn = document.getElementById('restoreEditorContent');
-    restoreEditorContentBtn.addEventListener('click', function() {editor.restoreEditorContent();});
+    restoreEditorContentBtn.addEventListener('click', function() {
+        editor.restoreEditorContent();
+    });
     var undoRestoreEditorContentBtn = document.getElementById('undoRestoreEditorContent');
-    undoRestoreEditorContentBtn.addEventListener('click', function() {editor.undoRestoreEditorContent();});
+    undoRestoreEditorContentBtn.addEventListener('click', function() {
+        editor.undoRestoreEditorContent();
+    });
     var clearWorkspaceBtn = document.getElementById('clearWorkspace');
-    clearWorkspaceBtn.addEventListener('click', function() {clearWorkspace();});
+    clearWorkspaceBtn.addEventListener('click', function() {
+        clearWorkspace();
+    });
     var editorModeSel = document.getElementById('editorMode');
-    editorModeSel.addEventListener('change', function() {setEditorMode();});
+    editorModeSel.addEventListener('change', function() {
+        setEditorMode();
+    });
     var languageSel = document.getElementById('language');
-    languageSel.addEventListener('change', function() {translateApp();});
+    languageSel.addEventListener('change', function() {
+        translateApp();
+    });
 }
 
 /**
