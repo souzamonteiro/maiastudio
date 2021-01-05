@@ -1,0 +1,325 @@
+{
+    "maiascript": {
+        "expression": [{
+            "comment": "// Input: GLSL source code and shader type."
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "type"
+                        }
+                    }
+                }, {
+                    "primary": {
+                        "member": {
+                            "identifier": ["glslang", "EShLangFragment"],
+                            "TOKEN": "."
+                        }
+                    }
+                }],
+                "TOKEN": "="
+            }
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "source"
+                        }
+                    }
+                }, {
+                    "primary": {
+                        "value": {
+                            "string": "\"\""
+                        }
+                    }
+                }],
+                "TOKEN": "="
+            }
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "source"
+                        }
+                    }
+                }, {
+                    "op": [{
+                        "primary": {
+                            "member": {
+                                "identifier": "source"
+                            }
+                        }
+                    }, {
+                        "primary": {
+                            "value": {
+                                "string": "\"#version 150\\n\""
+                            }
+                        }
+                    }],
+                    "TOKEN": "+"
+                }],
+                "TOKEN": "="
+            }
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "source"
+                        }
+                    }
+                }, {
+                    "op": [{
+                        "primary": {
+                            "member": {
+                                "identifier": "source"
+                            }
+                        }
+                    }, {
+                        "primary": {
+                            "value": {
+                                "string": "\"out vec4 finalColor;\\n\""
+                            }
+                        }
+                    }],
+                    "TOKEN": "+"
+                }],
+                "TOKEN": "="
+            }
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "source"
+                        }
+                    }
+                }, {
+                    "op": [{
+                        "primary": {
+                            "member": {
+                                "identifier": "source"
+                            }
+                        }
+                    }, {
+                        "primary": {
+                            "value": {
+                                "string": "\"void main() {\\n\""
+                            }
+                        }
+                    }],
+                    "TOKEN": "+"
+                }],
+                "TOKEN": "="
+            }
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "source"
+                        }
+                    }
+                }, {
+                    "op": [{
+                        "primary": {
+                            "member": {
+                                "identifier": "source"
+                            }
+                        }
+                    }, {
+                        "primary": {
+                            "value": {
+                                "string": "\"    finalColor = vec4(1.0, 1.0, 1.0, 1.0);\\n\""
+                            }
+                        }
+                    }],
+                    "TOKEN": "+"
+                }],
+                "TOKEN": "="
+            }
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "source"
+                        }
+                    }
+                }, {
+                    "op": [{
+                        "primary": {
+                            "member": {
+                                "identifier": "source"
+                            }
+                        }
+                    }, {
+                        "primary": {
+                            "value": {
+                                "string": "\"}\""
+                            }
+                        }
+                    }],
+                    "TOKEN": "+"
+                }],
+                "TOKEN": "="
+            }
+        }, {
+            "comment": "// Initialize Glslang."
+        }, {
+            "operation": {
+                "primary": {
+                    "member": {
+                        "identifier": ["glslang", "initialize"],
+                        "TOKEN": [".", "(", ")"]
+                    }
+                }
+            }
+        }, {
+            "comment": "// Compile shader."
+        }, {
+            "comment": "// shader = glsl.new(type, source)"
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "shader"
+                        }
+                    }
+                }, {
+                    "primary": {
+                        "member": {
+                            "identifier": ["glslang", "Shader"],
+                            "TOKEN": [".", "(", ")"],
+                            "arguments": {
+                                "expression": [{
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "type"
+                                            }
+                                        }
+                                    }
+                                }, {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "source"
+                                            }
+                                        }
+                                    }
+                                }],
+                                "TOKEN": ","
+                            }
+                        }
+                    }
+                }],
+                "TOKEN": ":="
+            }
+        }, {
+            "comment": "// Output: SPIR-V binary and disassembly."
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "binary"
+                        }
+                    }
+                }, {
+                    "primary": {
+                        "member": {
+                            "identifier": ["shader", "data"],
+                            "TOKEN": [".", "(", ")"]
+                        }
+                    }
+                }],
+                "TOKEN": "="
+            }
+        }, {
+            "operation": {
+                "op": [{
+                    "primary": {
+                        "member": {
+                            "identifier": "disassembly"
+                        }
+                    }
+                }, {
+                    "primary": {
+                        "member": {
+                            "identifier": ["shader", "disasm"],
+                            "TOKEN": [".", "(", ")"]
+                        }
+                    }
+                }],
+                "TOKEN": "="
+            }
+        }, {
+            "operation": {
+                "primary": {
+                    "member": {
+                        "identifier": ["system", "log"],
+                        "TOKEN": [".", "(", ")"],
+                        "arguments": {
+                            "expression": {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "disassembly"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }, {
+            "operation": {
+                "primary": {
+                    "member": {
+                        "identifier": ["system", "log"],
+                        "TOKEN": [".", "(", ")"],
+                        "arguments": {
+                            "expression": {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "binary"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }, {
+            "comment": "// Delete shader."
+        }, {
+            "operation": {
+                "primary": {
+                    "member": {
+                        "identifier": ["shader", "delete"],
+                        "TOKEN": [".", "(", ")"]
+                    }
+                }
+            }
+        }, {
+            "comment": "// Finalize Glslang."
+        }, {
+            "operation": {
+                "primary": {
+                    "member": {
+                        "identifier": ["glslang", "finalize"],
+                        "TOKEN": [".", "(", ")"]
+                    }
+                }
+            }
+        }]
+    }
+}

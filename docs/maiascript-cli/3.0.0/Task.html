@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: MaiaVM</title>
+    <title>JSDoc: Class: Task</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: MaiaVM</h1>
+    <h1 class="page-title">Class: Task</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>MaiaVM<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Task<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="MaiaVM"><span class="type-signature"></span>new MaiaVM<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Task"><span class="type-signature"></span>new Task<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,7 +49,7 @@
 
 
 <div class="description">
-    MaiaScript virtual machine.
+    MaiaScript multi-task library.
 </div>
 
 
@@ -93,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="MaiaVM.js.html">MaiaVM.js</a>, <a href="MaiaVM.js.html#line24">line 24</a>
+        <a href="Task.js.html">Task.js</a>, <a href="Task.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -149,7 +149,7 @@
     
 
     
-    <h4 class="name" id="compile"><span class="type-signature"></span>compile<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="isSupported"><span class="type-signature"></span>isSupported<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
     
@@ -157,19 +157,7 @@
 
 
 <div class="description">
-    Compiles MaiaScript code, contained in <script> tags for JavaScript
-and inserts the compiled code in a new <script> tag in the <body> tag
-of the document.
-
-MaiaScript codes must be in <script> tags of type 'text/maiascript',
-as in the following example:
-
-<script type='text/maiascript'> ... </script>
-
-This method must be called from the onLoad event of the document's
-<body> tag, as in the following example:
-
-<body onload='maiavm.compile()'> ... </body>
+    Tests whether multi-tasking is supported in the browser.
 </div>
 
 
@@ -213,7 +201,7 @@ This method must be called from the onLoad event of the document's
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="MaiaVM.js.html">MaiaVM.js</a>, <a href="MaiaVM.js.html#line54">line 54</a>
+        <a href="Task.js.html">Task.js</a>, <a href="Task.js.html#line62">line 62</a>
     </li></ul></dd>
     
 
@@ -238,6 +226,28 @@ This method must be called from the onLoad event of the document's
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Returns true if supported and false otherwise.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -249,7 +259,7 @@ This method must be called from the onLoad event of the document's
     
 
     
-    <h4 class="name" id="run"><span class="type-signature"></span>run<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="new"><span class="type-signature"></span>new<span class="signature">(func)</span><span class="type-signature"> &rarr; {object}</span></h4>
     
 
     
@@ -257,9 +267,11 @@ This method must be called from the onLoad event of the document's
 
 
 <div class="description">
-    Compiles the MaiaScript code passed as a command line argument
-and executes the code in the JavaScript interpreter from which
-this method was invoked.
+    Creates a new parallel task.
+The thread will be created in a new scope.
+For communication with the master thread, the postMessage function (method) and onmessage event must be used.
+To finish executing the thread, the terminate method must be executed.
+To import a script from within the thread, you can use the importScripts function.
 </div>
 
 
@@ -268,6 +280,55 @@ this method was invoked.
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>func</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Function that will be executed on a new thread.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -303,7 +364,7 @@ this method was invoked.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="MaiaVM.js.html">MaiaVM.js</a>, <a href="MaiaVM.js.html#line150">line 150</a>
+        <a href="Task.js.html">Task.js</a>, <a href="Task.js.html#line43">line 43</a>
     </li></ul></dd>
     
 
@@ -328,6 +389,28 @@ this method was invoked.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    An object to interact with the created thread.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -391,7 +474,7 @@ this method was invoked.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="MaiaVM.js.html">MaiaVM.js</a>, <a href="MaiaVM.js.html#line30">line 30</a>
+        <a href="Task.js.html">Task.js</a>, <a href="Task.js.html#line30">line 30</a>
     </li></ul></dd>
     
 
@@ -443,7 +526,7 @@ this method was invoked.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Mon Jan 04 2021 19:44:26 GMT-0300 (Brasilia Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Tue Jan 05 2021 14:52:50 GMT-0300 (Brasilia Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

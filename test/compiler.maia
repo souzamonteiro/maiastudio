@@ -8,7 +8,7 @@ if (system.argc == 2) {
 
 system.println("Testing the compiler " + tries + " times.")
 
-system.println("Testing operator '+'...")
+system.println("Testing operator '!'...")
 
 test (tries; "falsetrue"; 0) {
     a = 1
@@ -19,11 +19,10 @@ test (tries; "falsetrue"; 0) {
     f = core.toString(d)
     g = e + f
 } catch (v) {
-    system.print("TEST: Fail testing function core.toString.")
+    system.print("TEST: Fail testing operator \"!\".")
     system.print("      Expected result " + core.testResult.expected)
     system.print("      But got " + core.testResult.obtained)
 }
-
 
 system.println("Testing operator \"~\"...")
 
@@ -36,7 +35,7 @@ test (tries; -128; 0) {
     system.print("      But got " + core.testResult.obtained)
 }
 
-system.println("Testing operator '+'...")
+system.println("Testing operator '='...")
 
 test (tries; "12.3MaiaScript1+2*i"; 0) {
     a = 1
@@ -45,7 +44,20 @@ test (tries; "12.3MaiaScript1+2*i"; 0) {
     d = 1+2*i
     e = core.toString(a) + core.toString(b) + c + core.toString(d)
 } catch (v) {
-    system.print("TEST: Fail testing operator '^'.")
+    system.print("TEST: Fail testing operator `=`.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("Testing operator ':='...")
+test (tries; 1; 0) {
+    constructor a(b) {
+        this.x = b
+    }
+    c := a(1)
+    d = c.x
+} catch (v) {
+    system.print("TEST: Fail testing operator `=`.")
     system.print("      Expected result " + core.testResult.expected)
     system.print("      But got " + core.testResult.obtained)
 }

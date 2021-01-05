@@ -21,4 +21,4 @@ jsdoc -d ./docs ./package.json ./src
 jsdoc -c ./jsdoc.json -d ./docs ./maia/cna/package.json ./maia/cna
 
 mkdir docs/grammar
-cp -r grammar/diagram.xhtml docs/grammar
+cp -r grammar/MaiaScript.xhtml docs/grammar

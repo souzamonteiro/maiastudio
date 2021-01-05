@@ -51,8 +51,7 @@ function MaiaVM() {
      * 
      * <body onload='maiavm.compile()'> ... </body>
      */
-    this.compile = function()
-    {
+    this.compile = function() {
         var scripts = document.querySelectorAll('script[type="text/maiascript"]');
         for (index in scripts) {
             if (typeof scripts[index].getAttribute != 'undefined') {
@@ -61,45 +60,46 @@ function MaiaVM() {
                     if (fileName) {
                         compiledCode.maia = '';
                         fetch(fileName)
-                        .then(response => response.text())
-                        .then(data => {
-                            var code = data;
-                            if (typeof code != 'undefined') {
-                                if (typeof code == 'string') {
-                                    compiledCode.xml = '';
-                                    function getXml (data) {
-                                        compiledCode.xml += data;
-                                    }
-                                    var s = new MaiaScript.XmlSerializer(getXml, true);
-                                    var maiaScriptParser = new MaiaScript(code, s);
-                                    try {
-                                        maiaScriptParser.parse_maiascript();
-                                    } catch (pe) {
-                                        if (!(pe instanceof maiaScriptParser.ParseException)) {
-                                            throw pe;
-                                        } else {
-                                            var parserError = maiaScriptParser.getErrorMessage(pe);
-                                            system.log(parserError);
-                                            throw parserError;
+                            .then(response => response.text())
+                            .then(data => {
+                                var code = data;
+                                if (typeof code != 'undefined') {
+                                    if (typeof code == 'string') {
+                                        compiledCode.xml = '';
+
+                                        function getXml(data) {
+                                            compiledCode.xml += data;
+                                        }
+                                        var s = new MaiaScript.XmlSerializer(getXml, true);
+                                        var maiaScriptParser = new MaiaScript(code, s);
+                                        try {
+                                            maiaScriptParser.parse_maiascript();
+                                        } catch (pe) {
+                                            if (!(pe instanceof maiaScriptParser.ParseException)) {
+                                                throw pe;
+                                            } else {
+                                                var parserError = maiaScriptParser.getErrorMessage(pe);
+                                                system.log(parserError);
+                                                throw parserError;
+                                            }
+                                        }
+                                        var parser = new DOMParser();
+                                        var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
+                                        var compiler = new MaiaCompiler();
+                                        compiledCode.js = compiler.compile(xml);
+                                        try {
+                                            var script = document.createElement('script');
+                                            script.type = 'text/javascript';
+                                            script.text = compiledCode.js;
+                                            document.body.appendChild(script);
+                                        } catch (se) {
+                                            var scriptError = se.message;
+                                            system.log(scriptError);
+                                            throw scriptError;
                                         }
                                     }
-                                    var parser = new DOMParser();
-                                    var xml = parser.parseFromString(compiledCode.xml,'text/xml');
-                                    var compiler = new MaiaCompiler();
-                                    compiledCode.js = compiler.compile(xml);
-                                    try {
-                                        var script = document.createElement('script');
-                                        script.type = 'text/javascript';
-                                        script.text = compiledCode.js;
-                                        document.body.appendChild(script);
-                                    } catch (se) {
-                                        var scriptError = se.message;
-                                        system.log(scriptError);
-                                        throw scriptError;
-                                    }
                                 }
-                            }
-                        });
+                            });
                     }
                 }
             }
@@ -107,7 +107,8 @@ function MaiaVM() {
             if (typeof code != 'undefined') {
                 if (typeof code == 'string') {
                     compiledCode.xml = '';
-                    function getXml (data) {
+
+                    function getXml(data) {
                         compiledCode.xml += data;
                     }
                     var s = new MaiaScript.XmlSerializer(getXml, true);
@@ -124,7 +125,7 @@ function MaiaVM() {
                         }
                     }
                     var parser = new DOMParser();
-                    var xml = parser.parseFromString(compiledCode.xml,'text/xml');
+                    var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
                     var compiler = new MaiaCompiler();
                     compiledCode.js = compiler.compile(xml);
                     try {
@@ -147,8 +148,7 @@ function MaiaVM() {
      * and executes the code in the JavaScript interpreter from which
      * this method was invoked.
      */
-    this.run = function()
-    {
+    this.run = function() {
         // Supports only the Node.js interpreter.
         if (typeof process !== 'undefined') {
             var command = 'node';
@@ -160,7 +160,7 @@ function MaiaVM() {
             function getXml(data) {
                 compiledCode.xml += data;
             }
-            
+
             function read(input) {
                 if (/^{.*}$/.test(input)) {
                     return input.substring(1, input.length - 1);
@@ -169,22 +169,33 @@ function MaiaVM() {
                     return content.length > 0 && content.charCodeAt(0) == 0xFEFF ? content.substring(1) : content;
                 }
             }
-            
+
             system.argv = argv.slice();
             system.argc = argv.length;
             var justCompile = false;
             var inputFile;
             var outputFile;
+            var outputFileType = 'js';
+            var outputContents = '';
             if (argv.length > 2) {
                 var i = 2;
                 while (i < argv.length) {
                     if (argv[i] == '-c') {
                         justCompile = true;
+                        outputFileType = 'js';
+                    } else if (argv[i] == '-m') {
+                        justCompile = true;
+                        outputFileType = 'mil';
+                    } else if (argv[i] == '-x') {
+                        justCompile = true;
+                        outputFileType = 'xml';
                     } else if ((argv[i] == '-h') | (argv[i] == '--help')) {
                         system.log('MaiaScript Command Line Interface (CLI)');
                         system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
                         system.log('Options:');
-                        system.log('-c                          Just compile, don\'t run the script;');
+                        system.log('-c                          Just compile to JS, don\'t run the script;');
+                        system.log('-m                          Just compile to MIL, don\'t run the script;');
+                        system.log('-x                          Just compile to XML, don\'t run the script;');
                         system.log('-h     --help               Displays this help message;');
                         system.log('-o     <script.js>          Output file name;');
                         system.log('       --                   End of compiler options.\n');
@@ -217,15 +228,28 @@ function MaiaVM() {
                         }
                     }
                     var parser = new DOMParser();
-                    var xml = parser.parseFromString(compiledCode.xml,'text/xml');
+                    var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
                     var compiler = new MaiaCompiler();
+                    compiledCode.mil = compiler.xmlToMil(xml);
                     compiledCode.js = compiler.compile(xml);
                     if (justCompile) {
                         if (typeof outputFile == 'undefined') {
                             var fileName = inputFile.split('.').shift();
-                            outputFile = fileName + '.js';
+                            if (outputFileType == 'js') {
+                                outputFile = fileName + '.js';
+                                outputContents = compiledCode.js;
+                            } else if (outputFileType == 'mil') {
+                                outputFile = fileName + '.mil';
+                                outputContents = JSON.stringify(compiledCode.mil);
+                            } else if (outputFileType == 'xml') {
+                                outputFile = fileName + '.xml';
+                                outputContents = compiledCode.xml;
+                            } else {
+                                outputFile = fileName + '.js';
+                                outputContents = compiledCode.js;
+                            }
                         }
-                        fs.writeFile(outputFile, compiledCode.js, function (err) {
+                        fs.writeFile(outputFile, outputContents, function(err) {
                             if (err) {
                                 throw err;
                             }
@@ -257,7 +281,7 @@ function MaiaVM() {
                 rl.setPrompt(': ');
                 rl.prompt();
 
-                function runCommand (commandLine) {
+                function runCommand(commandLine) {
                     var res;
                     if (commandLine.trim() == 'exit') {
                         process.exit(0);
@@ -274,7 +298,7 @@ function MaiaVM() {
                     }
                     rl.prompt();
                 }
-                
+
                 rl.on('line', runCommand);
             }
         }
@@ -290,10 +314,12 @@ maiavm = new MaiaVM();
 if (typeof process !== 'undefined') {
     // Emulate DOM.
     const jsdom = require("jsdom");
-    const { JSDOM } = jsdom;
+    const {
+        JSDOM
+    } = jsdom;
     var doc = new JSDOM();
     var DOMParser = doc.window.DOMParser;
-    
+
     // Emulate Web SQL.
     const openDatabase = require('websql');
 
