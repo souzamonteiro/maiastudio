@@ -30,6 +30,20 @@ function Task() {
     function init() {
         // Class attributes goes here.
     }
+    
+    /**
+     * Tests whether multi-tasking is supported in the browser.
+     * @return {boolean}  Returns true if supported and false otherwise.
+     */
+    this.isSupported = function() {
+        var res = false;
+
+        if (typeof(Worker) != "undefined") {
+            res = true;
+        }
+        
+        return res;
+    }
 
     /**
      * Creates a new parallel task.
@@ -53,20 +67,6 @@ function Task() {
         }
         
         return worker;
-    }
-
-    /**
-     * Tests whether multi-tasking is supported in the browser.
-     * @return {boolean}  Returns true if supported and false otherwise.
-     */
-    this.isSupported = function() {
-        var res = false;
-
-        if (typeof(Worker) != "undefined") {
-            res = true;
-        }
-        
-        return res;
     }
 }
 

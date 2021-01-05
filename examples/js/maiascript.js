@@ -7978,6 +7978,46 @@ function GLSL() {
     }
 
     /**
+     * Tests whether the shader compiler is supported.
+     * @return {boolean}  Returns true if supported and false otherwise.
+     */
+    this.isSupported = function() {
+        var res = false;
+
+        if (typeof(glslang) != "undefined") {
+            res = true;
+        }
+
+        return res;
+    }
+
+    /**
+     * Compiles a GLSL shader to SPIR-V.
+     * @param {number}   type - Shader language.
+     * @param {string}   source - Shader code.
+     * @return {object}  The shader compiler to SPIR-V.
+     */
+    this.compile = function(type, source) {
+        var shader;
+
+        var compiledShader = {
+            binary: [],
+            disassembly: ""
+        }
+
+        if (typeof(glslang) != "undefined") {
+            glslang.initialize();
+            shader = new glslang.Shader(type, source);
+            compiledShader.binary = shader.data();
+            compiledShader.disassembly = shader.disasm();
+            shader.delete();
+            glslang.finalize();
+        }
+        
+        return compiledShader;
+    }
+
+    /**
      * Creates a new shader compiler object.
      * @param {number}   type - Shader language.
      * @param {string}   source - Shader code.
@@ -7991,20 +8031,6 @@ function GLSL() {
         }
 
         return shader;
-    }
-
-    /**
-     * Tests whether the shader compiler is supported.
-     * @return {boolean}  Returns true if supported and false otherwise.
-     */
-    this.isSupported = function() {
-        var res = false;
-
-        if (typeof(glslang) != "undefined") {
-            res = true;
-        }
-
-        return res;
     }
 }
 
@@ -9646,6 +9672,20 @@ function Task() {
     function init() {
         // Class attributes goes here.
     }
+    
+    /**
+     * Tests whether multi-tasking is supported in the browser.
+     * @return {boolean}  Returns true if supported and false otherwise.
+     */
+    this.isSupported = function() {
+        var res = false;
+
+        if (typeof(Worker) != "undefined") {
+            res = true;
+        }
+        
+        return res;
+    }
 
     /**
      * Creates a new parallel task.
@@ -9669,20 +9709,6 @@ function Task() {
         }
         
         return worker;
-    }
-
-    /**
-     * Tests whether multi-tasking is supported in the browser.
-     * @return {boolean}  Returns true if supported and false otherwise.
-     */
-    this.isSupported = function() {
-        var res = false;
-
-        if (typeof(Worker) != "undefined") {
-            res = true;
-        }
-        
-        return res;
     }
 }
 
