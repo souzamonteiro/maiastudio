@@ -1,0 +1,284 @@
+{
+    "maiascript": {
+        "expression": [{
+            "statement": {
+                "function": {
+                    "TOKEN": ["async", "(", ")", "{", "}"],
+                    "identifier": "setupGPU",
+                    "expression": [{
+                        "operation": {
+                            "op": [{
+                                "primary": {
+                                    "member": {
+                                        "identifier": "type"
+                                    }
+                                }
+                            }, {
+                                "primary": {
+                                    "member": {
+                                        "identifier": ["glslang", "EShLangCompute"],
+                                        "TOKEN": "."
+                                    }
+                                }
+                            }],
+                            "TOKEN": "="
+                        }
+                    }, {
+                        "operation": {
+                            "op": [{
+                                "primary": {
+                                    "member": {
+                                        "identifier": "source"
+                                    }
+                                }
+                            }, {
+                                "op": [{
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"#version 450\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"layout(std430, set = 0, binding = 0) readonly buffer FirstMatrix {\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    vec2 size;\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    float numbers[];\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"} firstMatrix;\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"layout(std430, set = 0, binding = 1) readonly buffer SecondMatrix {\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    vec2 size;\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    float numbers[];\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"} secondMatrix;\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"layout(std430, set = 0, binding = 2) buffer ResultMatrix {\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    vec2 size;\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    float numbers[];\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"} resultMatrix;\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"void main() {\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    resultMatrix.size = vec2(firstMatrix.size.x, secondMatrix.size.y);\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    ivec2 resultCell = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    float result = 0.0;\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    for (int i = 0; i < firstMatrix.size.y; i++) {\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"        int a = i + resultCell.x * int(firstMatrix.size.y);\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"        int b = resultCell.y + i * int(secondMatrix.size.y);\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"        result += firstMatrix.numbers[a] * secondMatrix.numbers[b];\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    }\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    int index = resultCell.y + resultCell.x * int(secondMatrix.size.y);\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"    resultMatrix.numbers[index] = result;\\n\""
+                                        }
+                                    }
+                                }, {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"}\""
+                                        }
+                                    }
+                                }],
+                                "TOKEN": ["+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+"]
+                            }],
+                            "TOKEN": "="
+                        }
+                    }, {
+                        "operation": {
+                            "op": [{
+                                "primary": {
+                                    "member": {
+                                        "identifier": "compiledShader"
+                                    }
+                                }
+                            }, {
+                                "primary": {
+                                    "member": {
+                                        "identifier": ["glsl", "compile"],
+                                        "TOKEN": [".", "(", ")"],
+                                        "arguments": {
+                                            "expression": [{
+                                                "operation": {
+                                                    "primary": {
+                                                        "member": {
+                                                            "identifier": "type"
+                                                        }
+                                                    }
+                                                }
+                                            }, {
+                                                "operation": {
+                                                    "primary": {
+                                                        "member": {
+                                                            "identifier": "source"
+                                                        }
+                                                    }
+                                                }
+                                            }],
+                                            "TOKEN": ","
+                                        }
+                                    }
+                                }
+                            }],
+                            "TOKEN": "="
+                        }
+                    }, {
+                        "operation": {
+                            "primary": {
+                                "member": {
+                                    "identifier": ["system", "log"],
+                                    "TOKEN": [".", "(", ")"],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": ["compiledShader", "disassembly"],
+                                                        "TOKEN": "."
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }, {
+                        "operation": {
+                            "primary": {
+                                "member": {
+                                    "identifier": ["system", "log"],
+                                    "TOKEN": [".", "(", ")"],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": ["compiledShader", "binary"],
+                                                        "TOKEN": "."
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        }, {
+            "operation": {
+                "primary": {
+                    "member": {
+                        "identifier": "setupGPU",
+                        "TOKEN": ["(", ")"]
+                    }
+                }
+            }
+        }]
+    }
+}

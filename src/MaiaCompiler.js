@@ -383,7 +383,17 @@ function MaiaCompiler() {
                     };
                     var name = this.parse(nodeIdentifier, nodeInfo);
                     
-                    js += name + ' = function ';
+                    if ('TOKEN' in node) {
+                        var statement = node['TOKEN'][0];
+                        if (statement == 'async') {
+                            js += name + ' = async function ';
+                        } else {
+                            js += name + ' = function ';
+                        }
+                    } else {
+                        js += name + ' = function ';
+                    }
+                    
                     if ('arguments' in node) {
                         var nodeArguments = {
                             'arguments': node['arguments']

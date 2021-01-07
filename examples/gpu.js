@@ -1,0 +1,8 @@
+setupGPU = function() {
+    type = glslang.EShLangCompute;
+    source = core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add(core.add("#version 450\n", "layout(std430, set = 0, binding = 0) readonly buffer FirstMatrix {\n"), "    vec2 size;\n"), "    float numbers[];\n"), "} firstMatrix;\n"), "layout(std430, set = 0, binding = 1) readonly buffer SecondMatrix {\n"), "    vec2 size;\n"), "    float numbers[];\n"), "} secondMatrix;\n"), "layout(std430, set = 0, binding = 2) buffer ResultMatrix {\n"), "    vec2 size;\n"), "    float numbers[];\n"), "} resultMatrix;\n"), "void main() {\n"), "    resultMatrix.size = vec2(firstMatrix.size.x, secondMatrix.size.y);\n"), "    ivec2 resultCell = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);\n"), "    float result = 0.0;\n"), "    for (int i = 0; i < firstMatrix.size.y; i++) {\n"), "        int a = i + resultCell.x * int(firstMatrix.size.y);\n"), "        int b = resultCell.y + i * int(secondMatrix.size.y);\n"), "        result += firstMatrix.numbers[a] * secondMatrix.numbers[b];\n"), "    }\n"), "    int index = resultCell.y + resultCell.x * int(secondMatrix.size.y);\n"), "    resultMatrix.numbers[index] = result;\n"), "}");
+    compiledShader = glsl.compile(type, source);
+    system.log(compiledShader.disassembly);
+    system.log(compiledShader.binary);
+};
+setupGPU();
