@@ -2,7 +2,7 @@ maiascript               ::= expression*
                            | eof
 
 operation                ::= variableAssignment
-variableAssignment       ::= logicalORExpression (('=' | ':=') logicalORExpression)*
+variableAssignment       ::= logicalORExpression (('=' | ':=' | '@') logicalORExpression)*
 logicalORExpression      ::= logicalXORExpression ('||' logicalXORExpression)*
 logicalXORExpression     ::= logicalANDExpression ('||||' logicalANDExpression)*
 logicalANDExpression     ::= bitwiseORExpression ('&&' bitwiseORExpression)*
@@ -38,7 +38,8 @@ statement                ::= namespace
                            | throw
                            
 namespace                ::= 'namespace' identifier '{' expression* '}'
-function                 ::= 'constructor' identifier '(' arguments? ')' '{' expression* '}'
+function                 ::= 'async' identifier '(' arguments? ')' '{' expression* '}'
+                           | 'constructor' identifier '(' arguments? ')' '{' expression* '}'
                            | 'function' identifier '(' arguments? ')' '{' expression* '}'
 if                       ::= 'if' '(' expression ')' '{' expression* '}' elseif* else?
 elseif                   ::= 'elseif' '(' expression ')' '{' expression* '}'
@@ -98,6 +99,7 @@ reservedWord             ::= keyword
                            | booleanLiteral
 
 keyword  ::= 'namespace'
+           | 'async'
            | 'constructor'
            | 'function'
            | 'if'

@@ -1,10 +1,9 @@
 type = glslang.EShLangFragment
-source = ""
-source = source + "#version 150\n"
-source = source + "out vec4 finalColor;\n"
-source = source + "void main() {\n"
-source = source + "    finalColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
-source = source + "}"
+source = "#version 150\n" +
+"out vec4 finalColor;\n" +
+"void main() {\n" +
+"    finalColor = vec4(1.0, 1.0, 1.0, 1.0);\n" +
+"}"
 compiledShader = glsl.compile(type, source)
 system.log(compiledShader.disassembly)
 system.log(compiledShader.binary)

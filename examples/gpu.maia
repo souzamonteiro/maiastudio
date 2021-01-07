@@ -28,4 +28,3 @@ source = "#version 450\n" +
 compiledShader = glsl.compile(type, source)
 system.log(compiledShader.disassembly)
 system.log(compiledShader.binary)
-

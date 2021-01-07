@@ -877,6 +877,9 @@ function MaiaCompiler() {
                             } else if (operator[j] == ':=') {
                                 parentNodeInfo.terminalNode = 'assignment';
                                 js += left + '= new ' + right;
+                            } else if (operator[j] == '@') {
+                                parentNodeInfo.terminalNode = 'assignment';
+                                js += left + '= await ' + right;
                             } else {
                                 js += operators[operator[j]] + '(' + left + ',' + right + ')';
                             }
@@ -890,6 +893,9 @@ function MaiaCompiler() {
                                 } else if (operator[j] == ':=') {
                                     parentNodeInfo.terminalNode = 'assignment';
                                     js += '= new ' + right;
+                                } else if (operator[j] == '@') {
+                                    parentNodeInfo.terminalNode = 'assignment';
+                                    js += '= await ' + right;
                                 } else {
                                     js = operators[operator[j]] + '(' + js + ',' + right + ')';
                                 }
@@ -902,6 +908,9 @@ function MaiaCompiler() {
                             } else if (operator == ':=') {
                                 parentNodeInfo.terminalNode = 'assignment';
                                 js += left + '= new ' + right;
+                            } else if (operator == '@') {
+                                parentNodeInfo.terminalNode = 'assignment';
+                                js += left + '= await ' + right;
                             } else {
                                 js += operators[operator] + '(' + left + ',' + right + ')';
                             }
