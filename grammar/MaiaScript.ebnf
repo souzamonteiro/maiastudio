@@ -2,7 +2,7 @@ maiascript               ::= expression*
                            | eof
 
 operation                ::= variableAssignment
-variableAssignment       ::= logicalORExpression (('=' | ':=' | '@') logicalORExpression)*
+variableAssignment       ::= logicalORExpression (('=' | ':=' | '?=') logicalORExpression)*
 logicalORExpression      ::= logicalXORExpression ('||' logicalXORExpression)*
 logicalXORExpression     ::= logicalANDExpression ('||||' logicalANDExpression)*
 logicalANDExpression     ::= bitwiseORExpression ('&&' bitwiseORExpression)*
