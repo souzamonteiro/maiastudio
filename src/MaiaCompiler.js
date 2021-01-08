@@ -45,6 +45,7 @@ function MaiaCompiler() {
         statementCodeBlock = ['maiascript',
                               'namespace',
                               'function',
+                              'local',
                               'if',
                               'do',
                               'while',
@@ -412,6 +413,21 @@ function MaiaCompiler() {
                     } else {
                         js += ' {}'
                     }
+                }
+            }
+        } else if ('local' in mil) {
+            node = mil['local'];
+            var nodeInfo = {
+                'parentNode': parentNodeInfo.parentNode,
+                'childNode': '',
+                'terminalNode' : ''
+            };
+            parentNodeInfo.childNode = 'local';
+
+            if (typeof node != 'undefined') {
+                if ('expression' in node) {
+                    var expressionValue = this.parse(node, nodeInfo);
+                    js += 'let ' + expressionValue;
                 }
             }
         } else if ('if' in mil) {

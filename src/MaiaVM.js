@@ -248,6 +248,8 @@ function MaiaVM() {
                                 outputFile = fileName + '.js';
                                 outputContents = compiledCode.js;
                             }
+                        } else {
+                            outputContents = compiledCode.js;
                         }
                         fs.writeFile(outputFile, outputContents, function(err) {
                             if (err) {
