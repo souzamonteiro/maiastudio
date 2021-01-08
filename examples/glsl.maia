@@ -108,6 +108,7 @@ async setupGPU() {
     // Imports the GLSL to SPIR-V compiler.
     glslangModule ?= import("https://unpkg.com/@webgpu/glslang@0.0.15/dist/web-devel/glslang.js")
     glslang ?= glslangModule.default()
+    // Compiles the GLSL code.
     wgslCode = glslang.compileGLSL(source, "compute")
     system.log("GLSL code: " + JSON.stringify(source))
     system.log("SPIR-V bytecodes: " + JSON.stringify(wgslCode))
