@@ -52,8 +52,17 @@ function MaiaGPU() {
     this.new = function() {
         var device;
 
-        if (typeof(GPU) != "undefined") {
-            device = new GPU();
+        if (typeof process !== 'undefined') {
+            try {
+                const {GPU} = require('gpu.js');
+                device = new GPU();
+            } catch (e) {
+                system.log(e.message);
+            }
+        } else {
+            if (typeof(GPU) != "undefined") {
+                device = new GPU();
+            }
         }
         
         return device;

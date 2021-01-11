@@ -316,14 +316,16 @@ maiavm = new MaiaVM();
 if (typeof process !== 'undefined') {
     // Emulate DOM.
     const jsdom = require("jsdom");
-    const {
-        JSDOM
-    } = jsdom;
+    const {JSDOM} = jsdom;
     var doc = new JSDOM();
     var DOMParser = doc.window.DOMParser;
 
     // Emulate Web SQL.
-    const openDatabase = require('websql');
+    try {
+        const openDatabase = require('websql');
+    } catch (e) {
+        system.log(e.message);
+    }
 
     var alert = system.log;
 
