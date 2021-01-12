@@ -37,11 +37,9 @@ function MaiaGPU() {
      */
     this.isSupported = function() {
         var res = false;
-
         if (typeof(GPU) != "undefined") {
             res = true;
         }
-        
         return res;
     }
 
@@ -51,7 +49,6 @@ function MaiaGPU() {
      */
     this.new = function() {
         var device;
-
         if (typeof process !== 'undefined') {
             try {
                 const {GPU} = require('gpu.js');
@@ -64,7 +61,6 @@ function MaiaGPU() {
                 device = new GPU();
             }
         }
-        
         return device;
     }
 }

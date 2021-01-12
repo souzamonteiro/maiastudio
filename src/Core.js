@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.1.1";
+    this.version = "3.1.2";
 
     this.testResult = {
         "expected": {},
@@ -58,11 +58,9 @@ function Core() {
      */
     this.copyMatrix = function(obj) {
         var newMatrix = [];
-
         for (var i = 0; i < obj.length; i++) {
             newMatrix[i] = obj[i].slice();
         }
-
         return newMatrix;
     }
 

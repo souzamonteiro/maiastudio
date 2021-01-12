@@ -1,3 +1,6 @@
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing the array functions 10 times.
 
 core.slice...
@@ -6,6 +9,9 @@ core.push...
 
 core.pop...
 
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing the complex number functions 10 times.
 
 core.abs...
@@ -18,6 +24,9 @@ core.imaginary...
 
 core.real...
 
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing the compiler 10 times.
 
 Testing operator '!'...
@@ -56,8 +65,14 @@ Testing matrix support...
 
 Testing the scripted functions support...
 
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing declaration and calling functions 10 times.
 
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing loop statements 10 times.
 
 while...
@@ -68,6 +83,9 @@ for...
 
 foreach...
 
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing the math functions 10 times.
 
 math.sin...
@@ -112,6 +130,9 @@ math.min...
 
 math.max...
 
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing the matrix functions 10 times.
 
 matrix.triang...
@@ -150,14 +171,23 @@ matrix.max...
 
 matrix.max...
 
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing source function 10 times.
 
 system.source...
 
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing sprintf functions 10 times.
 
 string.sprintf...
 
+Cannot find module 'algebrite'
+Require stack:
+- /home/coder/projects/maiastudio/bin/maiascript.js
 Testing the string functions 10 times.
 
 core.split...

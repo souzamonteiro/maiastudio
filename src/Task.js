@@ -37,11 +37,9 @@ function Task() {
      */
     this.isSupported = function() {
         var res = false;
-
         if (typeof(Worker) != "undefined") {
             res = true;
         }
-        
         return res;
     }
 
@@ -56,7 +54,13 @@ function Task() {
      */
     this.new = function(func) {
         var worker;
-
+        if (typeof process !== 'undefined') {
+            try {
+                const {Worker} = require('web-worker');
+            } catch (e) {
+                system.log(e.message);
+            }
+        }
         if (typeof(Worker) != "undefined") {
             var script = func.toString().match(/^\s*function\s*\(\s*\)\s*\{(([\s\S](?!\}$))*[\s\S])/)[1];
             var blob = new Blob([script], {type:'text/javascript'});
@@ -65,7 +69,6 @@ function Task() {
 
             worker = new Worker(blobURL);
         }
-        
         return worker;
     }
 }

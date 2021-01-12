@@ -22,6 +22,14 @@
   * @class 
   */
 function CAS() {
+    if (typeof process !== 'undefined') {
+        try {
+            var Algebrite = require('algebrite');
+        } catch (e) {
+            system.log(e.message);
+        }
+    }
+    git 
     init();
 
     /**
