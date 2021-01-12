@@ -1,0 +1,44 @@
+function task1() {
+    i = 0
+    function timedCount() {
+        i = i + 1
+        postMessage(i)
+        setTimeout("timedCount()", 500)
+    }
+    timedCount()
+}
+
+function task2() {
+    i = 0
+    function timedCount() {
+        i = i + 1
+        postMessage(i)
+        setTimeout("timedCount()", 500)
+    }
+    timedCount()
+}
+
+function onMessage1(e) {
+    system.log("Task 1: " + e.data)
+}
+
+function onMessage2(e) {
+    system.log("Task 2: " + e.data)
+}
+
+function showMessage() {
+    system.log("Main thread saying hello!")
+}
+
+try {
+    if (task.isSupported()) {
+        t1 = task.new(task1)
+        t1.onmessage = onMessage1
+        t2 = task.new(task2)
+        t2.onmessage = onMessage2
+    } else {
+        system.log("Multi-tasking is not supported!")
+    }
+} catch (e) {
+    system.log(e.message)
+}
