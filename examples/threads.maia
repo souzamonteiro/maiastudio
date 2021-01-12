@@ -1,6 +1,6 @@
-function task1() {
+kernel task1() {
     i = 0
-    function timedCount() {
+    kernel timedCount() {
         i = i + 1
         postMessage(i)
         setTimeout("timedCount()", 500)
@@ -8,9 +8,9 @@ function task1() {
     timedCount()
 }
 
-function task2() {
+kernel task2() {
     i = 0
-    function timedCount() {
+    kernel timedCount() {
         i = i + 1
         postMessage(i)
         setTimeout("timedCount()", 500)
@@ -31,14 +31,10 @@ function showMessage() {
 }
 
 try {
-    if (task.isSupported()) {
-        t1 = task.new(task1)
-        t1.onmessage = onMessage1
-        t2 = task.new(task2)
-        t2.onmessage = onMessage2
-    } else {
-        system.log("Multi-tasking is not supported!")
-    }
+    t1 = task.new(task1)
+    t1.onmessage = onMessage1
+    t2 = task.new(task2)
+    t2.onmessage = onMessage2
 } catch (e) {
     system.log(e.message)
 }

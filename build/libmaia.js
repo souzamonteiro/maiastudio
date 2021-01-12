@@ -9973,7 +9973,8 @@ function Task() {
         var worker;
         if (typeof process !== 'undefined') {
             try {
-                const {Worker} = require('web-worker');
+                var Worker = require('web-worker');
+                var Blob = require('blob');
             } catch (e) {
                 system.log(e.message);
             }
@@ -9986,6 +9987,7 @@ function Task() {
 
             worker = new Worker(blobURL);
         }
+        worker = new Worker('data:,postMessage("hello")');
         return worker;
     }
 }

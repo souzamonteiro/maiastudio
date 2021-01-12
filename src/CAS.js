@@ -29,7 +29,7 @@ function CAS() {
             system.log(e.message);
         }
     }
-    git 
+    
     init();
 
     /**
