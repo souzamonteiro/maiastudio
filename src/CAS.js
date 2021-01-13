@@ -26,7 +26,7 @@ function CAS() {
         try {
             var Algebrite = require('algebrite');
         } catch (e) {
-            system.log(e.message);
+            console.error(e.message);
         }
     }
     

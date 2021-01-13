@@ -22,6 +22,19 @@
  * @class
  */
 function Task() {
+    if (typeof process !== 'undefined') {
+        try {
+            var Worker = require('web-worker');
+        } catch (e) {
+            console.error(e.message);
+        }
+        try {
+            var Blob = require('cross-blob');
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
+    
     init();
 
     /**
@@ -54,23 +67,16 @@ function Task() {
      */
     this.new = function(func) {
         var worker;
-        if (typeof process !== 'undefined') {
-            try {
-                var Worker = require('web-worker');
-                var Blob = require('blob');
-            } catch (e) {
-                system.log(e.message);
-            }
-        }
         if (typeof(Worker) != "undefined") {
             var script = func.toString().match(/^\s*function\s*\(\s*\)\s*\{(([\s\S](?!\}$))*[\s\S])/)[1];
             var blob = new Blob([script], {type:'text/javascript'});
-            
-            var blobURL = window.URL.createObjectURL(blob);
-
+            if (typeof(window) != "undefined") {
+                var blobURL = window.URL.createObjectURL(blob);
+            } else {
+                var blobURL = 'data:,' + script;
+            }
             worker = new Worker(blobURL);
         }
-        worker = new Worker('data:,postMessage("hello")');
         return worker;
     }
 }

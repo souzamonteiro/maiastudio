@@ -22,6 +22,15 @@
  * @class
  */
 function MaiaGPU() {
+    if (typeof process !== 'undefined') {
+        try {
+            const {GPU} = require('gpu.js');
+            device = new GPU();
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
+
     init();
     
     /**
@@ -49,17 +58,8 @@ function MaiaGPU() {
      */
     this.new = function() {
         var device;
-        if (typeof process !== 'undefined') {
-            try {
-                const {GPU} = require('gpu.js');
-                device = new GPU();
-            } catch (e) {
-                system.log(e.message);
-            }
-        } else {
-            if (typeof(GPU) != "undefined") {
-                device = new GPU();
-            }
+        if (typeof(GPU) != "undefined") {
+            device = new GPU();
         }
         return device;
     }

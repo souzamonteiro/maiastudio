@@ -9815,7 +9815,7 @@ function CAS() {
         try {
             var Algebrite = require('algebrite');
         } catch (e) {
-            system.log(e.message);
+            console.error(e.message);
         }
     }
     
@@ -9872,6 +9872,15 @@ cas = new CAS();
  * @class
  */
 function MaiaGPU() {
+    if (typeof process !== 'undefined') {
+        try {
+            const {GPU} = require('gpu.js');
+            device = new GPU();
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
+
     init();
     
     /**
@@ -9899,17 +9908,8 @@ function MaiaGPU() {
      */
     this.new = function() {
         var device;
-        if (typeof process !== 'undefined') {
-            try {
-                const {GPU} = require('gpu.js');
-                device = new GPU();
-            } catch (e) {
-                system.log(e.message);
-            }
-        } else {
-            if (typeof(GPU) != "undefined") {
-                device = new GPU();
-            }
+        if (typeof(GPU) != "undefined") {
+            device = new GPU();
         }
         return device;
     }
@@ -9940,6 +9940,19 @@ gpu = new MaiaGPU();
  * @class
  */
 function Task() {
+    if (typeof process !== 'undefined') {
+        try {
+            var Worker = require('web-worker');
+        } catch (e) {
+            console.error(e.message);
+        }
+        try {
+            var Blob = require('cross-blob');
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
+    
     init();
 
     /**
@@ -9972,23 +9985,16 @@ function Task() {
      */
     this.new = function(func) {
         var worker;
-        if (typeof process !== 'undefined') {
-            try {
-                var Worker = require('web-worker');
-                var Blob = require('blob');
-            } catch (e) {
-                system.log(e.message);
-            }
-        }
         if (typeof(Worker) != "undefined") {
             var script = func.toString().match(/^\s*function\s*\(\s*\)\s*\{(([\s\S](?!\}$))*[\s\S])/)[1];
             var blob = new Blob([script], {type:'text/javascript'});
-            
-            var blobURL = window.URL.createObjectURL(blob);
-
+            if (typeof(window) != "undefined") {
+                var blobURL = window.URL.createObjectURL(blob);
+            } else {
+                var blobURL = 'data:,' + script;
+            }
             worker = new Worker(blobURL);
         }
-        worker = new Worker('data:,postMessage("hello")');
         return worker;
     }
 }
@@ -10320,7 +10326,7 @@ if (typeof process !== 'undefined') {
     try {
         const openDatabase = require('websql');
     } catch (e) {
-        system.log(e.message);
+        console.error(e.message);
     }
 
     var alert = system.log;

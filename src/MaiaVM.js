@@ -324,7 +324,7 @@ if (typeof process !== 'undefined') {
     try {
         const openDatabase = require('websql');
     } catch (e) {
-        system.log(e.message);
+        console.error(e.message);
     }
 
     var alert = system.log;
