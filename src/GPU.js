@@ -22,14 +22,6 @@
  * @class
  */
 function MaiaGPU() {
-    if (typeof process !== 'undefined') {
-        try {
-            var {GPU} = require('gpu.js');
-        } catch (e) {
-            console.error(e.message);
-        }
-    }
-
     init();
     
     /**
@@ -65,3 +57,11 @@ function MaiaGPU() {
 }
 
 gpu = new MaiaGPU();
+
+if (typeof process !== 'undefined') {
+    try {
+        var {GPU} = require('gpu.js');
+    } catch (e) {
+        console.error(e.message);
+    }
+}

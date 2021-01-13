@@ -22,19 +22,6 @@
  * @class
  */
 function Task() {
-    if (typeof process !== 'undefined') {
-        try {
-            var Worker = require('web-worker');
-        } catch (e) {
-            console.error(e.message);
-        }
-        try {
-            var Blob = require('cross-blob');
-        } catch (e) {
-            console.error(e.message);
-        }
-    }
-    
     init();
 
     /**
@@ -82,3 +69,16 @@ function Task() {
 }
 
 task = new Task();
+
+if (typeof process !== 'undefined') {
+    try {
+        var Worker = require('web-worker');
+    } catch (e) {
+        console.error(e.message);
+    }
+    try {
+        var Blob = require('cross-blob');
+    } catch (e) {
+        console.error(e.message);
+    }
+}

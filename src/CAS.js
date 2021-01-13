@@ -22,14 +22,6 @@
   * @class 
   */
 function CAS() {
-    if (typeof process !== 'undefined') {
-        try {
-            var Algebrite = require('algebrite');
-        } catch (e) {
-            console.error(e.message);
-        }
-    }
-    
     init();
 
     /**
@@ -59,3 +51,11 @@ function CAS() {
 }
 
 cas = new CAS();
+
+if (typeof process !== 'undefined') {
+    try {
+        var Algebrite = require('algebrite');
+    } catch (e) {
+        console.error(e.message);
+    }
+}
