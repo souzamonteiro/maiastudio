@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Task</title>
+    <title>JSDoc: Class: CAS</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Task</h1>
+    <h1 class="page-title">Class: CAS</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Task<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>CAS<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Task"><span class="type-signature"></span>new Task<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="CAS"><span class="type-signature"></span>new CAS<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,7 +49,7 @@
 
 
 <div class="description">
-    MaiaScript multi-task library.
+    MaiaScript Computer Algebra System library.
 </div>
 
 
@@ -93,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Task.js.html">Task.js</a>, <a href="Task.js.html#line24">line 24</a>
+        <a href="CAS.js.html">CAS.js</a>, <a href="CAS.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -149,7 +149,7 @@
     
 
     
-    <h4 class="name" id="isSupported"><span class="type-signature"></span>isSupported<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="eval"><span class="type-signature"></span>eval<span class="signature">(expr)</span><span class="type-signature"> &rarr; {object}</span></h4>
     
 
     
@@ -157,121 +157,9 @@
 
 
 <div class="description">
-    Tests whether multi-tasking is supported in the browser.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Task.js.html">Task.js</a>, <a href="Task.js.html#line38">line 38</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Returns true if supported and false otherwise.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="new"><span class="type-signature"></span>new<span class="signature">(func)</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Creates a new parallel task.
-The thread will be created in a new scope.
-For communication with the master thread, the postMessage function (method) and onmessage event must be used.
-To finish executing the thread, the terminate method must be executed.
-To import a script from within the thread, you can use the importScripts function.
+    Evaluates expressions using the Algebrite CAS.
+For complete reference, see the Algebrite documentation
+at http://algebrite.org
 </div>
 
 
@@ -307,13 +195,13 @@ To import a script from within the thread, you can use the importScripts functio
 
         <tr>
             
-                <td class="name"><code>func</code></td>
+                <td class="name"><code>expr</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">string</span>
 
 
             
@@ -323,7 +211,7 @@ To import a script from within the thread, you can use the importScripts functio
 
             
 
-            <td class="description last">Function that will be executed on a new thread.</td>
+            <td class="description last">Algebraic expression.</td>
         </tr>
 
     
@@ -364,7 +252,7 @@ To import a script from within the thread, you can use the importScripts functio
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Task.js.html">Task.js</a>, <a href="Task.js.html#line55">line 55</a>
+        <a href="CAS.js.html">CAS.js</a>, <a href="CAS.js.html#line41">line 41</a>
     </li></ul></dd>
     
 
@@ -393,7 +281,7 @@ To import a script from within the thread, you can use the importScripts functio
 
         
 <div class="param-desc">
-    An object to interact with the created thread.
+    Result of the expression.
 </div>
 
 
@@ -474,7 +362,7 @@ To import a script from within the thread, you can use the importScripts functio
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Task.js.html">Task.js</a>, <a href="Task.js.html#line30">line 30</a>
+        <a href="CAS.js.html">CAS.js</a>, <a href="CAS.js.html#line30">line 30</a>
     </li></ul></dd>
     
 
@@ -526,7 +414,7 @@ To import a script from within the thread, you can use the importScripts functio
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Wed Jan 13 2021 14:03:34 GMT-0300 (Brasilia Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Wed Jan 13 2021 14:11:52 GMT-0300 (Brasilia Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
