@@ -1,6 +1,6 @@
 # MaiaStudio (The MaiaScript IDE)
 
-Copyright (C) 2020 Roberto Luiz Souza Monteiro, Renata Souza Barreto, Hernane Borges de Barros Pereira.
+Copyright (C) 2020, 2021 Roberto Luiz Souza Monteiro, Renata Souza Barreto, Hernane Borges de Barros Pereira.
 
 This software is distributed under the terms of several open sources licenses.
 
@@ -40,6 +40,7 @@ MaiaStudio currently implements the following features:
 - Support for any language supported by the Prism syntax highlighter;
 - Lightweight and easily extensible editor;
 - Simplified API, although powerful;
+- GPU support;
 - Free software.
 
 In addition to being accessible via the API, some commands are available as shortcut keys:
