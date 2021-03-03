@@ -16,6 +16,7 @@ chmod 755 bin/*
 
 bin/maiascript.js -c -o build/cna.js ./maia/cna/cna.maia
 cp build/cna.js js/
+#cp ./maia/cna/cna.js js/
 
 jsdoc -d ./docs ./package.json ./src
 jsdoc -c ./jsdoc.json -d ./docs ./maia/cna/package.json ./maia/cna
