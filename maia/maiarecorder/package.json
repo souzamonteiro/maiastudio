@@ -1,0 +1,32 @@
+{
+    "name": "maiarecorder",
+    "version": "1.0.7",
+    "description": "Maia Cloud Lab Screen Recorder.",
+    "keywords": [
+      "maia",
+      "maiascript",
+      "javascript",
+      "screen recorder"
+    ],
+    "author": "The MaiaScript Team (https://www.maiascript.com)",
+    "license": "Apache-2.0",
+    "homepage": "https://www.maiascript.com",
+    "bugs": {
+      "url": "https://github.com/souzamonteiro/maiarecorder/issues"
+    },
+    "main": "",
+    "bin": {
+      "maiascript": ""
+    },
+    "scripts": {
+      "build": "./build.sh"
+    },
+    "directories": {
+      "example": "examples"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/souzamonteiro/maiarecorder.git"
+    }
+  }
+  
