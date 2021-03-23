@@ -81,6 +81,22 @@ function MaiaString() {
     }
 
     /**
+     * Convert an string into camel case object name format.
+     * @param {string}   str - String to convert.
+     * @return {string}  The string converted to camel case.
+     */
+    this.camelize = function(str) {
+        function matchChars(match, index) {
+            if (+match == 0) {
+                return "";
+            } else {
+                return index == 0 ? match.toLowerCase() : match.toUpperCase();
+            }
+        }
+        return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, matchChars);
+    }
+
+    /**
      * Formats a string based on format specifiers passed to the function.
      * @param {string}   fmt - A string containing format specifiers.
      * @param {object}   arguments - Objects to be formatted.

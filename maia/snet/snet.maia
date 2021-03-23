@@ -1,0 +1,255 @@
+///
+/// @license
+/// Copyright 2020 Roberto Luiz Souza Monteiro,
+///                Renata Souza Barreto,
+///                Hernane Borges de Barros Pereira.
+///
+/// Licensed under the Apache License, Version 2.0 (the 'License');
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at;
+///
+///   http://www.apache.org/licenses/LICENSE-2.0;
+///
+/// Unless required by applicable law or agreed to in writing, software;
+/// distributed under the License is distributed on an 'AS IS' BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eitherMath.express or implied.
+/// See the License for the specific language governing permissions and;
+/// limitations under the License.
+///
+
+ ///
+ /// Library for building semantic networks.
+ /// @namespace snet
+ ///
+namespace snet {
+    ///
+    /// Convert a file in DLF format to JSON.
+    /// @method dlfFileToJson
+    /// @memberof snet
+    /// @param {string}   fileContents - DLF file contents.
+    /// @param {object}   properties - Network properties (n, m and directed).
+    /// @param {string}   topology - Network topology. It can be:
+    ///                              chain, circle or clique.
+    /// @param {boolean}  weighted - The created network must be weighted based
+    ///                              on the number of occurrences of the connections
+    ///                              between the vertices.
+    /// @param {object}   network - Network previously created to insert new data.
+    /// @return {object}  A JSON containing the network.
+    ///
+    function dlfFileToJson(fileContents, properties, topology, weighted, network) {
+        if (core.type(properties) == "undefined") {
+            properties = {
+                "n": 0,
+                "m": 0,
+                "directed": true
+            }
+        } else {
+            properties.n = 0
+            properties.m = 0
+            properties.directed = true
+        }
+        if (core.type(topology) == "undefined") {
+            topology = "chain"
+        }
+        if (core.type(weighted) == "undefined") {
+            weighted = true
+        }
+        if (core.type(network) == "undefined") {
+            network = {
+                "nodes": [],
+                "edges": []
+            }
+        }
+
+        // Search engine.
+        queryObject = ""
+        edgeIndex = []
+
+        function findNode(element, index, list) {
+            thisNode = list[index]
+            found = (element.label == queryObject)
+            return(found)
+        }
+        function findEdge(element, index, list) {
+            thisNode = list[index]
+            found = ((element.source == queryObject.source) && (element.target== queryObject.target))
+            edgeIndex = index
+            return(found)
+        }
+
+        id = -1
+        nodes = []
+        endOfRecord = false
+
+        t1 = core.date()
+        
+        fileLines = core.split(core.replace(fileContents, "\r\n", "\n"), "\n")
+
+        system.println("Processing " + fileLines.length + " lines ...")
+
+        for (l = 0; l < fileLines.length; l = l + 1) {
+            if ((l != 0) && (l % 1000 == 0)) {
+                system.println("Processed " + l.toString() + " lines of " + fileLines.length.toString() + ".")
+            }
+            line = fileLines[l]
+            line = core.replace(line, "\t", " ")
+            record = core.splitCSV(line.trim(), " ", true)
+            if (record[0] == "{S}") {
+                endOfRecord = true
+            }
+            if (core.length(record) >= 1) {
+                if (!endOfRecord) {
+                    id = id + 1
+                    label = core.toString(record[0])
+                    x = ""
+                    y = ""
+                    size = ""
+                    if (x == "") {
+                        x = math.random()
+                    }
+                    if (y == "") {
+                        y = math.random()
+                    }
+                    if (size == "") {
+                        size = 1
+                    }
+                    node = {
+                        "id": "n" + id,
+                        "label": label,
+                        "x": x,
+                        "y": y,
+                        "size": size
+                    }
+                    nodes.push(node)
+                } else {
+                    foreach (nodes; index; node) {
+                        queryObject = node.label
+                        nodeFound = network.nodes.find(findNode)
+                        if (core.type(nodeFound) == "undefined") {
+                            node.id = "n" + network.nodes.length
+                            network.nodes.push(node)
+                        } else {
+                            node.id = nodeFound.id
+                        }
+                    }
+                    if (topology == "chain") {
+                        for (i = 0; i < nodes.length - 1; i = i + 1) {
+                            node1 = nodes[i]
+                            node2 = nodes[i + 1]
+
+                            edgeIndex = []
+                            queryObject = {"source": node1.id, "target": node2.id}
+                            edgeFound = network.edges.find(findEdge)
+                            
+                            if (core.type(edgeFound) == "undefined") {
+                                edge = {
+                                    "id": "e" + network.edges.length,
+                                    "source": node1.id,
+                                    "target": node2.id,
+                                    "size": 1,
+                                    "type": "arrow"
+                                }
+                                network.edges.push(edge)
+                            } else {
+                                if (weighted) {
+                                    edge = network.edges[edgeIndex]
+                                    edge.size = edge.size + 1
+                                }
+                            }
+                        }
+                    } elseif (topology == "clique") {
+                        foreach (nodes; index1; node1) {
+                            foreach (nodes; index2; node2) {
+                                if (index1 != index2) {
+                                    edgeIndex = []
+                                    queryObject = {"source": node1.id, "target": node2.id}
+                                    edgeFound = network.edges.find(findEdge)
+
+                                    if (core.type(edgeFound) == "undefined") {
+                                        edge = {
+                                            "id": "e" + network.edges.length,
+                                            "source": node1.id,
+                                            "target": node2.id,
+                                            "size": 1,
+                                            "type": "arrow"
+                                        }
+                                        network.edges.push(edge)
+                                    } else {
+                                        if (weighted) {
+                                            edge = network.edges[edgeIndex]
+                                            edge.size = edge.size + 1
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } elseif (topology == "circle") {
+                        for (i = 0; i < nodes.length - 1; i = i + 1) {
+                            node1 = nodes[i]
+                            node2 = nodes[i + 1]
+
+                            edgeIndex = []
+                            queryObject = {"source": node1.id, "target": node2.id}
+                            edgeFound = network.edges.find(findEdge)
+                            
+                            if (core.type(edgeFound) == "undefined") {
+                                edge = {
+                                    "id": "e" + network.edges.length,
+                                    "source": node1.id,
+                                    "target": node2.id,
+                                    "size": 1,
+                                    "type": "arrow"
+                                }
+                                network.edges.push(edge)
+                            } else {
+                                if (weighted) {
+                                    edge = network.edges[edgeIndex]
+                                    edge.size = edge.size + 1
+                                }
+                            }
+
+                            if (i + 1 == nodes.length - 1) {
+                                node1 = nodes[i + 1]
+                                node2 = nodes[0]
+
+                                edgeIndex = []
+                                queryObject = {"source": node1.id, "target": node2.id}
+                                edgeFound = network.edges.find(findEdge)
+
+                                if (core.type(edgeFound) == "undefined") {
+                                    edge = {
+                                        "id": "e" + network.edges.length,
+                                        "source": node1.id,
+                                        "target": node2.id,
+                                        "size": 1,
+                                        "type": "arrow"
+                                    }
+                                    network.edges.push(edge)
+                                } else {
+                                    if (weighted) {
+                                        edge = network.edges[edgeIndex]
+                                        edge.size = edge.size + 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    id = -1
+                    nodes = []
+                    endOfRecord = false
+                }
+            }
+        }
+
+        properties.n = network.nodes.length
+        properties.m = network.edges.length
+        
+        t2 = core.date()
+        t = t2 - t1
+
+        system.println("Processed " + l.toString() + " lines of " + fileLines.length.toString() + ".")
+        system.println("Elapsed time: " + t + " ms.")
+
+        return(network)
+    }
+}

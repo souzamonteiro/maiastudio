@@ -29,3 +29,13 @@ test (tries; 5; 0) {
     system.print("      But got " + core.testResult.obtained)
 }
 
+system.println("string.camelize...")
+a = "Hello World"
+test (tries; "helloWorld"; 0) {
+    string.camelize(a)
+} catch (v) {
+    system.print("TEST: Fail testing function string.camelize.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+

@@ -5967,7 +5967,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.3.0";
+    this.version = "3.3.1";
 
     this.testResult = {
         "expected": {},
@@ -7394,7 +7394,7 @@ function System() {
     /**
      * Convert Unicode caracters to Latin1.
      * @param {string}   str - Unicode string.
-     * @return {string}  The Unicode string converted do Latin1.
+     * @return {string}  The Unicode string converted to Latin1.
      */
     this.base64EncodeUnicode = function(str) {
         // First we escape the string using encodeURIComponent to get the UTF-8 encoding of the characters, 
@@ -8767,6 +8767,22 @@ function MaiaString() {
      */
     function init() {
         // Class attributes goes here.
+    }
+
+    /**
+     * Convert an string into camel case object name format.
+     * @param {string}   str - String to convert.
+     * @return {string}  The string converted to camel case.
+     */
+    this.camelize = function(str) {
+        function matchChars(match, index) {
+            if (+match == 0) {
+                return "";
+            } else {
+                return index == 0 ? match.toLowerCase() : match.toUpperCase();
+            }
+        }
+        return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, matchChars);
     }
 
     /**

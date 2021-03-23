@@ -34,7 +34,7 @@ function System() {
     /**
      * Convert Unicode caracters to Latin1.
      * @param {string}   str - Unicode string.
-     * @return {string}  The Unicode string converted do Latin1.
+     * @return {string}  The Unicode string converted to Latin1.
      */
     this.base64EncodeUnicode = function(str) {
         // First we escape the string using encodeURIComponent to get the UTF-8 encoding of the characters, 
