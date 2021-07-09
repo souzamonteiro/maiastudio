@@ -5968,7 +5968,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.3.1";
+    this.version = "3.3.2";
 
     this.testResult = {
         "expected": {},
@@ -8773,14 +8773,15 @@ function MaiaString() {
     /**
      * Convert an string into camel case object name format.
      * @param {string}   str - String to convert.
+     * @param {string}   firstCharToUpperCase - Converts the first character to uppercase.
      * @return {string}  The string converted to camel case.
      */
-    this.camelize = function(str) {
+    this.camelize = function(str, firstCharToUpperCase) {
         function matchChars(match, index) {
             if (+match == 0) {
                 return "";
             } else {
-                return index == 0 ? match.toLowerCase() : match.toUpperCase();
+                return ((index == 0) && !firstCharToUpperCase) ? match.toLowerCase() : match.toUpperCase();
             }
         }
         return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, matchChars);
