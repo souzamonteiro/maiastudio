@@ -1,0 +1,154 @@
+#!/usr/bin/env maiascript
+
+///
+/// @license
+/// Copyright 2020 Roberto Luiz Souza Monteiro,
+///                Renata Souza Barreto,
+///                Hernane Borges de Barros Pereira.
+///
+/// Licensed under the Apache License, Version 2.0 (the "License")
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///   http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eitherMath.express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+///
+
+///
+/// MaiaApp core class.
+/// @namespace
+///
+namespace maiaApp {
+    // Creates the attributes of the class.
+    function init() {
+        // Class attributes goes here.
+    }
+
+    init()
+
+    appTitle = "MaiaApp"
+    appName = "MaiaApp"
+
+    // Interpret the options passed on the command line,
+    // process the files and generate the requested reports.
+    function run() {
+        // Supports only the Node.js interpreter.
+        if (core.type(process) != "undefined") {
+            command = "node"
+            argv = process.argv.slice()
+            fs = system.require("fs")
+            readTextFile = fs.readFileSync
+            
+            // Read file callback.
+            function readFile(input) {
+                content = readTextFile(input, "utf-8")
+                return(content)
+            }
+            
+            // Command line arguments.
+                                            system.log(system.argv)
+            system.argv = argv.slice()
+            system.argc = argv.length
+
+            // Command line options.
+            inputFile = ""
+            outputFile = ""
+            
+            // Get command line arguments.
+            if (argv.length > 2) {
+                i = 2
+                while (i < argv.length) {
+                    if ((argv[i] == "-h") | (argv[i] == "--help")) {
+                        system.log(appTitle + " Command Line Interface (CLI)")
+                        system.log("Usage: " + appName + " [options] [input file] [--] [arguments]")
+                        system.log("Options:")
+                        system.log("-h     --help               Displays this help message;")
+                        system.log("-o     [output file]        Output file name.")
+                        process.exit(0)
+                    } elseif (argv[i] == "-o") {
+                        i = i + 1
+                        outputFile = argv[i]
+                    } else {
+                        inputFile = argv[i]
+                        break
+                    }
+                    i = i + 1
+                }
+                system.argv = argv.slice(i)
+                system.argc = system.argv.length
+
+                if (inputFile != "") {
+                    Glob = system.require("glob")
+                    // Process each file based on glob pattern.
+                    function processFiles(er, files) {
+                        if (files.length == 0) {
+                            system.log(appTitle + " Command Line Interface (CLI)")
+                            system.log("Usage: " + appName + " [options] [input file] [--] [arguments]")
+                        } else {
+                            for (i = 0; i < files.length; i = i + 1) {
+                                // Get the full file name.
+                                file = files[i]
+                                
+                                // Get the file without extension.
+                                fileName = file.split(".")
+                                fileName = fileName.shift()
+
+                                // Get the file name extension.
+                                fileExtension = file.split(".")
+                                fileExtension = fileExtension.pop()
+
+                                // Read the file contents.
+                                fileContents = readFile(String(file))
+
+                                // Do do something...
+
+                                // Sets the output file.
+                                if (outputFile == "") {
+                                    outputFile = fileName + ".out"
+                                }
+
+                                // Write something to the output file.
+                                function errorCallback(err) {
+                                    if (err) {
+                                        throw(err)
+                                    }
+                                }
+                                fs.writeFile(outputFile, fileContents, errorCallback)
+                            }
+                        }
+                    }
+
+                    options = []
+
+                    // Get all file names based on glob pattern.
+                    glob := Glob(inputFile, options, processFiles)
+                } else {
+                    system.log(appTitle + " Command Line Interface (CLI)")
+                    system.log("Usage: " + appName + " [options] [input file] [--] [arguments]")
+                }
+            } else {
+                system.log(appTitle + " Command Line Interface (CLI)")
+                system.log("Usage: " + appName + " [options] [input file] [--] [arguments]")
+            }
+        }
+    }
+}
+
+// Run the MaiaApp code if this script has been invoked
+// from the command line.
+if (core.type(process) != "undefined") {
+    // Emulate DOM.
+    jsdom = system.require("jsdom")
+    doc := jsdom.JSDOM()
+
+    DOMParser = doc.window.DOMParser
+
+    alert = system.log
+
+    maiaApp.run()
+}
