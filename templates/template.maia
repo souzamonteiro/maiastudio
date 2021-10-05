@@ -24,13 +24,6 @@
 /// @namespace
 ///
 namespace maiaApp {
-    // Creates the attributes of the class.
-    function init() {
-        // Class attributes goes here.
-    }
-
-    init()
-
     appTitle = "MaiaApp"
     appName = "MaiaApp"
 
@@ -40,7 +33,7 @@ namespace maiaApp {
         // Supports only the Node.js interpreter.
         if (core.type(process) != "undefined") {
             command = "node"
-            argv = process.argv.slice()
+            
             fs = system.require("fs")
             readTextFile = fs.readFileSync
             
@@ -58,25 +51,25 @@ namespace maiaApp {
             if (system.argc >= 1) {
                 i = 1
                 while (i < system.argc) {
-                    if ((argv[i] == "-h") | (argv[i] == "--help")) {
-                        system.log(appTitle + " Command Line Interface (CLI)")
-                        system.log("Usage: " + appName + " [options] [input file] [--] [arguments]")
+                    if ((system.argv[i] == "-h") | (system.argv[i] == "--help")) {
+                        system.log(this.appTitle + " Command Line Interface (CLI)")
+                        system.log("Usage: " + this.appName + " [options] [input file] [--] [arguments]")
                         system.log("Options:")
                         system.log("-h     --help               Displays this help message;")
                         system.log("-o     [output file]        Output file name.")
                         process.exit(0)
-                    } elseif (argv[i] == "-o") {
+                    } elseif (system.argv[i] == "-o") {
                         i = i + 1
-                        outputFile = argv[i]
+                        outputFile = system.argv[i]
                     } else {
-                        inputFile = argv[i]
+                        inputFile = system.argv[i]
                         break
                     }
                     i = i + 1
                 }
 
                 if (inputFile != "") {
-                    Glob = system.require("glob")
+                    local Glob = system.require("glob")
                     // Process each file based on glob pattern.
                     function processFiles(er, files) {
                         if (files.length == 0) {
@@ -119,14 +112,14 @@ namespace maiaApp {
                     options = []
 
                     // Get all file names based on glob pattern.
-                    glob := Glob(inputFile, options, processFiles)
+                    local glob := Glob(inputFile, options, processFiles)
                 } else {
-                    system.log(appTitle + " Command Line Interface (CLI)")
-                    system.log("Usage: " + appName + " [options] [input file] [--] [arguments]")
+                    system.log(this.appTitle + " Command Line Interface (CLI)")
+                    system.log("Usage: " + this.appName + " [options] [input file] [--] [arguments]")
                 }
             } else {
-                system.log(appTitle + " Command Line Interface (CLI)")
-                system.log("Usage: " + appName + " [options] [input file] [--] [arguments]")
+                system.log(this.appTitle + " Command Line Interface (CLI)")
+                system.log("Usage: " + this.appName + " [options] [input file] [--] [arguments]")
             }
         }
     }
@@ -135,13 +128,5 @@ namespace maiaApp {
 // Run the MaiaApp code if this script has been invoked
 // from the command line.
 if (core.type(process) != "undefined") {
-    // Emulate DOM.
-    jsdom = system.require("jsdom")
-    doc := jsdom.JSDOM()
-
-    DOMParser = doc.window.DOMParser
-
-    alert = system.log
-
     maiaApp.run()
 }
