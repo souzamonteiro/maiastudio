@@ -39,6 +39,7 @@ statement                ::= namespace
                            | throw
                            
 namespace                ::= 'namespace' identifier '{' expression* '}'
+                           | 'object' identifier '{' expression* '}'
 function                 ::= 'async' identifier '(' arguments? ')' '{' expression* '}'
                            | 'constructor' identifier '(' arguments? ')' '{' expression* '}'
                            | 'kernel' identifier '(' arguments? ')' '{' expression* '}'
@@ -102,6 +103,7 @@ reservedWord             ::= keyword
                            | booleanLiteral
 
 keyword  ::= 'namespace'
+           | 'object'
            | 'async'
            | 'constructor'
            | 'kernel'
