@@ -6128,7 +6128,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.4.0";
+    this.version = "3.4.1";
 
     this.testResult = {
         "expected": {},
@@ -6184,6 +6184,15 @@ function Core() {
      */
     this.charCodeAt = function(str, pos) {
         return str.charCodeAt(pos);
+    }
+
+    /**
+     * Returns a clone of an object.
+     * @param {object}   obj - The object to be cloned.
+     * @return {string}  The clone of the object.
+     */
+    this.clone = function(obj) {
+        return Object.assign({}, obj);
     }
 
     /**
