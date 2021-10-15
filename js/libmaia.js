@@ -5112,6 +5112,9 @@ function MaiaCompiler() {
                         var statement = node['TOKEN'][0];
                         if (statement == 'async') {
                             js += name + ' = async function ';
+                        } else if (statement == 'constructor') {
+                            nodeInfo.parentNode = 'namespace';
+                            js += name + ' = function ';
                         } else {
                             js += name + ' = function ';
                         }
