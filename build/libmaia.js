@@ -6391,28 +6391,7 @@ function Core() {
         }
         return result;
     }
-
-    /**
-     * Returns a subclass of the specified superclass.
-     * @param {object}   src - The super class.
-     * @param {object}   dst - The subclass.
-     * @param {object}   proto - Object prototype.
-     */
-    this.extend = function(src, dst, proto) {
-        if (typeof proto == 'undefined') {
-            var proto = {};
-        }
-        var o = {};
-        [dst.prototype, proto].forEach(function (e) {
-            Object.getOwnPropertyNames(e).forEach(function (k) {
-            o[k] = Object.getOwnPropertyDescriptor(e, k);
-            system.log(JSON.stringify(o[k]))
-            });
-        });
-        dst.prototype = Object.create(src.prototype, o);
-        dst.parent = src.call;
-    }
-
+    
     /**
      * Creates the identity matrix..
      * @param {number}  rows - Number of rows in the matrix.
