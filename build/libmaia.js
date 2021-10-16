@@ -6131,7 +6131,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.4.1";
+    this.version = "3.5.0";
 
     this.testResult = {
         "expected": {},
@@ -6171,7 +6171,7 @@ function Core() {
 
     /**
      * Returns the character at the indicated position.
-     * @param {string}   str - The string to look for..
+     * @param {string}   str - The string to look for.
      * @param {number}   pos - The character position.
      * @return {string}  The character at the indicated position.
      */
@@ -6181,7 +6181,7 @@ function Core() {
 
     /**
      * Returns the character code at the indicated position.
-     * @param {string}   str - The string to look for..
+     * @param {string}   str - The string to look for.
      * @param {number}   pos - The character position.
      * @return {string}  The character code at the indicated position.
      */
@@ -6390,6 +6390,27 @@ function Core() {
             system.log(evalError);
         }
         return result;
+    }
+
+    /**
+     * Returns a subclass of the specified superclass.
+     * @param {object}   src - The super class.
+     * @param {object}   dst - The subclass.
+     * @param {object}   proto - Object prototype.
+     */
+    this.extend = function(src, dst, proto) {
+        if (typeof proto == 'undefined') {
+            var proto = {};
+        }
+        var o = {};
+        [dst.prototype, proto].forEach(function (e) {
+            Object.getOwnPropertyNames(e).forEach(function (k) {
+            o[k] = Object.getOwnPropertyDescriptor(e, k);
+            system.log(JSON.stringify(o[k]))
+            });
+        });
+        dst.prototype = Object.create(src.prototype, o);
+        dst.parent = src.call;
     }
 
     /**
