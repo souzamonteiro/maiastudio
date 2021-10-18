@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.5.0";
+    this.version = "3.5.1";
 
     this.testResult = {
         "expected": {},
@@ -338,7 +338,7 @@ function Core() {
     this.indexOf = function(str, text) {
         return str.indexOf(text);
     }
-
+    
     /**
      * Calculates the inverse matrix.
      * @param {object}  obj - The matrix to calculate the inverse.
