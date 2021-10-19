@@ -45,7 +45,10 @@ function MaiaCompiler() {
         statementCodeBlock = ['maiascript',
                               'namespace',
                               'function',
-                              'local',
+                              'object',
+                              'async',
+                              'constructor',
+                              'kernel',
                               'if',
                               'do',
                               'while',
@@ -426,6 +429,21 @@ function MaiaCompiler() {
                     } else {
                         js += ' {}';
                     }
+                }
+            }
+        } else if ('inherit' in mil) {
+            node = mil['inherit'];
+            var nodeInfo = {
+                'parentNode': 'inherit',
+                'childNode': '',
+                'terminalNode' : 'inherit'
+            };
+            parentNodeInfo.childNode = 'inherit';
+
+            if (typeof node != 'undefined') {
+                if ('expression' in node) {
+                    var returnValue = this.parse(node, nodeInfo, isKernelFunction);
+                    js += 'core.import(' + returnValue + ')';
                 }
             }
         } else if ('local' in mil) {
