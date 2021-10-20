@@ -7,14 +7,11 @@ namespace b {
 }
 
 constructor c(x) {
-    function init(x) {
-        if (core.type(x) != "undefined") {
-            this.x = x
-        } else {
-            this.x = 3
-        }
+    if (core.type(x) != "undefined") {
+        this.x = x
+    } else {
+        this.x = 2
     }
-    init(x)
 }
 
 d := c()
@@ -29,5 +26,4 @@ system.println("c.x: " + c.x)
 system.println("d.x: " + d.x)
 system.println("e.x: " + e.x)
 system.println("f.x: " + f.x)
-
 

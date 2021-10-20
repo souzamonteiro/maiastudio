@@ -1,0 +1,24 @@
+constructor Dinosaur(n) {
+    name = n
+    
+    function walk(d, s) {
+        system.println("I, " + this.name + ", walked distance " + d + " at speed " + s + ".")
+    }
+}
+
+constructor Tyrannosaurus(n) {
+    include(Dinosaur)
+    
+    function eat(d) {
+        system.println("I, " + this.name + ", ate " + d.name)
+    }
+}
+
+toto := Dinosaur("Toto")
+rex := Tyrannosaurus("Rex")
+
+toto.walk(10,2)
+rex.walk(15,3)
+
+rex.eat(toto)
+

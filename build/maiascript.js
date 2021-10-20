@@ -5095,7 +5095,11 @@ function MaiaCompiler() {
                     parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                     if (codeBlockStatement.includes(parentNodeInfo.parentNode) && (nodeInfo.childNode != 'comment') && (nodeInfo.childNode != 'condition')) {
                         if (parentNodeInfo.parentNode == 'namespace') {
-                            js += 'this.' + text + ';';
+                            if ((parentNodeInfo.terminalNode == 'assignment') || (parentNodeInfo.terminalNode == 'function')) {
+                                js += 'this.' + text + ';';
+                            } else {
+                                js += text + ';';
+                            }
                         } else {
                             if (conditionalExpression.includes(parentNodeInfo.parentNode)) {
                                 js += text;
@@ -5199,9 +5203,9 @@ function MaiaCompiler() {
                     } else {
                         js += ' {}';
                     }
-                    parentNodeInfo.terminalNode = 'function';
                 }
             }
+            parentNodeInfo.terminalNode = 'function';
         } else if ('include' in mil) {
             node = mil['include'];
             var nodeInfo = {
@@ -5214,8 +5218,8 @@ function MaiaCompiler() {
             if (typeof node != 'undefined') {
                 if ('expression' in node) {
                     var returnValue = this.parse(node, nodeInfo, isKernelFunction);
-                    js += 'var script_ = ' + returnValue + '.toString().match(/^\s*function\s*\(\s*.\)\s*\{(([\s\S](?!\}$))*[\s\S])/)[1];';
-                    js += 'eval(script_);';
+                    js += 'var script_ = ' + returnValue + '.toString().match(/^\\s*function\\s*\\(\\s*.\\)\\s*\\{(([\\s\\S](?!\\}$))*[\\s\\S])/)[1];';
+                    js += 'eval(script_)';
                 }
             }
         } else if ('local' in mil) {
@@ -5334,12 +5338,13 @@ function MaiaCompiler() {
                     }
                 }
             }
+            parentNodeInfo.terminalNode = 'if';
         } else if ('do' in mil) {
             node = mil['do'];
             var nodeInfo = {
                 'parentNode': 'do',
                 'childNode': '',
-                'terminalNode' : ''
+                'terminalNode' : 'do'
             };
             parentNodeInfo.childNode = 'do';
 
@@ -5364,12 +5369,13 @@ function MaiaCompiler() {
                     js += 'do {' + body + '} while (' + condition + ')';
                 }
             }
+            parentNodeInfo.terminalNode = 'do';
         } else if ('while' in mil) {
             node = mil['while'];
             var nodeInfo = {
                 'parentNode': 'while',
                 'childNode': '',
-                'terminalNode' : ''
+                'terminalNode' : 'while'
             };
             parentNodeInfo.childNode = 'while';
 
@@ -5394,6 +5400,7 @@ function MaiaCompiler() {
                     js += 'while (' + condition + ') {' + body + '}';
                 }
             }
+            parentNodeInfo.terminalNode = 'while';
         } else if ('for' in mil) {
             node = mil['for'];
             var nodeInfo = {
@@ -5435,6 +5442,7 @@ function MaiaCompiler() {
                     js += 'for (' + before + ';' + condition + ';' + after + ') {' + body + '}';
                 }
             }
+            parentNodeInfo.terminalNode = 'for';
         } else if ('foreach' in mil) {
             node = mil['foreach'];
             var nodeInfo = {
@@ -5475,6 +5483,7 @@ function MaiaCompiler() {
                     js += 'for (' + keyVarName + ' in ' + arrayName + ') {var ' + valueVarName + ' = ' + arrayName + '[' + keyVarName + '];' + body + '}';
                 }
             }
+            parentNodeInfo.terminalNode = 'foreach';
         } else if ('try' in mil) {
             node = mil['try'];
             var nodeInfo = {
@@ -5517,6 +5526,7 @@ function MaiaCompiler() {
                     }
                 }
             }
+            parentNodeInfo.terminalNode = 'try';
         } else if ('test' in mil) {
             node = mil['test'];
             var nodeInfo = {
@@ -5579,6 +5589,7 @@ function MaiaCompiler() {
                     }
                 }
             }
+            parentNodeInfo.terminalNode = 'test';
         } else if ('break' in mil) {
             node = mil['break'];
             var nodeInfo = {
