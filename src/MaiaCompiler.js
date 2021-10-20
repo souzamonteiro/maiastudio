@@ -42,13 +42,9 @@ function MaiaCompiler() {
                             'additiveExpression',
                             'powerExpression',
                             'multiplicativeExpression'];
-        statementCodeBlock = ['maiascript',
+        codeBlockStatement = ['maiascript',
                               'namespace',
                               'function',
-                              'object',
-                              'async',
-                              'constructor',
-                              'kernel',
                               'if',
                               'do',
                               'while',
@@ -306,9 +302,13 @@ function MaiaCompiler() {
                     for (var i = 0; i < node.length; i++) {
                         text = this.parse(node[i], nodeInfo, isKernelFunction);
                         parentNodeInfo.terminalNode = nodeInfo.terminalNode;
-                        if (statementCodeBlock.includes(parentNodeInfo.parentNode) && (nodeInfo.childNode != 'comment') && (nodeInfo.childNode != 'condition')) {
+                        if (codeBlockStatement.includes(parentNodeInfo.parentNode) && (nodeInfo.childNode != 'comment') && (nodeInfo.childNode != 'condition')) {
                             if (parentNodeInfo.parentNode == 'namespace') {
-                                js += 'this.' + text + ';';
+                                if ((parentNodeInfo.terminalNode == 'assignment') || (parentNodeInfo.terminalNode == 'function')) {
+                                    js += 'this.' + text + ';';
+                                } else {
+                                    js += text + ';';
+                                }
                             } else {
                                 if (conditionalExpression.includes(parentNodeInfo.parentNode)) {
                                     js += text;
@@ -323,7 +323,7 @@ function MaiaCompiler() {
                 } else {
                     text = this.parse(node, nodeInfo, isKernelFunction);
                     parentNodeInfo.terminalNode = nodeInfo.terminalNode;
-                    if (statementCodeBlock.includes(parentNodeInfo.parentNode) && (nodeInfo.childNode != 'comment') && (nodeInfo.childNode != 'condition')) {
+                    if (codeBlockStatement.includes(parentNodeInfo.parentNode) && (nodeInfo.childNode != 'comment') && (nodeInfo.childNode != 'condition')) {
                         if (parentNodeInfo.parentNode == 'namespace') {
                             js += 'this.' + text + ';';
                         } else {
@@ -429,21 +429,23 @@ function MaiaCompiler() {
                     } else {
                         js += ' {}';
                     }
+                    parentNodeInfo.terminalNode = 'function';
                 }
             }
-        } else if ('inherit' in mil) {
-            node = mil['inherit'];
+        } else if ('include' in mil) {
+            node = mil['include'];
             var nodeInfo = {
-                'parentNode': 'inherit',
+                'parentNode': 'include',
                 'childNode': '',
-                'terminalNode' : 'inherit'
+                'terminalNode' : 'include'
             };
-            parentNodeInfo.childNode = 'inherit';
+            parentNodeInfo.childNode = 'include';
 
             if (typeof node != 'undefined') {
                 if ('expression' in node) {
                     var returnValue = this.parse(node, nodeInfo, isKernelFunction);
-                    js += 'core.import(' + returnValue + ')';
+                    js += 'var script_ = ' + returnValue + '.toString().match(/^\s*function\s*\(\s*.\)\s*\{(([\s\S](?!\}$))*[\s\S])/)[1];';
+                    js += 'eval(script_);';
                 }
             }
         } else if ('local' in mil) {

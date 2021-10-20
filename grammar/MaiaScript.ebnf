@@ -25,7 +25,7 @@ primary                  ::= member
 
 statement                ::= namespace
                            | function
-                           | inherit
+                           | include
                            | local
                            | if
                            | do
@@ -45,7 +45,7 @@ function                 ::= 'async' identifier '(' arguments? ')' '{' expressio
                            | 'constructor' identifier '(' arguments? ')' '{' expression* '}'
                            | 'kernel' identifier '(' arguments? ')' '{' expression* '}'
                            | 'function' identifier '(' arguments? ')' '{' expression* '}'
-inherit                  ::= 'inherit' '(' expression ')'
+include                  ::= 'include' '(' expression ')'
 local                    ::= 'local' expression
 if                       ::= 'if' '(' expression ')' '{' expression* '}' elseif* else?
 elseif                   ::= 'elseif' '(' expression ')' '{' expression* '}'
@@ -108,9 +108,9 @@ keyword  ::= 'namespace'
            | 'object'
            | 'async'
            | 'constructor'
-           | 'inherit'
            | 'kernel'
            | 'function'
+           | 'include'
            | 'local'
            | 'if'
            | 'elseif'
