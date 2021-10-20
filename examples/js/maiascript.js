@@ -5218,7 +5218,8 @@ function MaiaCompiler() {
             if (typeof node != 'undefined') {
                 if ('expression' in node) {
                     var returnValue = this.parse(node, nodeInfo, isKernelFunction);
-                    js += 'var script_ = ' + returnValue + '.toString().match(/^\\s*function\\s*\\(\\s*.\\)\\s*\\{(([\\s\\S](?!\\}$))*[\\s\\S])/)[1];';
+                    js += 'var func_ = core.type(' + returnValue + ') == "function" ? ' + returnValue + ' : ' + returnValue + '.constructor;';
+                    js += 'var script_ = func_.toString().substring(func_.toString().indexOf("{") + 1, func_.toString().lastIndexOf("}"));';
                     js += 'eval(script_)';
                 }
             }
