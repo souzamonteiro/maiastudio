@@ -249,10 +249,11 @@ function Core() {
 
     /**
      * Evaluates a MaiaScript script.
-     * @param {string}   stript - The object that will be used as a template.
-     * @return {number}  Result of the evaluated script..
+     * @param {string}   stript - The script to be evaluated.
+     * @param {object}   namespace - The namespace where evaluate the script.
+     * @return {number}  Result of the evaluated script.
      */
-    this.eval = function(script) {
+    this.eval = function(script, namespace) {
         var result;
 
         compiledCode.xml = "";
@@ -279,6 +280,11 @@ function Core() {
         var compiler = new MaiaCompiler();
         compiledCode.js = compiler.compile(xml);
         try {
+            if (typeof namespace != 'undefined') {
+                result = eval(namespace, compiledCode.js);
+            } else {
+                result = eval(compiledCode.js);
+            }
             result = eval(compiledCode.js);
         } catch (e) {
             var evalError = e.message;

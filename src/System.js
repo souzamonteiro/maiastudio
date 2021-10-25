@@ -192,7 +192,7 @@ function System() {
 
             if (typeof inputFile != 'undefined') {
                 var code = read(String(inputFile));
-                core.eval(code);
+                core.eval(code, global);
             } else {
                 throw new Error('Invalid argument for function source. Argument must be a string.');
             }

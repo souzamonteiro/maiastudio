@@ -52,7 +52,7 @@ test (tries; "12.3MaiaScript1+2*i"; 0) {
 system.println("Testing operator ':='...")
 test (tries; 1; 0) {
     constructor a(b) {
-        this.x = b
+        x = b
     }
     c := a(1)
     d = c.x
