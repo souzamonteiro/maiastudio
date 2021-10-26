@@ -6213,7 +6213,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.5.4";
+    this.version = "3.5.5";
 
     this.testResult = {
         "expected": {},
@@ -6819,9 +6819,10 @@ function Core() {
      * @param {string}   str - The string to slit.
      * @param {string}   separator - The separator characters.
      * @param {boolean}  allowRepeatChar - The separator character can be repeated (for formatting).
+     * @param {boolean}  doEval - Run core.eval before adding the column to the record.
      * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
      */
-    this.splitCSV = function(str, separator, allowRepeatChar) {
+    this.splitCSV = function(str, separator, allowRepeatChar, doEval) {
         var record = [];
         var column = '';
         var previous = '';
@@ -6833,6 +6834,9 @@ function Core() {
         }
         if (typeof allowRepeatChar == 'undefined') {
             var allowRepeatChar = false;
+        }
+        if (typeof doEval == 'undefined') {
+            var doEval = false;
         }
         while (j < str.length) {
             c = str[j];
@@ -6861,7 +6865,11 @@ function Core() {
                             }
                             j--;
                         }
-                        record[i] = core.eval(column);
+                        if (doEval) {
+                            record[i] = core.eval(column);
+                        } else {
+                            record[i] = column;
+                        }
                         column = '';
                         i++;
                     } else {
