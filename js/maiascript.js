@@ -6214,7 +6214,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.5.3";
+    this.version = "3.5.4";
 
     this.testResult = {
         "expected": {},
@@ -6818,20 +6818,19 @@ function Core() {
     /**
      * Convert a CSV record to an array, using the character indicated as the column separator.
      * @param {string}   str - The string to slit.
-     * @param {string}   char - The separator character.
+     * @param {string}   separator - The separator characters.
      * @param {boolean}  allowRepeatChar - The separator character can be repeated (for formatting).
      * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
      */
-    this.splitCSV = function(str, char, allowRepeatChar) {
+    this.splitCSV = function(str, separator, allowRepeatChar) {
         var record = [];
-        var separator = ',';
         var column = '';
         var previous = '';
         var insideAString = false;
         var i = 0;
         var j = 0;
-        if (typeof char != 'undefined') {
-            separator = char;
+        if (typeof separator == 'undefined') {
+            separator = ',';
         }
         if (typeof allowRepeatChar == 'undefined') {
             var allowRepeatChar = false;
@@ -6841,30 +6840,34 @@ function Core() {
             if (insideAString) {
                 if ((c == '"') && (previous != '\\')) {
                     insideAString = !insideAString;
+                    column += '"';
                 } else {
                     column += c;
                 }
             } else {
                 if ((c == '"') && (previous != '\\')) {
                     insideAString = !insideAString;
-                } else if (c == separator) {
-                    if (allowRepeatChar) {
-                        while (str[j] == separator) {
-                            if (j < str.length) {
-                                j++;
-                            }
-                            if (j == str.length) {
-                                j--;
-                                break;
-                            }
-                        }
-                        j--;
-                    }
-                    record[i] = column;
-                    column = '';
-                    i++;
+                    column += '"';
                 } else {
-                    column += c;
+                    if (separator.includes(c)) {
+                        if (allowRepeatChar) {
+                            while (separator.includes(str[j])) {
+                                if (j < str.length) {
+                                    j++;
+                                }
+                                if (j == str.length) {
+                                    j--;
+                                    break;
+                                }
+                            }
+                            j--;
+                        }
+                        record[i] = core.eval(column);
+                        column = '';
+                        i++;
+                    } else {
+                        column += c;
+                    }
                 }
             }
             previous = c;
