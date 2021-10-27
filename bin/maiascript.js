@@ -6214,7 +6214,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.5.5";
+    this.version = "3.5.6";
 
     this.testResult = {
         "expected": {},
@@ -6828,6 +6828,12 @@ function Core() {
         var column = '';
         var previous = '';
         var insideAString = false;
+        var openParentheses = false;
+        var closedParentheses = false;
+        var openBrackets = false;
+        var closedBrackets = false;
+        var openBraces = false;
+        var closedBraces = false;
         var i = 0;
         var j = 0;
         if (typeof separator == 'undefined') {
@@ -6844,44 +6850,95 @@ function Core() {
             if (insideAString) {
                 if ((c == '"') && (previous != '\\')) {
                     insideAString = !insideAString;
-                    column += '"';
+                    if (doEval) {
+                        column += '"';
+                    }
                 } else {
                     column += c;
                 }
             } else {
                 if ((c == '"') && (previous != '\\')) {
                     insideAString = !insideAString;
-                    column += '"';
+                    if (doEval) {
+                        column += '"';
+                    }
                 } else {
-                    if (separator.includes(c)) {
-                        if (allowRepeatChar) {
-                            while (separator.includes(str[j])) {
-                                if (j < str.length) {
-                                    j++;
-                                }
-                                if (j == str.length) {
-                                    j--;
-                                    break;
-                                }
-                            }
-                            j--;
-                        }
-                        if (doEval) {
-                            record[i] = core.eval(column);
+                    if (c == '(') {
+                        openParentheses++;
+                    } else if (c == ')') {
+                        closedParentheses++;
+                    }
+                    if (c == '[') {
+                        openBrackets++;
+                    } else if (c == ']') {
+                        closedBrackets++;
+                    }
+                    if (c == '{') {
+                        openBraces++;
+                    } else if (c == '}') {
+                        closedBraces++;
+                    }
+
+                    if (openParentheses > 0) {
+                        if (openParentheses != closedParentheses) {
+                            column += c;
                         } else {
-                            record[i] = column;
+                            openParentheses = 0;
+                            closedParentheses = 0;
                         }
-                        column = '';
-                        i++;
-                    } else {
-                        column += c;
+                    }
+                    if (openBrackets > 0) {
+                        if (openBrackets != closedBrackets) {
+                            column += c;
+                        } else {
+                            openBrackets = 0;
+                            closedBrackets = 0;
+                        }
+                    }
+                    if (openBraces > 0) {
+                        if (openBraces != closedBraces) {
+                            column += c;
+                        } else {
+                            openBraces = 0;
+                            closedBraces = 0;
+                        }
+                    }
+
+                    if ((openParentheses == 0) && (openBrackets == 0) && (openBraces == 0)) {
+                        if (separator.includes(c)) {
+                            if (allowRepeatChar) {
+                                while (separator.includes(str[j])) {
+                                    if (j < str.length) {
+                                        j++;
+                                    }
+                                    if (j == str.length) {
+                                        j--;
+                                        break;
+                                    }
+                                }
+                                j--;
+                            }
+                            if (doEval) {
+                                record[i] = core.eval(column);
+                            } else {
+                                record[i] = column;
+                            }
+                            column = '';
+                            i++;
+                        } else {
+                            column += c;
+                        }
                     }
                 }
             }
             previous = c;
             j++;
         }
-        record[i] = column;
+        if (doEval) {
+            record[i] = core.eval(column);
+        } else {
+            record[i] = column;
+        }
         return record;
     }
 
@@ -8137,6 +8194,20 @@ function Mathematics() {
     }
 
     /**
+     * Converts radians to decimal degrees.
+     * @param {object}   x - Value of X.
+     * @return {number}  Value of x in decimal degrees.
+     */
+    this.deg = function(x)
+    {
+        var y;
+        if (core.type(x) == 'number') {
+            y = x * (180 / Math.PI);;
+        }
+        return y;
+    }
+
+    /**
      * Returns the value of E^x
      * @param {object}   x - Value of X.
      * @return {number}  Value of E^x.
@@ -8228,6 +8299,20 @@ function Mathematics() {
     {
         var z = core.power(x, y);
         return z;
+    }
+
+    /**
+     * Converts decimal degrees to radians.
+     * @param {object}   x - Value of X.
+     * @return {number}  Value of x in radians.
+     */
+    this.rad = function(x)
+    {
+        var y;
+        if (core.type(x) == 'number') {
+            y = x * (Math.PI / 180);;
+        }
+        return y;
     }
 
     /**

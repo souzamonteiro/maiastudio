@@ -256,6 +256,20 @@ function Mathematics() {
     }
 
     /**
+     * Converts radians to decimal degrees.
+     * @param {object}   x - Value of X.
+     * @return {number}  Value of x in decimal degrees.
+     */
+    this.deg = function(x)
+    {
+        var y;
+        if (core.type(x) == 'number') {
+            y = x * (180 / Math.PI);;
+        }
+        return y;
+    }
+
+    /**
      * Returns the value of E^x
      * @param {object}   x - Value of X.
      * @return {number}  Value of E^x.
@@ -347,6 +361,20 @@ function Mathematics() {
     {
         var z = core.power(x, y);
         return z;
+    }
+
+    /**
+     * Converts decimal degrees to radians.
+     * @param {object}   x - Value of X.
+     * @return {number}  Value of x in radians.
+     */
+    this.rad = function(x)
+    {
+        var y;
+        if (core.type(x) == 'number') {
+            y = x * (Math.PI / 180);;
+        }
+        return y;
     }
 
     /**
