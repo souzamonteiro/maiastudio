@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.5.6";
+    this.version = "3.5.7";
 
     this.testResult = {
         "expected": {},
@@ -724,7 +724,6 @@ function Core() {
                                         j++;
                                     }
                                     if (j == str.length) {
-                                        j--;
                                         break;
                                     }
                                 }
