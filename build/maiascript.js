@@ -6214,7 +6214,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.5.8";
+    this.version = "3.5.9";
 
     this.testResult = {
         "expected": {},
@@ -6808,10 +6808,13 @@ function Core() {
     /**
      * Convert a string to an array, using the character indicated as a separator.
      * @param {string}   str - The string to slit.
-     * @param {string}   chars - The separator character.
+     * @param {string}   chars - The separator characters.
      * @return {array}   The array containing the parts of the string.
      */
     this.split = function(str, chars) {
+        if (typeof chars == 'undefined') {
+            chars = ' ';
+        }
         var firstChar = chars[0];
         for (var i = 1; i < chars.length; i++) {
             str = str.split(chars[i]).join(firstChar);
