@@ -75,6 +75,49 @@ function System() {
     }
 
     /**
+     * Convert a CSV record to an array, using the character indicated as the column separator.
+     * @param {string}   inputFile - CSV file.
+     * @param {number}   numberOfHeaderLines - Number of header lines and column descriptors to ignore.
+     * @param {string}   separator - The separator characters.
+     * @param {boolean}  allowRepeatChar - The separator character can be repeated (for formatting).
+     * @param {boolean}  doEval - Run core.eval before adding the column to the record.
+     * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
+     */
+    this.parseCSV = function(inputFile, numberOfHeaderLines, separator, allowRepeatChar, doEval)
+    {
+        if (typeof process != 'undefined') {
+            var fs = require('fs');
+            var readTextFile = fs.readFileSync;
+
+            function getXml(data) {
+                compiledCode.xml += data;
+            }
+
+            function read(input) {
+                if (/^{.*}$/.test(input)) {
+                    return input.substring(1, input.length - 1);
+                } else {
+                    var content = readTextFile(input, 'utf-8');
+                    return content.length > 0 && content.charCodeAt(0) == 0xFEFF ? content.substring(1) : content;
+                }
+            }
+
+            if (typeof inputFile != 'undefined') {
+                var fileContents = read(String(inputFile));
+                var fileLines = core.split(fileContents, '\r\n');
+                var csvArray = [];
+                for (i = numberOfHeaderLines; i < fileLines.length; i++) {
+                    var record = core.splitCSV(fileLines[i], separator, allowRepeatChar, doEval);
+                    csvArray.push(record);
+                }
+                return csvArray;
+            } else {
+                throw new Error('Invalid argument for function parseCSV. Argument must be a string.');
+            }
+        }
+    }
+    
+    /**
      * Displays a message in the console.
      * @param {string}  text - Text to display.
      */
@@ -173,7 +216,7 @@ function System() {
      */
     this.source = function(inputFile)
     {
-        if (typeof process !== 'undefined') {
+        if (typeof process != 'undefined') {
             var fs = require('fs');
             var readTextFile = fs.readFileSync;
 

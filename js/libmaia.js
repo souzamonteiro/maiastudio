@@ -6213,7 +6213,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.5.7";
+    this.version = "3.5.8";
 
     this.testResult = {
         "expected": {},
@@ -6807,11 +6807,16 @@ function Core() {
     /**
      * Convert a string to an array, using the character indicated as a separator.
      * @param {string}   str - The string to slit.
-     * @param {string}   char - The separator character.
+     * @param {string}   chars - The separator character.
      * @return {array}   The array containing the parts of the string.
      */
-    this.split = function(str, char) {
-        return str.split(char);
+    this.split = function(str, chars) {
+        var firstChar = chars[0];
+        for (var i = 1; i < chars.length; i++) {
+            str = str.split(chars[i]).join(firstChar);
+        }
+        str = str.split(firstChar);
+        return str;
     }
 
     /**
@@ -6847,7 +6852,7 @@ function Core() {
         while (j < str.length) {
             c = str[j];
             if (insideAString) {
-                if ((c == '"') && (previous != '\\')) {
+                if (((c == '"') || (c == '\'')) && (previous != '\\')) {
                     insideAString = !insideAString;
                     if (doEval) {
                         column += '"';
@@ -6856,7 +6861,7 @@ function Core() {
                     column += c;
                 }
             } else {
-                if ((c == '"') && (previous != '\\')) {
+                if (((c == '"') || (c == '\'')) && (previous != '\\')) {
                     insideAString = !insideAString;
                     if (doEval) {
                         column += '"';
@@ -7763,6 +7768,49 @@ function System() {
     }
 
     /**
+     * Convert a CSV record to an array, using the character indicated as the column separator.
+     * @param {string}   inputFile - CSV file.
+     * @param {number}   numberOfHeaderLines - Number of header lines and column descriptors to ignore.
+     * @param {string}   separator - The separator characters.
+     * @param {boolean}  allowRepeatChar - The separator character can be repeated (for formatting).
+     * @param {boolean}  doEval - Run core.eval before adding the column to the record.
+     * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
+     */
+    this.parseCSV = function(inputFile, numberOfHeaderLines, separator, allowRepeatChar, doEval)
+    {
+        if (typeof process != 'undefined') {
+            var fs = require('fs');
+            var readTextFile = fs.readFileSync;
+
+            function getXml(data) {
+                compiledCode.xml += data;
+            }
+
+            function read(input) {
+                if (/^{.*}$/.test(input)) {
+                    return input.substring(1, input.length - 1);
+                } else {
+                    var content = readTextFile(input, 'utf-8');
+                    return content.length > 0 && content.charCodeAt(0) == 0xFEFF ? content.substring(1) : content;
+                }
+            }
+
+            if (typeof inputFile != 'undefined') {
+                var fileContents = read(String(inputFile));
+                var fileLines = core.split(fileContents, '\r\n');
+                var csvArray = [];
+                for (i = numberOfHeaderLines; i < fileLines.length; i++) {
+                    var record = core.splitCSV(fileLines[i], separator, allowRepeatChar, doEval);
+                    csvArray.push(record);
+                }
+                return csvArray;
+            } else {
+                throw new Error('Invalid argument for function parseCSV. Argument must be a string.');
+            }
+        }
+    }
+    
+    /**
      * Displays a message in the console.
      * @param {string}  text - Text to display.
      */
@@ -7861,7 +7909,7 @@ function System() {
      */
     this.source = function(inputFile)
     {
-        if (typeof process !== 'undefined') {
+        if (typeof process != 'undefined') {
             var fs = require('fs');
             var readTextFile = fs.readFileSync;
 

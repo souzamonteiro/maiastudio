@@ -638,6 +638,257 @@
     
 
     
+    <h4 class="name" id="parseCSV"><span class="type-signature"></span>parseCSV<span class="signature">(inputFile, numberOfHeaderLines, separator, allowRepeatChar, doEval)</span><span class="type-signature"> &rarr; {array}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Convert a CSV record to an array, using the character indicated as the column separator.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>inputFile</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">CSV file.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>numberOfHeaderLines</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Number of header lines and column descriptors to ignore.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>separator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The separator characters.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>allowRepeatChar</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The separator character can be repeated (for formatting).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>doEval</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Run core.eval before adding the column to the record.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line86">line 86</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The array containing the parts of the CSV or NULL if the CSV record is not well formed.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">array</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="print"><span class="type-signature"></span>print<span class="signature">(text)</span><span class="type-signature"></span></h4>
     
 
@@ -739,7 +990,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line81">line 81</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line124">line 124</a>
     </li></ul></dd>
     
 
@@ -899,7 +1150,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line92">line 92</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line135">line 135</a>
     </li></ul></dd>
     
 
@@ -1058,7 +1309,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line101">line 101</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line144">line 144</a>
     </li></ul></dd>
     
 
@@ -1218,7 +1469,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line112">line 112</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line155">line 155</a>
     </li></ul></dd>
     
 
@@ -1365,7 +1616,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line130">line 130</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line173">line 173</a>
     </li></ul></dd>
     
 
@@ -1524,7 +1775,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line144">line 144</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line187">line 187</a>
     </li></ul></dd>
     
 
@@ -1706,7 +1957,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line155">line 155</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line198">line 198</a>
     </li></ul></dd>
     
 
@@ -1865,7 +2116,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line164">line 164</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line207">line 207</a>
     </li></ul></dd>
     
 
@@ -2002,7 +2253,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line174">line 174</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line217">line 217</a>
     </li></ul></dd>
     
 
@@ -2184,7 +2435,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line208">line 208</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line251">line 251</a>
     </li></ul></dd>
     
 
@@ -2354,7 +2605,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line234">line 234</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line277">line 277</a>
     </li></ul></dd>
     
 
@@ -2504,7 +2755,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Nov 02 2021 21:41:21 GMT-0300 (Brasilia Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Nov 22 2021 11:16:53 GMT-0300 (Brasilia Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

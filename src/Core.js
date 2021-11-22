@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.5.7";
+    this.version = "3.5.8";
 
     this.testResult = {
         "expected": {},
@@ -620,11 +620,16 @@ function Core() {
     /**
      * Convert a string to an array, using the character indicated as a separator.
      * @param {string}   str - The string to slit.
-     * @param {string}   char - The separator character.
+     * @param {string}   chars - The separator character.
      * @return {array}   The array containing the parts of the string.
      */
-    this.split = function(str, char) {
-        return str.split(char);
+    this.split = function(str, chars) {
+        var firstChar = chars[0];
+        for (var i = 1; i < chars.length; i++) {
+            str = str.split(chars[i]).join(firstChar);
+        }
+        str = str.split(firstChar);
+        return str;
     }
 
     /**
@@ -660,7 +665,7 @@ function Core() {
         while (j < str.length) {
             c = str[j];
             if (insideAString) {
-                if ((c == '"') && (previous != '\\')) {
+                if (((c == '"') || (c == '\'')) && (previous != '\\')) {
                     insideAString = !insideAString;
                     if (doEval) {
                         column += '"';
@@ -669,7 +674,7 @@ function Core() {
                     column += c;
                 }
             } else {
-                if ((c == '"') && (previous != '\\')) {
+                if (((c == '"') || (c == '\'')) && (previous != '\\')) {
                     insideAString = !insideAString;
                     if (doEval) {
                         column += '"';

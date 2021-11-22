@@ -3,6 +3,7 @@
 ./bin/maiascript.js test/array.maia 10
 ./bin/maiascript.js test/complex.maia 10
 ./bin/maiascript.js test/compiler.maia 10
+./bin/maiascript.js test/csv.maia 10
 ./bin/maiascript.js test/function.maia 10
 ./bin/maiascript.js test/loop.maia 10
 ./bin/maiascript.js test/math.maia 10
