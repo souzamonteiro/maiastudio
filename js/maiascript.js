@@ -9746,22 +9746,22 @@ function ANN() {
 
     /**
      * Returns the labels of an adjacency matrix.
-     * @param {object}   ANNMatrix - Adjacency matrix.
+     * @param {object}   NN - Adjacency matrix.
      * @return {object}  The labels of an adjacency matrix.
      */
-    this.getLabels = function(ANNMatrix) {
-        var dimNN = core.dim(ANNMatrix);
+    this.getLabels = function(NN) {
+        var dimNN = core.dim(NN);
         var dimI = dimNN[0];
         var labels = [''];
         for (var i = 1; i < dimI; i++) {
-            labels.push(ANNMatrix[i][0]);
+            labels.push(NN[i][0]);
         }
         return(labels);
     }
 
     /**
      * Trains an artificial neural network, represented as an adjacency matrix.
-     * @param {object}   ANNMatrix - Adjacency matrix.
+     * @param {object}   NN - Adjacency matrix.
      * @param {object}   inMatrix - Input data for training.
      * @param {object}   outMatrix - Output data for training.
      * @param {number}   ni - Number of input neurons.
@@ -9773,7 +9773,7 @@ function ANN() {
      *                         linear, logistic or tanh.
      * @return {object}  Trained neural network.
      */
-    this.learn = function(ANNMatrix, inMatrix, outMatrix, ni, no, lRate, AF, OAF) {
+    this.learn = function(NN, inMatrix, outMatrix, ni, no, lRate, AF, OAF) {
         if (typeof ni == 'undefined') {
             var ni = 0;
         }
@@ -9789,7 +9789,6 @@ function ANN() {
         if (typeof OAF == 'undefined') {
             var OAF = 'linear';
         }
-        var NN = ANNMatrix;
         var dimNN = core.dim(NN);
         var dimI = dimNN[0];
         var dimJ = dimNN[1];
@@ -10011,23 +10010,23 @@ function ANN() {
 
     /**
      * Sets the labels of an adjacency matrix.
-     * @param {object}   ANNMatrix - Adjacency matrix.
+     * @param {object}   NN - Adjacency matrix.
      * @param {object}   labels - Matrix labels.
      * @return {object}  The adjacency matrix.
      */
-    this.setLabels = function(ANNMatrix, labels) {
-        var dimNN = core.dim(ANNMatrix);
+    this.setLabels = function(NN, labels) {
+        var dimNN = core.dim(NN);
         var dimI = dimNN[0];
         for (var i = 1; i < dimI; i++) {
-            ANNMatrix[i][0] = labels[i];
-            ANNMatrix[0][i] = labels[i];
+            NN[i][0] = labels[i];
+            NN[0][i] = labels[i];
         }
         return(labels);
     }
 
     /**
      * It processes incoming data using a trained neural network.
-     * @param {object}   ANNMatrix - adjacency matrix.
+     * @param {object}   NN - adjacency matrix.
      * @param {object}   inMatrix - Input data for training.
      * @param {number}   ni - Number of input neurons.
      * @param {number}   no - Number of output neurons.
@@ -10040,7 +10039,7 @@ function ANN() {
      * @param {object}   OFC - Output function coefficients.
      * @return {object}  Trained neural network.
      */
-    this.think = function(ANNMatrix, inMatrix, ni, no, AF, OAF, OF, OFC) {
+    this.think = function(NN, inMatrix, ni, no, AF, OAF, OF, OFC) {
         if (typeof ni == 'undefined') {
             var ni = 0;
         }
@@ -10059,7 +10058,6 @@ function ANN() {
         if (typeof OFC == 'undefined') {
             var OFC = [1, 0];
         }
-        var NN = ANNMatrix;
         var output = core.matrix(0.0, 1, no);
         var dimNN = core.dim(NN);
         var dimI = dimNN[0];
@@ -10174,7 +10172,7 @@ function ANN() {
 
     /**
      * Train an artificial neural network, represented as an adjacency matrix.
-     * @param {object}    ANNMatrix - Adjacency matrix.
+     * @param {object}    NN - Adjacency matrix.
      * @param {object}    inMatrix - Input data for training.
      * @param {object}    outMatrix - Output data for training.
      * @param {number}    lRate - Learning rate.
@@ -10191,7 +10189,7 @@ function ANN() {
      * @param {number}    interval - Interval between calls from the callback function.
      * @return {object}   Trained neural network.
      */
-    this.training = function(ANNMatrix, inMatrix, outMatrix, lRate, AF, OAF, OF, OFC, maxEpochs, minimumCorrectness, callback, interval) {
+    this.training = function(NN, inMatrix, outMatrix, lRate, AF, OAF, OF, OFC, maxEpochs, minimumCorrectness, callback, interval) {
         if (typeof lRate == 'undefined') {
             var lRate = 1;
         }
@@ -10219,7 +10217,6 @@ function ANN() {
         if (typeof interval == 'undefined') {
             var interval = 0;
         }
-        var NN = ANNMatrix;
         var dimI = dimNN[0];
         var dimJ = dimNN[1];
         var dimIn = core.dim(inMatrix);
