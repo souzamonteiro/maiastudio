@@ -24,7 +24,7 @@ system.println(core.toString("ANN after be prepared: " + core.toString(nn)))
 correctnessMatrix = core.matrix(0.0, 1, nData)
 
 // Trains the neural network.
-statistics = ann.training(nn, dataX, dataY, 0.005, "tanh", "linear", "none", [1, 0], 2000, 0.001, trainingCallback, 100)
+statistics = ann.training(nn, dataX, dataY, 0.005, "tanh", "linear", "none", [1, 0], 2000, 0.001, trainingCallback, 0)
 // Displays training statistics.
 // system.println("Statistics: " + core.toString(statistics))
 

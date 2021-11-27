@@ -9788,7 +9788,7 @@ function ANN() {
         if (typeof OAF == 'undefined') {
             var OAF = 'linear';
         }
-        var NN = core.copyMatrix(ANNMatrix);
+        var NN = ANNMatrix;
         var dimNN = core.dim(NN);
         var dimI = dimNN[0];
         var dimJ = dimNN[1];
@@ -9921,12 +9921,6 @@ function ANN() {
                 }
             }
         }
-        // Copy the results to the ANN matrix.
-        for (var i = 0; i < (dimI - 1); i++) {
-            for (var j = 0; j < (dimJ - 1); j++) {
-                ANNMatrix[i][j] = NN[i][j];
-            }
-        }
         return NN;
     }
 
@@ -9952,7 +9946,7 @@ function ANN() {
         var dimANN = core.dim(ANNMatrix);
         var dimI = dimANN[0];
         var dimJ = dimANN[1];
-        var NN = core.matrix(0.0, dimI + 1, dimJ + 1);
+        let NN = core.matrix(0.0, dimI + 1, dimJ + 1);
         for (var i = 1; i < (dimI - 1); i++) {
             for (var j = 1; j < (dimJ - 1); j++) {
                 NN[i][j] = ANNMatrix[i][j];
@@ -9997,10 +9991,28 @@ function ANN() {
     }
 
     /**
+     * Remove the last row and last column from the matrix.
+     * @param {object}   ANNMatrix - Adjacency matrix.
+     * @return {object}  The matrix without the last row and last column.
+     */
+     this.reduce = function(ANNMatrix) {
+        var dimANN = core.dim(ANNMatrix);
+        var dimI = dimANN[0];
+        var dimJ = dimANN[1];
+        var NN = core.matrix(0.0, dimI - 1, dimJ - 1);
+        for (var i = 1; i < (dimI - 1); i++) {
+            for (var j = 1; j < (dimJ - 1); j++) {
+                NN[i][j] = ANNMatrix[i][j];
+            }
+        }
+        return(NN);
+    }
+
+    /**
      * Sets the labels of an adjacency matrix.
      * @param {object}   ANNMatrix - Adjacency matrix.
      * @param {object}   labels - Matrix labels.
-     * @return {object}  The adjacency matrix
+     * @return {object}  The adjacency matrix.
      */
     this.setLabels = function(ANNMatrix, labels) {
         var dimNN = core.dim(ANNMatrix);
@@ -10046,7 +10058,7 @@ function ANN() {
         if (typeof OFC == 'undefined') {
             var OFC = [1, 0];
         }
-        var NN = core.copyMatrix(ANNMatrix);
+        var NN = ANNMatrix;
         var output = core.matrix(0.0, 1, no);
         var dimNN = core.dim(NN);
         var dimI = dimNN[0];
@@ -10156,12 +10168,6 @@ function ANN() {
                 output[i] = NN[firstOut + i][0];
             }
         }
-        // Copy the results to the ANN matrix.
-        for (var i = 0; i < (dimI - 1); i++) {
-            for (var j = 0; j < (dimJ - 1); j++) {
-                ANNMatrix[i][j] = NN[i][j];
-            }
-        }
         return output;
     }
 
@@ -10212,7 +10218,7 @@ function ANN() {
         if (typeof interval == 'undefined') {
             var interval = 0;
         }
-        var NN = core.copyMatrix(ANNMatrix);
+        var NN = ANNMatrix;
         var dimI = dimNN[0];
         var dimJ = dimNN[1];
         var dimIn = core.dim(inMatrix);
@@ -10263,22 +10269,10 @@ function ANN() {
                 correctnessMatrix[epochs][0] = RSS;
                 correctnessMatrix[epochs][1] = correctness;
                 if (hits == dimIn[0]) {
-                    // Copy the results to the ANN matrix.
-                    for (var k = 0; k < (dimI - 1); k++) {
-                        for (var j = 0; j < (dimJ - 1); j++) {
-                            ANNMatrix[k][j] = NN[k][j];
-                        }
-                    }
                     result = [epochs, RSS, correctnessMatrix];
                     return result;
                 }
                 if (correctness >= minimumCorrectness) {
-                    // Copy the results to the ANN matrix.
-                    for (var k = 0; k < (dimI - 1); k++) {
-                        for (var j = 0; j < (dimJ - 1); j++) {
-                            ANNMatrix[k][j] = NN[k][j];
-                        }
-                    }
                     result = [epochs, RSS, correctnessMatrix];
                     return result;
                 }
@@ -10289,7 +10283,7 @@ function ANN() {
                 input = inMatrix[i];
                 output = outMatrix[i];
                 // Learn this set.
-                NN = this.learn(NN, input, output, dimIn[1], dimOut[1], lRate, AF, OAF);
+                this.learn(NN, input, output, dimIn[1], dimOut[1], lRate, AF, OAF);
             }
             epochsCounter++;
             if (interval != 0) {
@@ -10304,12 +10298,6 @@ function ANN() {
                         ETL1 = date.getTime();
                     }
                 }
-            }
-        }
-        // Copy the results to the ANN matrix.
-        for (var i = 0; i < (dimI - 1); i++) {
-            for (var j = 0; j < (dimJ - 1); j++) {
-                ANNMatrix[i][j] = NN[i][j];
             }
         }
         result = [epochs, RSS, correctnessMatrix];
