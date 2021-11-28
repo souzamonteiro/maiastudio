@@ -24,7 +24,7 @@ system.println(core.toString("ANN after be prepared: " + core.toString(nn)))
 correctnessMatrix = core.matrix(0.0, 1, nData)
 
 // Trains the neural network.
-statistics = ann.training(nn, dataX, dataY, 0.005, "tanh", "linear", "none", [1, 0], 2000, 0.001, trainingCallback, 0)
+statistics = ann.training(nn, dataX, dataY, 0.005, "tanh", "linear", "none", [1, 0], 2000, 0.001, trainingCallback, 100)
 // Displays training statistics.
 // system.println("Statistics: " + core.toString(statistics))
 
@@ -32,6 +32,17 @@ statistics = ann.training(nn, dataX, dataY, 0.005, "tanh", "linear", "none", [1,
 system.println("Trained ANN: " + core.toString(nn))
 
 // Uses the trained network to estimate the value of the function.
+
+// nn[1,2] = 1.52021
+// nn[2,2] = -9.55616
+// nn[1,3] = -1.26172
+// nn[3,3] = 5.93258
+// nn[1,4] = 0.146194
+// nn[4,4] = 0.686591
+// nn[2,5] = 1.47574
+// nn[3,5] = -1.47603
+// nn[4,5] = 8.08261
+// nn[5,5] = 0.10794
 
 system.println("The output must be f(0.50) = 2.3811")
 out = ann.think(nn, [0.50], 1, 1, "tanh", "linear", "none", [1, 0])

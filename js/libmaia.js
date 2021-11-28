@@ -9819,7 +9819,7 @@ function ANN() {
                     }
                 } else {
                     break;
-                }
+                };
             }
             // Activation function.
             if (j < firstOut) {
@@ -9946,8 +9946,8 @@ function ANN() {
         var dimI = dimANN[0];
         var dimJ = dimANN[1];
         let NN = core.matrix(0.0, dimI + 1, dimJ + 1);
-        for (var i = 1; i < (dimI - 1); i++) {
-            for (var j = 1; j < (dimJ - 1); j++) {
+        for (var i = 1; i < dimI; i++) {
+            for (var j = 1; j < dimJ; j++) {
                 NN[i][j] = ANNMatrix[i][j];
             }
         }
