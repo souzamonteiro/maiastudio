@@ -21,7 +21,7 @@
 
 ///
 /// MaiaApp core class.
-/// @namespace
+/// @namespace maiaApp
 ///
 namespace maiaApp {
     appTitle = "MaiaApp"
