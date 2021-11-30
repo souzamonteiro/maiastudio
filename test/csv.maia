@@ -6,14 +6,14 @@ if (system.argc == 2) {
     tries = system.argv[1]
 }
 
-system.println("Testing parseCSV function " + tries + " times.")
+system.println("Testing loadCSV function " + tries + " times.")
 
-system.println("system.parseCSV...")
+system.println("system.loadCSV...")
 testData = [[1,"Testing... 1","Done 1"],[2,"Testing... 2","Done 2"],[3,"Testing... 3","Done 3"]]
 test (tries; testData; 0) {
-    data = system.parseCSV("test/test.csv", 2, ", ", true, true)
+    data = system.loadCSV("test/test.csv", 2, ", ", true, true)
 } catch (v) {
-    system.print("TEST: Fail testing function system.parseCSV.")
+    system.print("TEST: Fail testing function system.loadCSV.")
     system.print("      Expected result " + core.testResult.expected)
     system.print("      But got " + JSON.stringify(core.testResult.obtained))
 }
