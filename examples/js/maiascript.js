@@ -6214,7 +6214,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.7.0";
+    this.version = "3.7.1";
 
     this.testResult = {
         "expected": {},
@@ -7751,6 +7751,9 @@ function System() {
      */
      this.createCSV = function(csvData, separator, header)
      {
+        if (typeof separator != 'undefined') {
+            var separator = ',';
+        }
         if (typeof csvData != 'undefined') {
             var fileContents = '';
             if (typeof header != 'undefined') {
@@ -7759,8 +7762,8 @@ function System() {
                     if (i < header.length - 1) {
                         fileContents += separator;
                     }
-                    fileContents += '\n';
                 }
+                fileContents += '\n';
             }
             for (var i = 0; i < csvData.length; i++) {
                 record = csvData[i];
@@ -7772,7 +7775,7 @@ function System() {
                     } else {
                         fileContents += record[j];
                     }
-                    if (i < record.length - 1) {
+                    if (j < record.length - 1) {
                         fileContents += separator;
                     }
                 }
