@@ -46,6 +46,48 @@ function System() {
     }
 
     /**
+     * Converts an array to a CSV file, using the character indicated as the column separator.
+     * @param {array}    csvData - CSV data.
+     * @param {string}   separator - The separator characters.
+     * @param {array}    header - Column descriptors.
+     * @return {string}  The CSV file data.
+     */
+     this.createCSV = function(csvData, separator, header)
+     {
+        if (typeof csvData != 'undefined') {
+            var fileContents = '';
+            if (typeof header != 'undefined') {
+                for (var i = 0; i < header.length; i++) {
+                    fileContents += '"' + header[i] + '"';
+                    if (i < header.length - 1) {
+                        fileContents += separator;
+                    }
+                    fileContents += '\n';
+                }
+            }
+            for (var i = 0; i < csvData.length; i++) {
+                record = csvData[i];
+                for (var j = 0; j < record.length; j++) {
+                    if (typeof record[j] != 'string') {
+                        fileContents += '"' + record[j] + '"';
+                    } else if (typeof record[j] != 'object') {
+                        fileContents += JSON.stringify(record[j]);
+                    } else {
+                        fileContents += record[j];
+                    }
+                    if (i < record.length - 1) {
+                        fileContents += separator;
+                    }
+                }
+                fileContents += '\n';
+            }
+            return fileContents;
+        } else {
+            throw new Error('Invalid argument for function createCSV. Argument must be an array.');
+        }
+     }
+
+    /**
      * Download a file.
      * @param {string}  fileName - File name.
      * @param {string}  fileData - Data to save.
@@ -66,6 +108,30 @@ function System() {
     }
 
     /**
+     * Converts a CSV record to an array, using the character indicated as the column separator.
+     * @param {string}   csvData - CSV file data.
+     * @param {number}   numberOfHeaderLines - Number of header lines and column descriptors to ignore.
+     * @param {string}   separator - The separator characters.
+     * @param {boolean}  allowRepeatChar - The separator character can be repeated (for formatting).
+     * @param {boolean}  doEval - Run core.eval before adding the column to the record.
+     * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
+     */
+     this.parseCSV = function(csvData, numberOfHeaderLines, separator, allowRepeatChar, doEval)
+     {
+        if (typeof csvData != 'undefined') {
+            var fileLines = core.split(csvData, '\r\n');
+            var csvArray = [];
+            for (i = numberOfHeaderLines; i < fileLines.length; i++) {
+                var record = core.splitCSV(fileLines[i], separator, allowRepeatChar, doEval);
+                csvArray.push(record);
+            }
+            return csvArray;
+        } else {
+            throw new Error('Invalid argument for function loadCSV. Argument must be a string.');
+        }
+     }
+
+    /**
      * Displays a message in the console.
      * @param {string}  text - Text to display.
      */
@@ -75,7 +141,7 @@ function System() {
     }
 
     /**
-     * Convert a CSV record to an array, using the character indicated as the column separator.
+     * Loads a CSV file and converts it to an array, using the character indicated as the column separator.
      * @param {string}   inputFile - CSV file.
      * @param {number}   numberOfHeaderLines - Number of header lines and column descriptors to ignore.
      * @param {string}   separator - The separator characters.
@@ -83,7 +149,7 @@ function System() {
      * @param {boolean}  doEval - Run core.eval before adding the column to the record.
      * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
      */
-    this.parseCSV = function(inputFile, numberOfHeaderLines, separator, allowRepeatChar, doEval)
+    this.loadCSV = function(inputFile, numberOfHeaderLines, separator, allowRepeatChar, doEval)
     {
         if (typeof process != 'undefined') {
             var fs = require('fs');
@@ -104,13 +170,7 @@ function System() {
 
             if (typeof inputFile != 'undefined') {
                 var fileContents = read(String(inputFile));
-                var fileLines = core.split(fileContents, '\r\n');
-                var csvArray = [];
-                for (i = numberOfHeaderLines; i < fileLines.length; i++) {
-                    var record = core.splitCSV(fileLines[i], separator, allowRepeatChar, doEval);
-                    csvArray.push(record);
-                }
-                return csvArray;
+                return this.parseCSV(fileContents, numberOfHeaderLines, separator, allowRepeatChar, doEval);
             } else {
                 throw new Error('Invalid argument for function parseCSV. Argument must be a string.');
             }
@@ -178,7 +238,7 @@ function System() {
         }
         return moduleReference;
     }
-
+    
     /**
      * Displays a message in a dialog box asking for confirmation.
      * @param {string}   text - Text to display.

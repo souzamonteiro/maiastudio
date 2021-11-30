@@ -308,6 +308,211 @@
     
 
     
+    <h4 class="name" id="createCSV"><span class="type-signature"></span>createCSV<span class="signature">(csvData, separator, header)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Converts an array to a CSV file, using the character indicated as the column separator.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>csvData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">CSV data.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>separator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The separator characters.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>header</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Column descriptors.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line55">line 55</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The CSV file data.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="downloadFile"><span class="type-signature"></span>downloadFile<span class="signature">(fileName, fileData, mimeType)</span><span class="type-signature"></span></h4>
     
 
@@ -455,7 +660,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line55">line 55</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line97">line 97</a>
     </li></ul></dd>
     
 
@@ -501,7 +706,7 @@
     
 
     
-    <h4 class="name" id="log"><span class="type-signature"></span>log<span class="signature">(text)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loadCSV"><span class="type-signature"></span>loadCSV<span class="signature">(inputFile, numberOfHeaderLines, separator, allowRepeatChar, doEval)</span><span class="type-signature"> &rarr; {array}</span></h4>
     
 
     
@@ -509,144 +714,7 @@
 
 
 <div class="description">
-    Displays a message in the console.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>text</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Text to display.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line72">line 72</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="parseCSV"><span class="type-signature"></span>parseCSV<span class="signature">(inputFile, numberOfHeaderLines, separator, allowRepeatChar, doEval)</span><span class="type-signature"> &rarr; {array}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Convert a CSV record to an array, using the character indicated as the column separator.
+    Loads a CSV file and converts it to an array, using the character indicated as the column separator.
 </div>
 
 
@@ -831,7 +899,395 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line86">line 86</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line152">line 152</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The array containing the parts of the CSV or NULL if the CSV record is not well formed.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">array</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="log"><span class="type-signature"></span>log<span class="signature">(text)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Displays a message in the console.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Text to display.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line138">line 138</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="parseCSV"><span class="type-signature"></span>parseCSV<span class="signature">(csvData, numberOfHeaderLines, separator, allowRepeatChar, doEval)</span><span class="type-signature"> &rarr; {array}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Converts a CSV record to an array, using the character indicated as the column separator.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>csvData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">CSV file data.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>numberOfHeaderLines</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Number of header lines and column descriptors to ignore.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>separator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The separator characters.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>allowRepeatChar</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The separator character can be repeated (for formatting).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>doEval</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Run core.eval before adding the column to the record.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line119">line 119</a>
     </li></ul></dd>
     
 
@@ -990,7 +1446,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line124">line 124</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line184">line 184</a>
     </li></ul></dd>
     
 
@@ -1150,7 +1606,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line135">line 135</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line195">line 195</a>
     </li></ul></dd>
     
 
@@ -1309,7 +1765,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line144">line 144</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line204">line 204</a>
     </li></ul></dd>
     
 
@@ -1469,7 +1925,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line155">line 155</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line215">line 215</a>
     </li></ul></dd>
     
 
@@ -1616,7 +2072,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line173">line 173</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line233">line 233</a>
     </li></ul></dd>
     
 
@@ -1775,7 +2231,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line187">line 187</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line247">line 247</a>
     </li></ul></dd>
     
 
@@ -1957,7 +2413,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line198">line 198</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line258">line 258</a>
     </li></ul></dd>
     
 
@@ -2116,7 +2572,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line207">line 207</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line267">line 267</a>
     </li></ul></dd>
     
 
@@ -2253,7 +2709,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line217">line 217</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line277">line 277</a>
     </li></ul></dd>
     
 
@@ -2435,7 +2891,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line251">line 251</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line311">line 311</a>
     </li></ul></dd>
     
 
@@ -2605,7 +3061,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="System.js.html">System.js</a>, <a href="System.js.html#line277">line 277</a>
+        <a href="System.js.html">System.js</a>, <a href="System.js.html#line337">line 337</a>
     </li></ul></dd>
     
 
@@ -2755,7 +3211,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Nov 29 2021 16:04:28 GMT-0300 (Brasilia Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Nov 30 2021 10:40:00 GMT-0300 (Brasilia Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
