@@ -197,7 +197,7 @@ function newLineToBr(text) {
  */
 function downloadHtml() {
     if (editorMode == 'md') {
-        var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked(editor.getText()) + '</body></html>';
+        var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked.parse(editor.getText()) + '</body></html>';
     } else {
         var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet"/></head><body><pre>' + newLineToBr(editor.getHtml()) + '</pre></body></html>';
     }
@@ -246,7 +246,7 @@ function compileAndRun() {
         compiledCode.js = code;
     }
     if (editorMode == 'html') {
-        var win = window.open();
+        var win = window.open("", fileName + '.' + fileExtension, "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600,top=0,left=0");
         iframe = win.document.createElement('iframe');
         iframe.width = '100%';
         iframe.height = '100%';
@@ -255,15 +255,9 @@ function compileAndRun() {
         iframe.src = 'data:text/html;charset=utf-8,' + code;
         win.document.body.appendChild(iframe);
     } else if (editorMode == 'md') {
-        var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked(code) + '</body></html>';
-        var win = window.open();
-        iframe = win.document.createElement('iframe');
-        iframe.width = '100%';
-        iframe.height = '100%';
-        iframe.frameBorder = 0;
-        iframe.style = 'border: 0';
-        iframe.src = 'data:text/html;charset=utf-8,' + html;
-        win.document.body.appendChild(iframe);
+        var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head><body>' + marked.parse(code) + '</body></html>';
+        var win = window.open("", fileName + '.' + fileExtension, "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600,top=0,left=0");
+        win.document.body.innerHTML = html;
     } else if ((editorMode == 'maia') || (editorMode == 'mil') || (editorMode == 'js')) {
         try {
             eval(compiledCode.js);
@@ -284,7 +278,7 @@ function saveWorkspace() {
     var data = {
         'language': document.getElementById('language').value,
         'editorMode': document.getElementById('editorMode').value,
-        'terminalMode': getComputedStyle(document.getElementById('content'))['display'],
+        'terminalMode': getComputedStyle(document.getElementById('terminalContent'))['display'],
         'terminalHistory': JSON.stringify(terminalHistory),
         'fullFileName': fullFileName,
         'fileName': fileName,
@@ -355,14 +349,14 @@ function loadWorkspace() {
         if (typeof data['terminalMode'] != 'undefined') {
             terminalMode = data['terminalMode'];
             if (terminalMode) {
-                document.getElementById('content').style.display = terminalMode;
+                document.getElementById('terminalContent').style.display = terminalMode;
             } else {
                 terminalMode = 'block';
-                document.getElementById('content').style.display = terminalMode;
+                document.getElementById('terminalContent').style.display = terminalMode;
             }
         } else {
             terminalMode = 'block';
-            document.getElementById('content').style.display = terminalMode;
+            document.getElementById('terminalContent').style.display = terminalMode;
         }
         if (typeof data['terminalHistory'] != 'undefined') {
             if (Array.isArray(data['terminalHistory'])) {
@@ -484,11 +478,11 @@ function initApp() {
     var coll = document.getElementsByClassName('collapsible');
     for (var i = 0; i < coll.length; i++) {
         coll[i].addEventListener('click', function() {
-            var content = this.nextElementSibling;
-            if (content.style.display === 'block') {
-                content.style.display = 'none';
+            var terminalContent = this.nextElementSibling;
+            if (terminalContent.style.display === 'block') {
+                terminalContent.style.display = 'none';
             } else {
-                content.style.display = 'block';
+                terminalContent.style.display = 'block';
             }
         });
     }
