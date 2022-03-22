@@ -60,6 +60,7 @@ function MaiaEditor(container, language, options) {
     // History for undo and redo operations. 
     var editorHistory = [];
     var editorHistoryBackup = [];
+    var editorHistoryLength = 999;
 
     // Element that will contain the editor.
     var editorContainer = document.getElementById(container);
@@ -101,6 +102,23 @@ function MaiaEditor(container, language, options) {
      * Gets the editor's text.
      * @return {string}  The text in the editor.
      */
+    this.getEditorHistoryLength = function() {
+        return editor.editorHistoryLength;
+    }
+
+    /**
+     * Sets the editor history length.
+     * @param {number}  length - Editor history length.
+     * @return          Sets the editor history length.
+     */
+    this.setEditorHistoryLength = function(length) {
+        editor.editorHistoryLength = length;
+    }
+
+    /**
+     * Gets the editor's text.
+     * @return {string}  The text in the editor.
+     */
     this.getText = function() {
         return editor.textContent;
     }
@@ -111,6 +129,15 @@ function MaiaEditor(container, language, options) {
      */
     this.getHtml = function() {
         return editor.innerHTML;
+    }
+    
+    /**
+     * Sets the editor inner HTML.
+     * @param {string}  html - Editor inner HTML.
+     * @return          Sets the editor inner HTML.
+     */
+     this.setHtml = function(html) {
+        editor.innerHTML = html;
     }
 
     /**
@@ -460,7 +487,7 @@ function MaiaEditor(container, language, options) {
             var element = editor;
         }
         // Place the previous contents on the stack.
-        if (editorHistory.length >= 3) {
+        if (editorHistory.length >= editorHistoryLength) {
             editorHistory.shift();
             editorHistoryBackup.shift();
         }
