@@ -20,9 +20,6 @@ system.println(core.toString(ann.getLabels(nn)))
 nn = ann.prepare(nn, true, true, true)
 system.println(core.toString("ANN after be prepared: " + core.toString(nn)))
 
-// Creates a vector to store data about the correctness of the training.
-correctnessMatrix = core.matrix(0.0, 1, nData)
-
 // Trains the neural network.
 statistics = ann.training(nn, dataX, dataY, 0.005, "tanh", "linear", "none", [1, 0], 2000, 0.001, trainingCallback, 100)
 // Displays training statistics.
