@@ -71,9 +71,9 @@ function System() {
             for (var i = 0; i < csvData.length; i++) {
                 record = csvData[i];
                 for (var j = 0; j < record.length; j++) {
-                    if (typeof record[j] != 'string') {
+                    if (typeof record[j] == 'string') {
                         fileContents += '"' + record[j] + '"';
-                    } else if (typeof record[j] != 'object') {
+                    } else if (typeof record[j] == 'object') {
                         fileContents += JSON.stringify(record[j]);
                     } else {
                         fileContents += record[j];
