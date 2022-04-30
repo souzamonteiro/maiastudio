@@ -6213,7 +6213,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.8.1";
+    this.version = "3.8.2";
 
     this.testResult = {
         "expected": {},
@@ -10279,8 +10279,6 @@ function ANN() {
         if (typeof interval == 'undefined') {
             var interval = 0;
         }
-        var dimI = dimNN[0];
-        var dimJ = dimNN[1];
         var dimIn = core.dim(inMatrix);
         var dimOut = core.dim(outMatrix);
         var input = core.matrix(0.0, 1, dimIn[1]);

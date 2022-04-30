@@ -826,8 +826,6 @@ function ANN() {
         if (typeof interval == 'undefined') {
             var interval = 0;
         }
-        var dimI = dimNN[0];
-        var dimJ = dimNN[1];
         var dimIn = core.dim(inMatrix);
         var dimOut = core.dim(outMatrix);
         var input = core.matrix(0.0, 1, dimIn[1]);
