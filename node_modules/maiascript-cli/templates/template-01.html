@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>App Title</title>
+        <meta charset="utf-8">
+        <script src="http://www.maiascript.com/maiastudio/js/maiascript.js"></script>
+    </head>
+    <body onload="maiavm.compile();">
+        Hello, World!<br />
+        <button id="helloBtn" onclick="showHello()">Click me!</button>
+        <script type="text/maiascript">
+            function showHello() {
+              system.showMessageDialog("Hello, World!")
+            }
+        </script>
+    </body>
+</html>

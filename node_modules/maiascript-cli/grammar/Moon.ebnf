@@ -1,0 +1,42 @@
+moon              ::= value eof
+array             ::= '{' element (',' element)* '}'
+matrix            ::= '[' row (';' row)* ']'
+
+element           ::= (key ':')? value
+key               ::= string
+
+row               ::= column (',' column)*
+column            ::= value
+
+value             ::= real
+                    | complex
+                    | string
+                    | array
+                    | matrix
+                    | 'true'
+                    | 'false'
+                    | 'null'
+
+whitespace        ::= whitespace^token
+                   /* ws: definition */
+
+<?TOKENS?>
+
+eof               ::= $
+
+string            ::= '"' (unicode | '\"' | '\\' | '\/' | '\b' | '\f' | '\n' | '\r' | '\t')* '"'
+
+unicode           ::= alphabet - ["#x005C]
+alphabet          ::= #x0009
+                    | #x000A
+                    | #x000D
+                    | [#x0020-#xD7FF]
+                    | [#xE000-#xFFFD]
+                    | [#x10000-#x10FFFF]
+
+complex           ::= (real)? imaginary
+real              ::= '-'? digit+ ('.' digit+)? (('e' | 'E') ('+' | '-')? digit+)?
+imaginary         ::= (('+' | '-')? real '*' 'i')
+digit             ::= [0-9]
+
+whitespace        ::= [#x0009#x000A#x000D#x0020]+

@@ -1,0 +1,3 @@
+- [ ] Add config button and config page
+- [ ] Add video and audio sources setup
+- [ ] Add Save From Camera option

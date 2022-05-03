@@ -1,0 +1,54 @@
+#!/usr/bin/env maiascript
+
+tries = 10
+
+if (system.argc == 2) {
+    tries = system.argv[1]
+}
+
+system.println("Testing the complex number functions " + tries + " times.")
+
+system.println("core.abs...")
+test (tries; 5; 0) {
+    math.abs(4+3*i)
+} catch (v) {
+    system.print("TEST: Fail testing function core.abs.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.arg...")
+test (tries; 0.643501; 0.000001) {
+    math.arg(4+3*i)
+} catch (v) {
+    system.print("TEST: Fail testing function core.arg.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.conj...")
+test (tries; core.complex(4,-3); 0) {
+    core.conj(4+3*i)
+} catch (v) {
+    system.print("TEST: Fail testing function core.conj.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.imaginary...")
+test (tries; 3; 0) {
+    core.imaginary(4+3*i)
+} catch (v) {
+    system.print("TEST: Fail testing function core.imaginary.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.real...")
+test (tries; 4; 0) {
+    core.real(4+3*i)
+} catch (v) {
+    system.print("TEST: Fail testing function core.real.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}

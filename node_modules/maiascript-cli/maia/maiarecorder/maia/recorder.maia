@@ -1,0 +1,288 @@
+///
+/// @license
+/// Copyright 2020 Roberto Luiz Souza Monteiro,
+///                Renata Souza Barreto,
+///                Hernane Borges de Barros Pereira.
+///
+/// Licensed under the Apache License, Version 2.0 (the 'License');
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at;
+///
+///   http://www.apache.org/licenses/LICENSE-2.0;
+///
+/// Unless required by applicable law or agreed to in writing, software;
+/// distributed under the License is distributed on an 'AS IS' BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eitherMath.express or implied.
+/// See the License for the specific language governing permissions and;
+/// limitations under the License.
+///
+/// This code is based on https://github.com/webrtcHacks/jitsiLocalRecorder.git
+///
+
+ ///
+ /// MaiaScript screen recorder library.
+ /// @class MaiaRecorder
+ /// @param {object}   options - Object containing options for configuring the recorder.
+ ///                             It can be: startButton, pauseButton, stopButton,
+ ///                                        playButton, saveButton, videoPlayer,
+ ///                                        fileNamePrefix, mimeType.
+ /// @return {object}  Screen recorder object.
+ ///
+constructor MaiaRecorder(options) {
+    opts = {
+        "startButton": "",
+        "pauseButton": "",
+        "stopButton": "",
+        "playButton": "",
+        "saveButton": "",
+        "videoPlayer": "",
+        "fileNamePrefix": "Screen-recording",
+        "mimeType": "video/webm"
+    }
+    
+    if (core.type(options) != "undefined") {
+        foreach (options; key; value) {
+            opts[key] = value
+        }
+    }
+
+    local startButton
+    local pauseButton
+    local stopButton
+    local playButton
+    local saveButton
+    local videoPlayer
+    local fileNamePrefix
+    local mimeType
+    
+    local recorder
+    local recordingData = []
+    local recorderStream
+    local isPlaying = false
+    
+    startButton = document.getElementById(opts["startButton"])
+    pauseButton = document.getElementById(opts["pauseButton"])
+    stopButton = document.getElementById(opts["stopButton"])
+    playButton = document.getElementById(opts["playButton"])
+    saveButton = document.getElementById(opts["saveButton"])
+    videoPlayer = document.getElementById(opts["videoPlayer"])
+    fileNamePrefix = opts["fileNamePrefix"]
+    mimeType = opts["mimeType"]
+
+    ///
+    /// Mixes two audio tracks and the first video track found.
+    /// @method mixTracks
+    /// @memberof MaiaRecorder
+    /// @param {object}   trackA - Track A.
+    /// @param {object}   trackB - Track B.
+    /// @return {object}  Video stream containing mixed audio and video tracks.
+    ///
+    function mixTracks(trackA, trackB) {
+        ctx := AudioContext()
+        dest = ctx.createMediaStreamDestination()
+
+        audioTracksA = trackA.getAudioTracks()
+        if (audioTracksA.length > 0) {
+            mediaStreamSourceA = ctx.createMediaStreamSource(trackA)
+            mediaStreamSourceA.connect(dest)
+        }
+        audioTracksB = trackB.getAudioTracks()
+        if (audioTracksB.length > 0) {
+            mediaStreamSourceB = ctx.createMediaStreamSource(trackB)
+            mediaStreamSourceB.connect(dest)
+        }
+
+        mixedTracks = dest.stream.getTracks()
+        mixedTracks = mixedTracks.concat(trackA.getVideoTracks())
+        mixedTracks = mixedTracks.concat(trackB.getVideoTracks())
+        
+        mediaStream := MediaStream(mixedTracks)
+
+        return(mediaStream)
+    }
+
+    ///
+    /// Return the file name for the captured video.
+    /// @method getFilename
+    /// @memberof MaiaRecorder
+    /// @return {object}  File name for the captured video.
+    ///
+    function getFilename() {
+        now := Date()
+        timestamp = now.toISOString()
+        fileName = fileNamePrefix + "-" + timestamp
+        return(fileName)
+    }
+
+    ///
+    /// Start recording screen.
+    /// @method startRecording
+    /// @memberof MaiaRecorder
+    /// @return {object}  Screen recording started.
+    ///
+    async startRecording () {
+        local userMediaStream
+        local displayMediaStream
+        recordingData = []
+
+        audioOptions = {
+            "video": false,
+            "audio": true
+        }
+        videoOptions = {
+            "video": {"displaySurface": "browser"},
+            "audio": true
+        }
+
+        try {
+            userMediaStream ?= navigator.mediaDevices.getUserMedia(audioOptions)
+            displayMediaStream ?= navigator.mediaDevices.getDisplayMedia(videoOptions)
+        } catch (e) {
+            system.showMessageDialog("Error: screen recording is not supported by this browser.")
+            return()
+        }
+
+        if (userMediaStream) {
+            recorderStream = mixTracks(userMediaStream, displayMediaStream)
+        } else {
+            recorderStream = displayMediaStream
+        }
+        recorder := MediaRecorder(recorderStream, {"mimeType": mimeType})
+
+        function onDataAvailable (e) {
+            if (e.data && e.data.size > 0) {
+                recordingData.push(e.data)
+            }
+            console.log("available")
+        }
+        function onStop () {
+            function stopTrackRecording(track) {
+                track.stop()
+            }
+            recorderStreamTracks = recorderStream.getTracks()
+            recorderStreamTracks.forEach(stopTrackRecording)
+
+            userMediaStreamTracks = userMediaStream.getTracks()
+            userMediaStreamTracks.forEach(stopTrackRecording)
+
+            displayMediaStreamTracks = displayMediaStream.getTracks()
+            displayMediaStreamTracks.forEach(stopTrackRecording)
+        }
+        recorder.ondataavailable = onDataAvailable
+        recorder.onstop = onStop
+
+        function onInactive () {
+            stopRecording()
+            console.log(recorder.state)
+        }
+        recorderStream.addEventListener("inactive", onInactive)
+
+        recorder.start()
+        
+        startButton.innerText = "Recording"
+        startButton.disabled = true
+        pauseButton.disabled = false
+        stopButton.disabled = false
+        playButton.disabled = true
+        saveButton.disabled = true
+
+        console.log(recorder.state)
+    }
+    startButton.addEventListener("click", startRecording)
+
+    ///
+    /// Stop recording screen.
+    /// @method stopRecording
+    /// @memberof MaiaRecorder
+    /// @return {object}  Screen recording stopped.
+    ///
+    function stopRecording() {
+        if ((recorder.state == "recording") || (recorder.state == "paused")) {
+            recorder.stop()
+        }
+
+        startButton.disabled = false
+        pauseButton.disabled = true
+        stopButton.disabled = true
+        playButton.disabled = false
+        saveButton.disabled = false
+
+        startButton.innerText = "Record"
+        pauseButton.innerText = "Pause"
+
+        console.log(recorder.state)
+    }
+    stopButton.addEventListener("click", stopRecording)
+
+    ///
+    /// Pause recording screen.
+    /// @method pauseRecording
+    /// @memberof MaiaRecorder
+    /// @return {object}  Screen recording paused.
+    ///
+    function pauseRecording() {
+        if (recorder.state == "paused") {
+            recorder.resume()
+            pauseButton.innerText = "Pause"
+        } elseif (recorder.state == "recording") {
+            recorder.pause()
+            pauseButton.innerText = "Resume"
+        }
+
+        console.log(recorder.state)
+    }
+    pauseButton.addEventListener("click", pauseRecording)
+
+    ///
+    /// Plays the recording.
+    /// @method playRecording
+    /// @memberof MaiaRecorder
+    /// @return {object}  The recorded video is played.
+    ///
+    function playRecording() {
+        videoPlayer.hidden = !videoPlayer.hidden
+        if ((!isPlaying) && (!videoPlayer.hidden)) {
+            videoSource := Blob(recordingData, {"type": mimeType})
+            videoPlayer.src = window.URL.createObjectURL(videoSource)
+            videoPlayer.play()
+            playButton.innerText = "Hide"
+        } else {
+            playButton.innerText = "Play"
+        }
+    }
+    playButton.addEventListener("click", playRecording)
+    
+    function setIsPlaying() {
+        isPlaying = true
+    }
+    function unsetIsPlaying() {
+        isPlaying = false
+    }
+    videoPlayer.addEventListener("play", setIsPlaying)
+    videoPlayer.addEventListener("pause", unsetIsPlaying)
+    videoPlayer.addEventListener("playing", setIsPlaying)
+    videoPlayer.addEventListener("ended", unsetIsPlaying)
+
+    ///
+    /// Saves the recording.
+    /// @method saveRecording
+    /// @memberof MaiaRecorder
+    /// @return {object}  The recorded video is saved.
+    ///
+    function saveRecording() {
+        blob := Blob(recordingData, {"type": mimeType})
+        url = window.URL.createObjectURL(blob)
+        a = document.createElement("a")
+        a.style.display = "none"
+        a.href = url
+        a.download = getFilename() + ".webm"
+        document.body.appendChild(a)
+        a.click()
+        function removeDownloadLink() {
+            document.body.removeChild(a)
+            window.URL.revokeObjectURL(url)
+        }
+        setTimeout(removeDownloadLink, 500)
+    }
+    saveButton.addEventListener("click", saveRecording)
+}

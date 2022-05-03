@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>BMI Calculator</title>
+    <meta charset="utf-8">
+    <script src="js/maiascript.js"></script>
+    <style>
+      form {
+        border: 0;
+        line-height: 2.5;
+        padding: 0 20px;
+        font-family: Arial;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body onload="maiavm.compile();">
+    <form id="bmiForm">
+      <h1>BMI Calculator</h1>
+      <label for="height">Height:</label>
+      <input id="height" type="text" />
+      <label for="weight">Weight:</label>
+      <input id="weight" type="text" />
+      <button id="calculateBtn" type="button" onclick="calculateBMI()">Calculate BMI</button>
+    </form>
+    <script type="text/maiascript" src="http://www.maiascript.com/maiastudio/examples/maia/example-24.maia"></script>
+    <script type="text/maiascript">
+      system.showMessageDialog("First script executed!")
+    </script>
+    <script type="text/maiascript">
+      function calculateBMI() {
+        heightTxt = document.getElementById("height")
+        weightTxt = document.getElementById("weight")
+        height = heightTxt.value
+        weight = weightTxt.value
+        bmi = core.toNumber(weight) / (core.toNumber(height) ^ 2)
+        system.showMessageDialog("BMI: " + bmi)
+      }
+    </script>
+  </body>
+</html>

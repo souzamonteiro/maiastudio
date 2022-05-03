@@ -1,0 +1,22 @@
+a = [1,2,3,4]
+b = "Hello"
+c = "1,2,3"
+d = ","
+e = "Hello, World!"
+
+system.println("splice(a, 1, 2) = " + core.toString(core.splice(a, 1, 2)))
+system.println("splice(a, 1, 2, b) = " + core.toString(core.splice(a, 0, 2, b)))
+
+system.println("split(c) = " + core.split(c, ","))
+
+system.println("search(e) = " + core.search(e, ","))
+
+g = []
+core.push(g, b)
+system.println("g = " + core.toString(g))
+core.pop(g)
+system.println("g = " + core.toString(g))
+g.push("World")
+system.println("g = " + core.toString(g))
+g.pop()
+system.println("g = " + core.toString(g))

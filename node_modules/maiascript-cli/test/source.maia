@@ -1,0 +1,19 @@
+#!/usr/bin/env maiascript
+
+tries = 10
+
+if (system.argc == 2) {
+    tries = system.argv[1]
+}
+
+system.println("Testing source function " + tries + " times.")
+
+system.println("system.source...")
+test (tries; "Hello, World!"; 0) {
+    system.source("test/script.maia")
+    hello()
+} catch (v) {
+    system.print("TEST: Fail testing function system.source.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}

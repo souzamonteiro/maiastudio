@@ -1,0 +1,171 @@
+#!/usr/bin/env maiascript
+
+tries = 10
+
+if (system.argc == 2) {
+    tries = system.argv[1]
+}
+
+system.println("Testing the matrix functions " + tries + " times.")
+
+system.println("matrix.triang...")
+test (tries; [2.0,3.0,-1.0;0.0,-2.0,-1.0;0.0,0.0,5.0]; 0) { 
+    matrix.triang([2,3,-1;4,4,-3;2,-3,1])
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.triang.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.diag...")
+test (tries; "[[1,0,0],[0,-3,0],[0,0,0.33333333333333304]]"; 0) { 
+    core.toString(core.diag([1,1,2;2,-1,-1;1,-1,-1]))
+} catch (v) {
+    system.print("TEST: Fail testing function core.diag.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.det...")
+test (tries; 156; 0) {
+    core.det([2,5,7;3,1,4;6,8,2])
+} catch (v) {
+    system.print("TEST: Fail testing function core.det.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.one...")
+test (tries; [1.0,1.0,1.0;1.0,1.0,1.0;1.0,1.0,1.0]; 0) {
+    core.one(3, 3)
+} catch (v) {
+    system.print("TEST: Fail testing function core.one.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.zero...")
+test (tries; [0.0,0.0,0.0;0.0,0.0,0.0;0.0,0.0,0.0]; 0) {
+    core.zero(3, 3)
+} catch (v) {
+    system.print("TEST: Fail testing function core.zero.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.trans...")
+test (tries; [1,4,7;2,5,8;3,6,9]; 0) {
+    matrix.trans([1,2,3;4,5,6;7,8,9])
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.trans.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.cross...")
+test (tries; [-3.0,6.0,-3.0]; 0) { 
+    matrix.cross([1,2,3], [4,5,6])
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.cross.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.dot...")
+test (tries; 48; 0) {
+    matrix.dot([1,2,5], [2,-7,12])
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.dot.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.sum...")
+test (tries; 45; 0) {
+    matrix.sum([1,2,3;4,5,6;7,8,9])
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.sum.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.sum...")
+test (tries; 28; 0) {
+    matrix.sum([1,2,3;4,5,6;7,8,9], 1, 1, 2, 2)
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.sum.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.avg...")
+test (tries; "{\"avg\":5,\"dev\":2.7386127875258306}"; 0) {
+    core.toString(matrix.avg([1,2,3;4,5,6;7,8,9]))
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.avg.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.avg...")
+test (tries; "{\"avg\":7,\"dev\":1.8257418583505538}"; 0) {
+    core.toString(matrix.avg([1,2,3;4,5,6;7,8,9], 1, 1, 2, 2))
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.avg.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.count...")
+test (tries; 9; 0) {
+    matrix.count([1,2,3;4,5,6;7,8,9])
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.count.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.count...")
+test (tries; 4; 0) {
+    matrix.count([1,2,3;4,5,6;7,8,9], 1, 1, 2, 2)
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.count.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.min...")
+test (tries; 3; 0) {
+    matrix.min([7,4,3;22,9,8;5,11,14])
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.min.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.min...")
+test (tries; 8; 0) {
+    matrix.min([7,4,3;22,9,8;5,11,14], 1, 1, 2, 2)
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.min.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.max...")
+test (tries; 22; 0) {
+    matrix.max([7,4,3;22,9,8;5,11,14])
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.max.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("matrix.max...")
+test (tries; 14; 0) {
+    matrix.max([7,4,3;22,9,8;5,11,14], 1, 1, 2, 2)
+} catch (v) {
+    system.print("TEST: Fail testing function matrix.max.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}

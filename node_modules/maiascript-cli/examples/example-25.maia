@@ -1,0 +1,29 @@
+res = cas.eval("x + x")
+system.showMessageDialog("x + x:\n\n" + res)
+
+res = cas.eval("numerator(1/a+1/b)\n" +
+               "denominator(1/(x-1)/(x-2))\n" +
+               "rationalize(a/b+b/a)")
+system.showMessageDialog("numerator(1/a+1/b)\n" +
+                         "denominator(1/(x-1)/(x-2))\n" +
+                         "rationalize(a/b+b/a):\n\n" + res)
+
+res = cas.eval("simplify(cos(x)^2 + sin(x)^2)\n" +
+               "simplify(a*b+a*c)\n" +
+               "simplify(n!/(n+1)!)")
+system.showMessageDialog("simplify(cos(x)^2 + sin(x)^2)\n" +
+                         "simplify(a*b+a*c)\n" +
+                         "simplify(n!/(n+1)!):\n\n" + res)
+
+res = cas.eval("integral(x^2)\n" +
+               "integral(x*y,x,y)")
+system.showMessageDialog("integral(x^2)\n" +
+                         "integral(x*y,x,y):\n\n" + res)
+
+res = cas.eval("d(x^2)\n" +
+               "r=sqrt(x^2+y^2)\n" +
+               "d(r,[x,y])")
+system.showMessageDialog("d(x^2)\n" +
+                         "r=sqrt(x^2+y^2)\n" +
+                         "d(r,[x,y])\n\n" + res)
+

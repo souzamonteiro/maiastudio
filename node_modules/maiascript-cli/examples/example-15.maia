@@ -1,0 +1,9 @@
+nota1 = core.toNumber(system.showInputDialog("Informe a nota da unidade 1:"))
+nota2 = core.toNumber(system.showInputDialog("Informe a nota da unidade 2:"))
+media = (nota1 + nota2) / 2
+system.showMessageDialog(core.toString("Sua média é: ") + core.toString(media))
+if (media >= 7) {
+  system.showMessageDialog("Você foi aprovado!")
+} else {
+  system.showMessageDialog("Você foi reprovado!")
+}

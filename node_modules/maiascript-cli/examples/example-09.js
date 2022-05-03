@@ -1,0 +1,2 @@
+// One line comment.
+a=1;b=1;c=0;d=core.logicalAND(a,b);e=core.logicalOR(a,c);f=core.bitwiseXOR(a,b);g=core.GT(a,b);h=core.LT(a,b);i=core.GE(a,b);j=core.LE(a,b);k=core.bitwiseAND(a,b);l=core.bitwiseOR(a,b);system.println(a);system.println(b);system.println(c);system.println(d);system.println(e);system.println(f);system.println(g);system.println(h);system.println(i);system.println(j);system.println(k);system.println(l);

@@ -1,0 +1,52 @@
+#!/usr/local/bin/maiavm
+##
+# This comment is for documentation by JSDoc.
+#
+// This is a comment.
+namespace a {
+    b = [1, 2; 3, 4]
+    // This is another comment.
+    function f (x) {
+        c = 2 * x + 1
+        d = [[1,2],[3,4];{"v1":5,"v2":6},{"v3":6,"v4":7}]
+        if (c > 0) {
+            return(c)
+        } else {
+            return(d)
+        }
+    }
+    e = core.toNumber("-2-3*i")
+}
+system.println("a.b = " + core.toString(a.b))
+system.println("a.f(-1) = " + core.toString(a.f(-1)))
+system.println("a.f(1) = " + a.f(1))
+
+e = a.b[1,1]
+f = a.e
+g = core.dim([[[1,2,3],[3,4,5]],[[6,7,8],[9,10,11]],[[12,13,14],[15,16,17]]])
+h = core.new(a)
+h.b = 1
+// Just more a comment.
+system.println("e = " + e)
+system.println("f = " + core.toString(f))
+system.println("g = " + core.toString(g))
+system.println("h = " + core.toString(h))
+system.println("a = " + core.toString(a))
+system.println("core.length('Hello, World!') = " + core.length("Hello, World!"))
+
+x = [1,2;3,4]
+y = [5,6;7,8]
+z = [0,0;0,0]
+
+dimsX = core.dim(x)
+dimsY = core.dim(y)
+
+for (i=0;i<dimsX[0];i=i+1) {
+  for (j=0;j<dimsY[1];j=j+1) {
+    for (k=0;k<dimsY[0];k=k+1) {
+        z[i,j]=z[i,j] + x[i,k]*y[k,j]
+    }
+  }
+}
+
+system.println("z = " + core.toString(z))
