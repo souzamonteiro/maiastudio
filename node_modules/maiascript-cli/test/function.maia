@@ -1,0 +1,43 @@
+#!/usr/bin/env maiascript
+
+tries = 10
+
+if (system.argc == 2) {
+    tries = system.argv[1]
+}
+
+system.println("Testing declaration and calling functions " + tries + " times.")
+
+function f1(x) {
+    return(x + 1)
+}
+
+test (tries; 4; 0) {
+    y = 1
+    z = f1(y) + 2
+} catch (v) {
+    system.print("TEST: Fail testing function core.arg.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+test (tries; 3) {
+    function f2() {
+        a = 1
+        b = 2
+
+        function f3(x, y) {
+            z = x + y
+            return(z)
+        }
+        
+        c = f3(a, b)
+        return(c)
+    }
+
+    f2()
+} catch (v) {
+    system.print("TEST: Fail testing function core.abs.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}

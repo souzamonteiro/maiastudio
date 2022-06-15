@@ -1,0 +1,707 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "comment": "// One line comment."
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "a"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "real": "1"
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "b"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "real": "1"
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "c"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "real": "0"
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "d"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "a"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "b"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "&&"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "e"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "a"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "c"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "||"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "f"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "a"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "b"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "`"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "g"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "a"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "b"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": ">"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "h"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "a"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "b"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "<"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "i"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "a"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "b"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": ">="
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "j"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "a"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "b"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "<="
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "k"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "TOKEN": "!",
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "a"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "b"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "&"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "l"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "TOKEN": "~",
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "a"
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "b"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "|"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "a"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "b"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "c"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "d"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "e"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "f"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "g"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "h"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "i"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "j"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "k"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "l"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

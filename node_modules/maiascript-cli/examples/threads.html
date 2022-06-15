@@ -1,0 +1,129 @@
+<html>
+    <head>
+        <title>MaiaScript Multi-tasking Example</title>
+        <meta charset="utf-8">
+        <script src="maiascript.js"></script>
+        <style>
+            @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+
+            h1 {
+                color: black;
+                text-align: center;
+                font-family: Montserrat, sans-serif;
+                font-weight: bold;
+                font-size: 10pt;
+            }
+
+            .page {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                padding: 2px;
+                border-width: 1px;
+                border-style: solid;
+                border-color: black;
+                color: black;
+                background-color: white;
+                text-align: center;
+                font-family: Montserrat, sans-serif;
+                font-weight: bold;
+            }
+
+            .panel {
+                position: relative;
+                float: left;
+                margin: 2px;
+                padding: 2px;
+                border-width: 1px;
+                border-style: solid;
+                border-color: black;
+                color: black;
+                background-color: white;
+                text-align: center;
+                font-family: Montserrat, sans-serif;
+                font-weight: bold;
+            }
+
+            .msg {
+                position: relative;
+                float: left;
+                width: 30px;
+                height: 15px;
+                margin: 2px;
+                padding: 2px;
+                color: white;
+                background-color: tomato;
+                text-align: center;
+                vertical-align: middle;
+                font-family: Montserrat, sans-serif;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body onload="maiavm.compile();">
+        <div class="page">
+            <h1>MaiaScript Multi-tasking</h1>
+            <div class="panel">
+                Task 1
+                <div id="msg1" class="msg">0</div>
+            </div>
+            <div class="panel">
+                Task 2
+                <div id="msg2" class="msg">0</div>
+            </div>
+            <br />
+            <button onclick="showMessage()">Click me!</button>
+        </div>
+        <script type="text/maiascript">
+            kernel task1() {
+                i = 0
+                kernel timedCount() {
+                    i = i + 1
+                    postMessage(i)
+                    setTimeout("timedCount()", 500)
+                }
+
+                timedCount()
+            }
+
+            kernel task2() {
+                i = 0
+                kernel timedCount() {
+                    i = i + 1
+                    postMessage(i)
+                    setTimeout("timedCount()", 500)
+                }
+
+                timedCount()
+            }
+
+            function onMessage1(e) {
+                msg1 = document.getElementById("msg1")
+                msg1.innerHTML = e.data
+            }
+
+            function onMessage2(e) {
+                msg2 = document.getElementById("msg2")
+                msg2.innerHTML = e.data
+            }
+
+            function showMessage() {
+                system.showMessageDialog("Main thread saying hello!")
+            }
+
+            try {
+                if (task.isSupported()) {
+                    t1 = task.new(task1)
+                    t1.onmessage = onMessage1
+                    t2 = task.new(task2)
+                    t2.onmessage = onMessage2
+                } else {
+                    system.showMessageDialog("Multi-tasking is not supported by this browser!")
+                }
+            } catch (e) {
+                system.showMessageDialog(e.message)
+            }
+        </script>
+    </body>
+</html>

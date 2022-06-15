@@ -1,0 +1,46 @@
+##
+# Namespace a
+# @namespace
+#
+namespace a {
+    ##
+    # @member {number}
+    b=1
+    c=2
+    d=null
+    e=true
+    f=false
+    
+    ##
+    # Function f1
+    # @function f1
+    # @param {number}   x - X value.
+    # @return {number}  Function result.
+    function f1(x) {
+        return(x)
+    }
+    ##
+    # Function f2
+    # @function f2
+    # @param {number}   x - X value.
+    # @return {number}  Function result.
+    function f2(x) {
+        return(2*x)
+    }
+}
+
+d=a.b
+e=a.c
+f=a.d
+g=a.e
+h=a.f
+i=a.f1(2)
+j=a.f2(2)
+system.println(d)
+system.println(e)
+system.println(f)
+system.println(g)
+system.println(h)
+system.println(i)
+system.println(j)
+

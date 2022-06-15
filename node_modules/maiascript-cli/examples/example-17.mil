@@ -1,0 +1,1788 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"abs(-1) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "math",
+                                                            "abs"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "value": {
+                                                                            "real": "-1"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"abs(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "math",
+                                                            "abs"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "value": {
+                                                                            "complex": "2+2*i"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"arg(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "math",
+                                                            "arg"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "value": {
+                                                                            "complex": "2+2*i"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"cos(1) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "cos"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "real": "1"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"cos(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "cos"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "complex": "2+2*i"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"cosh(1) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "cosh"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "real": "1"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"cosh(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "cosh"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "complex": "2+2*i"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"exp(1) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "exp"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "real": "1"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"exp(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "exp"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "complex": "2+2*i"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"log(1) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "log"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "real": "1"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"log(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "log"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "complex": "2+2*i"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"pow(2,3) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "math",
+                                                            "pow"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": [
+                                                                {
+                                                                    "operation": {
+                                                                        "primary": {
+                                                                            "value": {
+                                                                                "real": "2"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "operation": {
+                                                                        "primary": {
+                                                                            "value": {
+                                                                                "real": "3"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ],
+                                                            "TOKEN": ","
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"pow(2+2*i,3) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "pow"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": [
+                                                                                    {
+                                                                                        "operation": {
+                                                                                            "primary": {
+                                                                                                "value": {
+                                                                                                    "complex": "2+2*i"
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    {
+                                                                                        "operation": {
+                                                                                            "primary": {
+                                                                                                "value": {
+                                                                                                    "real": "3"
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                ],
+                                                                                "TOKEN": ","
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"sin(1) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "sin"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "real": "1"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"sin(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "sin"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "complex": "2+2*i"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"sinh(1) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "sinh"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "real": "1"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"sinh(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "sinh"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "complex": "2+2*i"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"sqrt(16) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "math",
+                                                            "sqrt"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "value": {
+                                                                            "real": "16"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"sqrt(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "sqrt"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "complex": "2+2*i"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"cbrt(8) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "math",
+                                                            "cbrt"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "value": {
+                                                                            "real": "8"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"tan(1) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "tan"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "real": "1"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"tan(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "tan"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "complex": "2+2*i"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"tanh(1) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "tanh"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "real": "1"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "println"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"tanh(2+2*i) = \""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": [
+                                                                                "math",
+                                                                                "tanh"
+                                                                            ],
+                                                                            "TOKEN": [
+                                                                                ".",
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "arguments": {
+                                                                                "expression": {
+                                                                                    "operation": {
+                                                                                        "primary": {
+                                                                                            "value": {
+                                                                                                "complex": "2+2*i"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,358 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "nota1"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "core",
+                                        "toNumber"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "system",
+                                                            "showInputDialog"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "value": {
+                                                                            "string": "\"Informe a nota da unidade 1:\""
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "nota2"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "core",
+                                        "toNumber"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "system",
+                                                            "showInputDialog"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "value": {
+                                                                            "string": "\"Informe a nota da unidade 2:\""
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "media"
+                                }
+                            }
+                        },
+                        {
+                            "op": [
+                                {
+                                    "primary": {
+                                        "parenthesizedExpression": {
+                                            "TOKEN": [
+                                                "(",
+                                                ")"
+                                            ],
+                                            "expression": {
+                                                "operation": {
+                                                    "op": [
+                                                        {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "nota1"
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "nota2"
+                                                                }
+                                                            }
+                                                        }
+                                                    ],
+                                                    "TOKEN": "+"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "primary": {
+                                        "value": {
+                                            "real": "2"
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": "/"
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "showMessageDialog"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "value": {
+                                                                            "string": "\"Sua média é: \""
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "core",
+                                                            "toString"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": "media"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "statement": {
+                    "if": {
+                        "TOKEN": [
+                            "if",
+                            "(",
+                            ")",
+                            "{",
+                            "}"
+                        ],
+                        "expression": [
+                            {
+                                "operation": {
+                                    "op": [
+                                        {
+                                            "primary": {
+                                                "member": {
+                                                    "identifier": "media"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "primary": {
+                                                "value": {
+                                                    "real": "7"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "TOKEN": ">="
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": [
+                                                "system",
+                                                "showMessageDialog"
+                                            ],
+                                            "TOKEN": [
+                                                ".",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "arguments": {
+                                                "expression": {
+                                                    "operation": {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"Você foi aprovado!\""
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "else": {
+                            "TOKEN": [
+                                "else",
+                                "{",
+                                "}"
+                            ],
+                            "expression": {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": [
+                                                "system",
+                                                "showMessageDialog"
+                                            ],
+                                            "TOKEN": [
+                                                ".",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "arguments": {
+                                                "expression": {
+                                                    "operation": {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"Você foi reprovado!\""
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

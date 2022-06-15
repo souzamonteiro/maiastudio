@@ -1,0 +1,32 @@
+{
+    "maiascript": {
+        "expression": {
+            "operation": {
+                "primary": {
+                    "member": {
+                        "identifier": [
+                            "system",
+                            "showMessageDialog"
+                        ],
+                        "TOKEN": [
+                            ".",
+                            "(",
+                            ")"
+                        ],
+                        "arguments": {
+                            "expression": {
+                                "operation": {
+                                    "primary": {
+                                        "value": {
+                                            "string": "\"Hello, World!\""
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

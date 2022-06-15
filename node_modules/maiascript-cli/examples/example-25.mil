@@ -1,0 +1,548 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "res"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "cas",
+                                        "eval"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"x + x\""
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "showMessageDialog"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"x + x:\\n\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": "res"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "+"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "res"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "cas",
+                                        "eval"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "op": [
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"numerator(1/a+1/b)\\n\""
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"denominator(1/(x-1)/(x-2))\\n\""
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"rationalize(a/b+b/a)\""
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    "+",
+                                                    "+"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "showMessageDialog"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"numerator(1/a+1/b)\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"denominator(1/(x-1)/(x-2))\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"rationalize(a/b+b/a):\\n\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": "res"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": [
+                                            "+",
+                                            "+",
+                                            "+"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "res"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "cas",
+                                        "eval"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "op": [
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"simplify(cos(x)^2 + sin(x)^2)\\n\""
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"simplify(a*b+a*c)\\n\""
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"simplify(n!/(n+1)!)\""
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    "+",
+                                                    "+"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "showMessageDialog"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"simplify(cos(x)^2 + sin(x)^2)\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"simplify(a*b+a*c)\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"simplify(n!/(n+1)!):\\n\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": "res"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": [
+                                            "+",
+                                            "+",
+                                            "+"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "res"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "cas",
+                                        "eval"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "op": [
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"integral(x^2)\\n\""
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"integral(x*y,x,y)\""
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": "+"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "showMessageDialog"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"integral(x^2)\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"integral(x*y,x,y):\\n\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": "res"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": [
+                                            "+",
+                                            "+"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "res"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "cas",
+                                        "eval"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": {
+                                            "operation": {
+                                                "op": [
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"d(x^2)\\n\""
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"r=sqrt(x^2+y^2)\\n\""
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "primary": {
+                                                            "value": {
+                                                                "string": "\"d(r,[x,y])\""
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    "+",
+                                                    "+"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "system",
+                                "showMessageDialog"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "op": [
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"d(x^2)\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"r=sqrt(x^2+y^2)\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "value": {
+                                                        "string": "\"d(r,[x,y])\\n\\n\""
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": "res"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": [
+                                            "+",
+                                            "+",
+                                            "+"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

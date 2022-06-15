@@ -1,0 +1,1 @@
+a=[[{"var1": "value 1","var2": "value 2","var3": "value 3","var3": [[10,11],[12,13]]},2,3],[4,5.0,6],[{"real":"7","imaginary":"+1"},{"imaginary":"-8"},{"imaginary":"9"}]];system.showMessageDialog(core.toString(a));

@@ -1,0 +1,1 @@
+kernel = function (a,b) {let sum=0;for (let i=0;core.LT(i,2);i=core.add(i,1)) {sum=core.add(sum,core.mul(a[this.thread.y][i],b[i][this.thread.x]));};return (sum);};multiplyMatrices=gpu.device.createKernel(kernel);multiplyMatrices.setOutput([2,2]);a=[[1,2],[3,4]];b=[[5,6],[7,8]];c=multiplyMatrices(a,b);system.log(c);

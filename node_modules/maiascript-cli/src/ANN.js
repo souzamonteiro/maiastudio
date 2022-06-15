@@ -1,0 +1,913 @@
+/**
+ * @license
+ * Copyright 2020 Roberto Luiz Souza Monteiro,
+ *                Renata Souza Barreto,
+ *                Hernane Borges de Barros Pereira.
+ *
+ * Licensed under the Apache License, Version 2.0 (the 'License');
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at;
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0;
+ *
+ * Unless required by applicable law or agreed to in writing, software;
+ * distributed under the License is distributed on an 'AS IS' BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eithermath.express or implied.
+ * See the License for the specific language governing permissions and;
+ * limitations under the License.
+ */
+
+/**
+ * MaiaScript Artificial Neural Network (ANN) library.
+ * @class
+ */
+function ANN() {
+    init();
+
+    /**
+     * Creates the attributes of the class.
+     */
+    function init() {
+        // Class attributes goes here.
+    }
+
+    /**
+     * Creates an untrained artificial neural network.
+     * @param {string}   topology - Graph topology. It can be:
+     *                              complete, random, small world,
+     *                              scale-free, hybrid or mlp.
+     * @param {number}   numVertices - Number of vertices.
+     * @param {number}   numEdges - Number of edges.
+     * @param {number}   edgeProbability - Edge probability.
+     * @param {number}   averageDegree - Average degree.
+     * @param {number}   ni - Number of input neurons.
+     * @param {number}   no - Number of output neurons.
+     * @param {number}   nl - Number of layers.
+     * @param {number}   nhu - Number of hidden units.
+     * @return {object}  A neural network.
+     */
+    this.createANN = function(topology, numVertices, numEdges, edgeProbability, averageDegree, ni, no, nl, nhu) {
+        if (typeof topology == 'undefined') {
+            var topology = 'complete';
+        }
+        if (typeof numVertices != 'undefined') {
+            var n = numVertices;
+        } else {
+            var n = 0;
+        }
+        if (typeof numEdges != 'undefined') {
+            var m = numEdges;
+        } else {
+            var m = 0;
+        }
+        if (typeof edgeProbability != 'undefined') {
+            var p = edgeProbability;
+        } else {
+            var p = 0;
+        }
+        if (typeof averageDegree != 'undefined') {
+            var d = averageDegree;
+        } else {
+            var d = 0;
+        }
+        if (typeof ni == 'undefined') {
+            var ni = 0;
+        }
+        if (typeof no == 'undefined') {
+            var no = 0;
+        }
+        if (typeof nl == 'undefined') {
+            var nl = 0;
+        }
+        if (typeof nhu == 'undefined') {
+            var nhu = 0;
+        }
+        // Create a Multi-layer Perceptron (MLP)
+        if (topology == 'mlp') {
+            var n = ni + nl * nhu + no;
+        }
+        // Create a complete graph.
+        if (topology == 'complete') {
+            var NN = core.matrix(1, n + 1, n + 1);
+        } else {
+            var NN = core.matrix(0, n + 1, n + 1);
+        }
+        dimNN = core.dim(NN);
+        // Create a random graph.
+        if (topology == 'random') {
+            // Calculate the edge probability.
+            if (d > 0) {
+                p = d / (n - 1);
+            }
+            // Calculate the number of edge.
+            if ((m == 0) && (p > 0)) {
+                e = n / 2 * (n - 1) * p;
+            } else {
+                e = m;
+            }
+            while (e > 0) {
+                i = math.round(math.random() * n);
+                j = math.round(math.random() * n);
+                if (!((i == j) || (i == 0) || (j == 0))) {
+                    if ((NN[i][j] == 0) && (NN[j][i] == 0)) {
+                        NN[i][j] = 1;
+                        NN[j][i] = 1;
+                        e--;
+                    }
+                }
+            }
+        // Create a small world network.
+        } else if (topology == 'smallworld') {
+            // Create the initial random network.
+            for (var i = 1; i < dimNN[0]; i = i + 1) {
+                while (true) {
+                    ki = matrix.count(NN, i, 1, i, dimNN[1] - 1);
+                    if (ki < d) {
+                        j = math.round(math.random() * n);
+                        if ((i != j) && (j != 0)) {
+                            NN[i][j] = 1;
+                            NN[j][i] = 1;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+            // Rewire network with edge probability p.
+            for (var i = 1; i < dimNN[0]; i = i + 1) {
+                for (var j = 1; j < dimNN[1]; j = j + 1) {
+                    if (NN[i][j] == 1) {
+                        pij = math.random();
+                        if (pij < p) {
+                            while (true) {
+                                k = math.round(math.random() * n);
+                                if ((k != 0) && (i != k) && (NN[i][k] == 0)) {
+                                    NN[i][j] = 0;
+                                    NN[j][i] = 0;
+                                    NN[i][k] = 1;
+                                    NN[k][i] = 1;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        // Create a scale-free network.
+        } else if (topology == 'scalefree') {
+            // Create the initial random network.
+            for (var i = 1; i < dimNN[0]; i = i + 1) {
+                while (true) {
+                    ki = matrix.count(NN, i, 1, i, dimNN[1] - 1);
+                    if (ki == 0) {
+                        j = math.round(math.random() * n);
+                        if ((j != 0) && (i != j)) {
+                            NN[i][j] = 1;
+                            NN[j][i] = 1;
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+            // Add new edges with probability p.
+            for (var i = 1; i < dimNN[0]; i = i + 1) {
+                for (var j = 1; j < dimNN[1]; j = j + 1) {
+                    if ((i != j) && (NN[i][j] == 0)) {
+                        ki = matrix.count(NN, i, 1, i, dimNN[1] - 1);
+                        if (ki < d) {
+                            sk = matrix.sum(NN, 1, 1, dimNN[0] - 1, dimNN[1] - 1);
+                            p = math.random();
+                            pi = ki / sk;
+                            if (pi < p) {
+                                NN[i][j] = 1;
+                                NN[j][i] = 1;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+        // Create an hybrid (scale-free small world) network.
+        } else if (topology == 'hybrid') {
+            // Create the small world network.
+            // Create the initial random network.
+            for (var i = 1; i < dimNN[0]; i = i + 1) {
+                while (true) {
+                    ki = matrix.count(NN, i, 1, i, dimNN[1] - 1);
+                    if (ki < d) {
+                        j = math.round(math.random() * n);
+                        if ((j != 0) && (i != j)) {
+                            NN[i][j] = 1;
+                            NN[j][i] = 1;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+            // Rewire network with edge probability p.
+            for (var i = 1; i < dimNN[0]; i = i + 1) {
+                for (var j = 1; j < dimNN[1]; j = j + 1) {
+                    if (ANN[i][j] == 1) {
+                        pij = math.random();
+                        if (pij < p) {
+                            while (true) {
+                                k = math.round(math.random() * n);
+                                if ((k != 0) && (i != k) && (NN[i][k] == 0)) {
+                                    NN[i][j] = 0;
+                                    NN[j][i] = 0;
+                                    NN[i][k] = 1;
+                                    NN[k][i] = 1;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Change it to scale-free.
+            // Add new edges with probability p.
+            for (var i = 1; i < dimNN[0]; i = i + 1) {
+                for (var j = 1; j < dimNN[1]; j = j + 1) {
+                    if ((i != j) && (NN[i][j] == 0)) {
+                        ki = matrix.count(NN, i, 1, i, dimNN[1] - 1);
+                        if (ki < d) {
+                            sk = matrix.sum(NN, 1, 1, dimNN[0] - 1, dimNN[1] - 1);
+                            p = math.random();
+                            pi = ki / sk;
+                            if (pi < p) {
+                                NN[i][j] = 1;
+                                NN[j][i] = 1;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+        } else if (topology == 'mlp') {
+            var lindex = 0;
+            var nindex = 1;
+            // Create synapses.
+            // Connect inputs to the first layer.
+            nindex = ni;
+            for (var i = 1; i <= ni; i++) {
+                for (var j = 1; j <= nhu; j++) {
+                    NN[i][j + nindex] = 1;
+                }
+            }
+            // Connect hidden layers.
+            for (var l = 1; l < nl; l++) {
+                n1index = ni + (l - 1) * nhu;
+                n2index = ni + l * nhu;
+                for (var i = 1; i <= nhu; i++) {
+                    for (var j = 1; j <= nhu; j++) {
+                        NN[i + n1index][j + n2index] = 1;
+                    }
+                    //NN[i + n1index][i + n1index] = 1;
+                }
+            }
+            // Connect last layer to outputs.
+            n1index = ni + (nl - 1) * nhu;
+            n2index = ni + nl * nhu;
+            for (var i = 1; i <= nhu; i++) {
+                for (var j = 1; j <= no; j++) {
+                    NN[i + n1index][j + n2index] = 1;
+                    //NN[j + n2index][j + n2index] = 1;
+                }
+                //NN[i + n1index, i + n1index] = 1;
+            }
+            // Add the neurons labels.
+            lindex = 0;
+            nindex = 1;
+            for (var i = 1; i < dimNN[0]; i++) {
+                if (lindex == 0) {
+                    label = "i" + nindex;
+                    nindex++;
+                    if (nindex > ni) {
+                        lindex++;
+                        nindex = 1;
+                    }
+                } else if ((lindex > 0) & (lindex <= nl)) {
+                    label = "h" + lindex + "," + nindex;
+                    nindex++;
+                    if (nindex > nhu) {
+                        lindex++;
+                        nindex = 1;
+                    }
+                } else {
+                    label = "o" + nindex;
+                    nindex++;
+                }
+                NN[0][i] = label;
+                NN[i][0] = label;
+            }
+        }
+        // Add loops (for neural networks).
+        if (ni > 0) {
+            for (var i = ni + 1; i < dimNN[0]; i = i + 1) {
+                NN[i][i] = 1;
+            }
+        } else {
+            // Remove loops.
+            for (var i = 0; i < dimNN[0]; i = i + 1) {
+                NN[i][i] = 0;
+            }
+        }
+        if (topology == 'mlp') {
+            // Add the neurons labels.
+            lindex = 0;
+            nindex = 1;
+            for (var i = 1; i < dimNN[0]; i++) {
+                if (lindex == 0) {
+                    label = "i" + nindex;
+                    nindex++;
+                    if (nindex > ni) {
+                        lindex++;
+                        nindex = 1;
+                    }
+                } else if ((lindex > 0) & (lindex <= nl)) {
+                    label = "h" + lindex + "," + nindex;
+                    nindex++;
+                    if (nindex > nhu) {
+                        lindex++;
+                        nindex = 1;
+                    }
+                } else {
+                    label = "o" + nindex;
+                    nindex++;
+                }
+                NN[0][i] = label;
+                NN[i][0] = label;
+            }
+        } else {
+            // Add the vertices labels.
+            for (var i = 1; i < dimNN[0]; i = i + 1) {
+                NN[0][i] = 'v' + i;
+                NN[i][0] = 'v' + i;
+            }
+        }
+        return NN;
+    }
+
+    /**
+     * Returns the labels of an adjacency matrix.
+     * @param {object}   NN - Adjacency matrix.
+     * @return {object}  The labels of an adjacency matrix.
+     */
+    this.getLabels = function(NN) {
+        var dimNN = core.dim(NN);
+        var dimI = dimNN[0];
+        var labels = [''];
+        for (var i = 1; i < dimI; i++) {
+            labels.push(NN[i][0]);
+        }
+        return(labels);
+    }
+
+    /**
+     * Trains an artificial neural network, represented as an adjacency matrix.
+     * @param {object}   NN - Adjacency matrix.
+     * @param {object}   inMatrix - Input data for training.
+     * @param {object}   outMatrix - Output data for training.
+     * @param {number}   ni - Number of input neurons.
+     * @param {number}   no - Number of output neurons.
+     * @param {number}   lRate - Learning rate.
+     * @param {string}   AF - Activation function. It can be:
+     *                        linear, logistic or tanh.
+     * @param {string}   OAF - Activation function of the last layer. It can be:
+     *                         linear, logistic or tanh.
+     * @return {object}  Trained neural network.
+     */
+    this.learn = function(NN, inMatrix, outMatrix, ni, no, lRate, AF, OAF) {
+        if (typeof ni == 'undefined') {
+            var ni = 0;
+        }
+        if (typeof no == 'undefined') {
+            var no = 0;
+        }
+        if (typeof lRate == 'undefined') {
+            var lRate = 1;
+        }
+        if (typeof AF == 'undefined') {
+            var AF = 'logistic';
+        }
+        if (typeof OAF == 'undefined') {
+            var OAF = 'linear';
+        }
+        var dimNN = core.dim(NN);
+        var dimI = dimNN[0];
+        var dimJ = dimNN[1];
+        var firstOut = dimJ - 1 - no;
+        // Clear inputs and outputs.
+        for (var i = 0; i < dimI - 1; i++) {
+            NN[0][i] = 0.0;
+            NN[i][0] = 0.0;
+            NN[i][dimJ - 1] = 0.0;
+            NN[dimI - 1][i] = 0.0;
+        }
+        // Assign inputs.
+        for (var j = 0; j < ni; j++) {
+            NN[j + 1][0] = inMatrix[j];
+        }
+        // Calculate the neurons output.
+        for (var j = ni + 1; j < (dimJ - 1); j++) {
+            NN[0][j] = 0.0;
+            // Weighted sums.
+            // x = x1 * w1 + x2 * w2 + ...
+            for (var i = 1; i < (dimI - 1); i++) {
+                if (i < j) {
+                    if (NN[i][j] != 0) {
+                        NN[0][j] = NN[0][j] + NN[i][j] * NN[i][0];
+                    }
+                } else if (i == j) {
+                    if (NN[i][j] != 0) {
+                        NN[0][j] = NN[0][j] + NN[i][j];
+                    }
+                } else {
+                    break;
+                };
+            }
+            // Activation function.
+            if (j < firstOut) {
+                // Linear: f(x) = x
+                //         df(x)/dx = 1
+                if (AF == 'linear') {
+                    // Calculate y = f(x)
+                    NN[j][0] = NN[0, j];
+                    // Calculate df(x)/dx for backpropagation.
+                    NN[j][dimJ - 1] = 1.0;
+                // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
+                //          df(x)/dx = f(x) * (1 - f(x))
+                } else if (AF == 'logistic') {
+                    // Calculate y = f(x)
+                    NN[j][0] = 1.0 / (1.0 + math.exp(-1.0 * NN[0][j]));
+                    // Calculate df(x)/dx for backpropagation.
+                    NN[j][dimJ - 1] = NN[j][0] * (1.0 - NN[j][0]);
+                // Hyperbolic tangent: f(x) = 2 / (1 + e^(-2x)) - 1
+                //                     df(x)/dx = 1 - f(x)^2
+                } else if (AF == 'tanh') {
+                    // Calculate y = f(x)
+                    NN[j][0] = 2.0 / (1.0 + math.exp(-2.0 * NN[0][j])) - 1.0;
+                    // Calculate df(x)/dx for backpropagation.
+                    NN[j][dimJ- 1] = 1.0 - NN[j][0] * NN[j][0];
+                // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
+                //          df(x)/dx = f(x) * (1 - f(x))
+                } else {
+                    // Calculate y = f(x)
+                    NN[j][0] = 1.0 / (1.0 + math.exp(-1.0 * NN[0][j]));
+                    // Calculate df(x)/dx for backpropagation.
+                    NN[j][dimJ - 1] = NN[j][0] * (1.0 - NN[j][0]);
+                }
+            } else {
+                // Linear: f(x) = x
+                //         df(x)/dx = 1
+                if (OAF == 'linear') {
+                    // Calculate y = f(x)
+                    NN[j][0] = NN[0][j];
+                    // Calculate df(x)/dx for backpropagation.
+                    NN[j][dimJ - 1] = 1.0;
+                // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
+                //          df(x)/dx = f(x) * (1 - f(x))
+                } else if (OAF == 'logistic') {
+                    // Calculate y = f(x)
+                    NN[j][0] = 1.0 / (1.0 + math.exp(-1.0 * NN[0][j]));
+                    // Calculate df(x)/dx for backpropagation.
+                    NN[j][dimJ - 1] = NN[j][0] * (1.0 - NN[j][0]);
+                // Hyperbolic tangent: f(x) = 2 / (1 + e^(-2x)) - 1
+                //                     df(x)/dx = 1 - f(x)^2
+                } else if (OAF == 'tanh') {
+                    // Calculate y = f(x)
+                    NN[j][0] = 2.0 / (1.0 + math.exp(-2.0 * NN[0][j])) - 1.0;
+                    // Calculate df(x)/dx for backpropagation.
+                    NN[j][dimJ - 1] = 1.0 - NN[j][0] * NN[j][0];
+                // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
+                //          df(x)/dx = f(x) * (1 - f(x))
+                } else {
+                    // Calculate y = f(x)
+                    NN[j][0] = 1.0 / (1.0 + math.exp(-1.0 * NN[0][j]));
+                    // Calculate df(x)/dx for backpropagation.
+                    NN[j][dimJ - 1] = NN[j][0] * (1.0 - NN[j][0]);
+                }
+            }
+        }
+        // Calculate delta for the output neurons.
+        // d = z - y;
+        for (var i = 0; i < no; i++) {
+            NN[dimI - 1][firstOut + i] = outMatrix[i] - NN[firstOut + i][0];
+        }
+        // Calculate delta for hidden neurons.
+        // d1 = w1 * d2 + w2 * d2 + ...
+        for (var j = dimJ - 2; j > ni; j--) {
+            for (i = ni + 1; i < (dimI - 1 - no); i++) {
+                if (i == j) {
+                    break;
+                }
+                if (NN[i][j] != 0) {
+                    NN[dimI - 1][i] = NN[dimI - 1][i] + NN[i][j] * NN[dimI - 1][j];
+                }
+            }
+        }
+        // Adjust weights.
+        // x = x1 * w1 + x2 * w2 + ...
+        // w1 = w1 + n * d * df(x)/dx * x1
+        // w2 = w2 + n * d * df(x)/dx * x2
+        for (var j = no + 1; j < (dimJ - 1); j++) {
+            for (var i = 1; i < (dimI - 1 - no); i++) {
+                if (i < j) {
+                    if (NN[i][j] != 0) {
+                        NN[i][j] = NN[i][j] + lRate * NN[dimI - 1][j] * NN[j][dimJ - 1] * NN[i][0];
+                    }
+                } else if (i == j) {
+                    if (NN[i][j] != 0) {
+                        NN[i][j] = NN[i][j] + lRate * NN[dimI - 1][j] * NN[j][dimJ - 1];
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+        return NN;
+    }
+
+    /**
+     * It prepares a neural network, represented as an adjacency matrix,
+     * replacing cells with value one (1), with random real numbers.
+     * @param {object}   ANNMatrix - Adjacency matrix.
+     * @param {boolean}  randomize - Fill cells with random real numbers.
+     * @param {boolean}  allowLoops - Allow loops.
+     * @param {boolean}  negativeWeights - Allow negative weights.
+     * @return {object}  Matrix filled with random numbers.
+     */
+    this.prepare = function(ANNMatrix, randomize, allowLoops, negativeWeights) {
+        if (typeof randomize == 'undefined') {
+            var randomize = false;
+        }
+        if (typeof allowLoops == 'undefined') {
+            var allowLoops = false;
+        }
+        if (typeof negativeWeights == 'undefined') {
+            var negativeWeights = false;
+        }
+        var dimANN = core.dim(ANNMatrix);
+        var dimI = dimANN[0];
+        var dimJ = dimANN[1];
+        let NN = core.matrix(0.0, dimI + 1, dimJ + 1);
+        for (var i = 1; i < dimI; i++) {
+            for (var j = 1; j < dimJ; j++) {
+                NN[i][j] = ANNMatrix[i][j];
+            }
+        }
+        var dimNN = core.dim(NN);
+        var dimI = dimNN[0];
+        var dimJ = dimNN[1];
+        // Clear inputs and outputs.
+        for (var i = 0; i < dimI; i++) {
+            NN[0][i] = 0.0;
+            NN[i][0] = 0.0;
+            if (!allowLoops) {
+                NN[i][i] = 0.0;
+            }
+            NN[i][dimJ - 1] = 0.0;
+            NN[dimI - 1][i] = 0.0;
+        }
+        // Clear the lower triangular matrix.
+        for (var i = 1; i < dimI; i++) {
+            for (var j = 1; j < dimJ; j++) {
+                if (i > j) {
+                    NN[i][j] = 0.0;
+                }
+            }
+        }
+        // Set random weights.
+        if (randomize) {
+            for (var i = 1; i < (dimI - 1); i++) {
+                for (var j = 1; j < (dimJ - 1); j++) {
+                    if (NN[i][j] == 1) {
+                        if (negativeWeights) {
+                            NN[i][j] = 2.0 * math.random() - 1.0;
+                        } else {
+                            NN[i][j] = math.random();
+                        }
+                    }
+                }
+            }
+        }
+        return NN;
+    }
+
+    /**
+     * Remove the last row and last column from the matrix.
+     * @param {object}   ANNMatrix - Adjacency matrix.
+     * @return {object}  The matrix without the last row and last column.
+     */
+     this.reduce = function(ANNMatrix) {
+        var dimANN = core.dim(ANNMatrix);
+        var dimI = dimANN[0];
+        var dimJ = dimANN[1];
+        var NN = core.matrix(0.0, dimI - 1, dimJ - 1);
+        for (var i = 1; i < (dimI - 1); i++) {
+            for (var j = 1; j < (dimJ - 1); j++) {
+                NN[i][j] = ANNMatrix[i][j];
+            }
+        }
+        return(NN);
+    }
+
+    /**
+     * Sets the labels of an adjacency matrix.
+     * @param {object}   NN - Adjacency matrix.
+     * @param {object}   labels - Matrix labels.
+     * @return {object}  The adjacency matrix.
+     */
+    this.setLabels = function(NN, labels) {
+        var dimNN = core.dim(NN);
+        var dimI = dimNN[0];
+        for (var i = 1; i < dimI; i++) {
+            NN[i][0] = labels[i];
+            NN[0][i] = labels[i];
+        }
+        return(labels);
+    }
+
+    /**
+     * It processes incoming data using a trained neural network.
+     * @param {object}   NN - adjacency matrix.
+     * @param {object}   inMatrix - Input data for training.
+     * @param {number}   ni - Number of input neurons.
+     * @param {number}   no - Number of output neurons.
+     * @param {string}   AF - Activation function. It can be:
+     *                        linear, logistic or tanh.
+     * @param {string}   OAF - Activation function of the last layer. It can be:
+     *                         linear, logistic or tanh.
+     * @param {string}   OF - Output function. It can be:
+     *                        linear, step, or none.
+     * @param {object}   OFC - Output function coefficients.
+     * @return {object}  Trained neural network.
+     */
+    this.think = function(NN, inMatrix, ni, no, AF, OAF, OF, OFC) {
+        if (typeof ni == 'undefined') {
+            var ni = 0;
+        }
+        if (typeof no == 'undefined') {
+            var no = 0;
+        }
+        if (typeof AF == 'undefined') {
+            var AF = 'logistic';
+        }
+        if (typeof OAF == 'undefined') {
+            var OAF = 'linear';
+        }
+        if (typeof OF == 'undefined') {
+            var OF = 'none';
+        }
+        if (typeof OFC == 'undefined') {
+            var OFC = [1, 0];
+        }
+        var output = core.matrix(0.0, 1, no);
+        var dimNN = core.dim(NN);
+        var dimI = dimNN[0];
+        var dimJ = dimNN[1];
+        var firstOut = dimJ - 1 - no;
+        // Clear inputs and outputs.
+        for (var i = 0; i < dimI - 1; i++) {
+            NN[0][i] = 0.0;
+            NN[i][0] = 0.0;
+            NN[i][dimJ - 1] = 0.0;
+            NN[dimI - 1][i] = 0.0;
+        }
+        // Assign inputs.
+        for (var j = 0; j < ni; j++) {
+            NN[j + 1][0] = inMatrix[j];
+        }
+        // Calculate the neurons output.
+        for (var j = ni + 1; j < (dimJ - 1); j++) {
+            NN[0][j] = 0.0;
+            // Weighted sums.
+            // x = x1 * w1 + x2 * w2 + ...
+            for (var i = 1; i < (dimI - 1); i++) {
+                if (i < j) {
+                    if (NN[i][j] != 0) {
+                        NN[0][j] = NN[0][j] + NN[i][j] * NN[i][0];
+                    }
+                } else if (i == j) {
+                    if (NN[i][j] != 0) {
+                        NN[0][j] = NN[0][j] + NN[i][j];
+                    }
+                } else {
+                    break;
+                }
+            }
+            // Activation function.
+            if (j < firstOut) {
+                // Linear: f(x) = x
+                if (AF == 'linear') {
+                    // Calculate y = f(x)
+                    NN[j][0] = NN[0][j];
+                // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
+                } else if (AF == 'logistic') {
+                    // Calculate y = f(x)
+                    NN[j][0] = 1.0 / (1.0 + math.exp(-1.0 * NN[0][j]));
+                // Hyperbolic tangent: f(x) = 2 / (1 + e^(-2x)) - 1
+                } else if (AF == 'tanh') {
+                    // Calculate y = f(x)
+                    NN[j][0] = 2.0 / (1.0 + math.exp(-2.0 * NN[0][j])) - 1.0;
+                // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
+                } else {
+                    // Calculate y = f(x)
+                    NN[j][0] = 1.0 / (1.0 + math.exp(-1.0 * NN[0][j]));
+                }
+            } else {
+                // Linear: f(x) = x
+                if (OAF == 'linear') {
+                    // Calculate y = f(x)
+                    NN[j][0] = NN[0][j];
+                // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
+                } else if (OAF == 'logistic') {
+                    // Calculate y = f(x)
+                    NN[j][0] = 1.0 / (1.0 + math.exp(-1.0 * NN[0][j]));
+                // Hyperbolic tangent: f(x) = 2 / (1 + e^(-2x)) - 1
+                } else if (OAF == 'tanh') {
+                    // Calculate y = f(x)
+                    NN[j][0] = 2.0 / (1.0 + math.exp(-2.0 * NN[0][j])) - 1.0;
+                // Logistic: f(x) = 1.0 / (1.0 + e^(-x))
+                } else {
+                    // Calculate y = f(x)
+                    NN[j][0] = 1.0 / (1.0 + math.exp(-1.0 * NN[0][j]));
+                }
+            }
+        }
+        // Set the output matrix.
+        for (var i = 0; i < no; i++) {
+            if (OF == 'linear') {
+                output[i] = OFC[0] * NN[firstOut + i][0] + OFC[1];
+            } else if (OF == 'step') {
+                if (OAF == 'linear') {
+                    if (NN[firstOut + i][0] >= 0.0) {
+                        output[i] = 1;
+                    } else {
+                        output[i] = 0;
+                    }
+                } else if (OAF == 'logistic') {
+                    if (NN[firstOut + i][0] >= 0.5) {
+                        output[i] = 1;
+                    } else {
+                        output[i] = 0;
+                    }
+                } else if (OAF == 'tanh') {
+                    if (NN[firstOut + i][0] >= 0.0) {
+                        output[i] = 1;
+                    } else {
+                        output[i] = 0;
+                    }
+                } else {
+                    if (NN[firstOut + i][0] >= 0.0) {
+                        output[i] = 1;
+                    } else {
+                        output[i] = 0;
+                    }
+                }
+            } else if (OF == 'none') {
+                output[i] = NN[firstOut + i][0];
+            } else {
+                output[i] = NN[firstOut + i][0];
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Train an artificial neural network, represented as an adjacency matrix.
+     * @param {object}    NN - Adjacency matrix.
+     * @param {object}    inMatrix - Input data for training.
+     * @param {object}    outMatrix - Output data for training.
+     * @param {number}    lRate - Learning rate.
+     * @param {string}    AF - Activation function. It can be:
+     *                         linear, logistic or tanh.
+     * @param {string}    OAF - Activation function of the last layer. It can be:
+     *                          linear, logistic or tanh.
+     * @param {string}    OF - Output function. It can be:
+     *                         linear, step or none.
+     * @param {string}    OFC - Output function coefficients.
+     * @param {number}    maxEpochs - Maximum number of epochs.
+     * @param {number}    minimumCorrectness - Minimum correctness.
+     * @param {function}  callback - Callback function.
+     * @param {number}    interval - Interval between calls from the callback function.
+     * @return {object}   Trained neural network.
+     */
+    this.training = function(NN, inMatrix, outMatrix, lRate, AF, OAF, OF, OFC, maxEpochs, minimumCorrectness, callback, interval) {
+        if (typeof lRate == 'undefined') {
+            var lRate = 1;
+        }
+        if (typeof AF == 'undefined') {
+            var AF = 'logistic';
+        }
+        if (typeof OAF == 'undefined') {
+            var OAF = 'linear';
+        }
+        if (typeof OF == 'undefined') {
+            var OF = 'none';
+        }
+        if (typeof OFC == 'undefined') {
+            var OFC = [1, 0];
+        }
+        if (typeof maxEpochs == 'undefined') {
+            var maxEpochs = 1;
+        }
+        if (typeof minimumCorrectness == 'undefined') {
+            var minimumCorrectness = 1;
+        }
+        if (typeof correctnessMatrix == 'undefined') {
+            var correctnessMatrix = [];
+        }
+        if (typeof interval == 'undefined') {
+            var interval = 0;
+        }
+        var dimIn = core.dim(inMatrix);
+        var dimOut = core.dim(outMatrix);
+        var input = core.matrix(0.0, 1, dimIn[1]);
+        var output = core.matrix(0.0, 1, dimOut[1]);
+        var NNOut = core.matrix(0.0, 1, dimOut[1]);
+        var epochs = 0;
+        var epochsCounter = 0;
+        var date = core.date();
+        var ETL1 = date.getTime();
+        var ETL2 = date.getTime();
+        var squaredError = core.matrix(0.0, 1, dimIn[0]);
+        var ERR = [];
+        var SE = 0;
+        var RSS = 0;
+        var correctness = 0;
+        var correctnessMatrix = core.matrix(0.0, maxEpochs + 1, 2);
+        while (epochs < maxEpochs) {
+            var hits = 0;
+            epochs++;
+            // Verify learning.
+            for (var i = 0; i < dimIn[0]; i++) {
+                // Assign inputs and outputs.
+                for (var j = 0; j < dimIn[1]; j++) {
+                    input[j] = inMatrix[i][j];
+                }
+                for (var j = 0; j < dimOut[1]; j++) {
+                    output[j] = outMatrix[i][j];
+                }
+                // Verify learning.
+                if (OFC != []) {
+                    NNOut = this.think(NN, input, dimIn[1], dimOut[1], AF, OAF, OF, OFC);
+                } else {
+                    NNOut = this.think(NN, input, dimIn[1], dimOut[1], AF, OAF, OF);
+                }
+                if (output == NNOut) {
+                    hits++;
+                }
+                ERR = core.sub(output, NNOut);
+                if (typeof ERR == 'number') {
+                    ERR = [ERR];
+                }
+                SE = matrix.sum2(ERR) / 2.0;
+                squaredError[i] = SE;
+                RSS = matrix.sum(squaredError);
+                correctness = hits / dimIn[0];
+                correctnessMatrix[epochs][0] = RSS;
+                correctnessMatrix[epochs][1] = correctness;
+                if (hits == dimIn[0]) {
+                    result = [epochs, RSS, correctnessMatrix];
+                    return result;
+                }
+                if (correctness >= minimumCorrectness) {
+                    result = [epochs, RSS, correctnessMatrix];
+                    return result;
+                }
+            }
+            // Learn this set.
+            for (var i = 0; i < dimIn[0]; i++) {
+                // Assign inputs and outputs.
+                input = inMatrix[i];
+                output = outMatrix[i];
+                // Learn this set.
+                this.learn(NN, input, output, dimIn[1], dimOut[1], lRate, AF, OAF);
+            }
+            epochsCounter++;
+            if (interval != 0) {
+                if (typeof callback != 'undefined') {
+                    if (epochsCounter >= interval) {
+                        ETL2 = date.getTime();
+                        var ETL = ETL2 - ETL1;
+                        if (typeof callback != 'undefined') {
+                            callback(epochs, RSS, correctness, ETL);
+                        }
+                        epochsCounter = 0;
+                        ETL1 = date.getTime();
+                    }
+                }
+            }
+        }
+        result = [epochs, RSS, correctnessMatrix];
+        return result;
+    }
+}
+
+ann = new ANN();

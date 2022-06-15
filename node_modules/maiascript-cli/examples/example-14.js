@@ -1,0 +1,1 @@
+function a_() {this.x=1;this.b = function (c) {system.showMessageDialog(c);};this.d = function (e) {system.showMessageDialog(e);};}; var a = new a_();a.b("Hello, World!");a.d("Ok!");a.b(a.x);e=a;e.x=2;e.b(e.x);

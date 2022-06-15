@@ -1,0 +1,54 @@
+// This file tests the compilation of all MaiaScript tokens.
+a = 1
+namespace n1 {a = 1}
+function f1 (a) {return(a)}
+if (a == 1) {b = 1}
+if (a == 1) {b = 1} elseif (a == 2) {b = 2}
+if (a == 1) {b = 1} elseif (a == 2) {b = 2} elseif (a == 3) {b = 3} else {b = 4}
+do {a = a + 1} while (a == 1)
+while (a == 2) {a = a + 1}
+for (a = 1; a < 2; a = a + 1) {b = a}
+foreach ({"a": 1, "b": 2};k;v) {b = k}
+foreach ({"a": 1, "b": 2};k;v) {c = v}
+//try {a == z} catch (e) {b = e}
+test (1;2;0) {b = 2} catch (v) {c = v}
+test (1;2;0) {b = 3} catch (v) {c = v}
+while (a == 2) {break}
+do {continue} while (a == 1)
+//throw(1)
+a = 1
+a = 1||2
+a = 1&&2
+a = 1|2
+a = 1`2
+a = 1&2
+a = a==1
+a = a!=1
+a = a<1
+a = a>1
+a = a<=1
+a = a>=1
+a = a<<1
+a = a>>1
+a = a+1
+a = a - 1
+a = a^1
+a = a*1
+a = a/1
+a = a%1
+a = ~a
+a = !a
+a = a
+a = n1.a
+a = f1(1)
+a = [1,2]
+b = a[1]
+a = 1
+a = 1.0
+a = 1.0+2.0*i
+a = "Test"
+a = {"a":1,"b":2}
+a = [1,2]
+a = [[1,2],[3,4]]
+a = (1+2)
+system.println(a)
