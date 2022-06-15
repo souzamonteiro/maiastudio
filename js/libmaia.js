@@ -6213,7 +6213,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.8.6";
+    this.version = "3.8.7";
 
     this.testResult = {
         "expected": {},
@@ -7399,6 +7399,8 @@ function Core() {
                 res = core.complex(real, img);
             } else if (core.type(right) == 'number') {
                 res = left + right;
+            } else if (core.type(right) == 'string') {
+                res = core.toString(left) + right;
             } else {
                 throw new Error('Invalid operand for operator "+", in the expression ' + core.toString(left) + ' + ' + core.toString(right) + '.');
             }
@@ -7433,6 +7435,14 @@ function Core() {
                         throw new Error('Operand invalid for operator "+", in the expression ' + core.toString(left) + ' + ' + core.toString(right) + '. The matrices must have the same dimensions.');
                     }
                 }
+            } else {
+                throw new Error('Invalid operand for operator "+", in the expression ' + core.toString(left) + ' + ' + core.toString(right) + '.');
+            }
+        } else if (core.type(left) == 'string') {
+            if (core.type(right) == 'number') {
+                res = left + core.toString(right);
+            } else if (core.type(right) == 'string') {
+                    res = left + right;
             } else {
                 throw new Error('Invalid operand for operator "+", in the expression ' + core.toString(left) + ' + ' + core.toString(right) + '.');
             }
