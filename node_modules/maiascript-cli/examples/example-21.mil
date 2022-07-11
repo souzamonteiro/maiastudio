@@ -1,0 +1,719 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "statement": {
+                    "function": {
+                        "TOKEN": [
+                            "function",
+                            "(",
+                            ")",
+                            "{",
+                            "}"
+                        ],
+                        "identifier": "dataHandler",
+                        "arguments": {
+                            "expression": [
+                                {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "transaction"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "results"
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": ","
+                        }
+                    }
+                }
+            },
+            {
+                "statement": {
+                    "function": {
+                        "TOKEN": [
+                            "function",
+                            "(",
+                            ")",
+                            "{",
+                            "}"
+                        ],
+                        "identifier": "errorHandler",
+                        "arguments": {
+                            "expression": [
+                                {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "transaction"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": "error"
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "TOKEN": ","
+                        }
+                    }
+                }
+            },
+            {
+                "statement": {
+                    "function": {
+                        "TOKEN": [
+                            "function",
+                            "(",
+                            ")",
+                            "{",
+                            "}"
+                        ],
+                        "identifier": "createTable",
+                        "arguments": {
+                            "expression": {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": "transaction"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "expression": [
+                            {
+                                "operation": {
+                                    "op": [
+                                        {
+                                            "primary": {
+                                                "member": {
+                                                    "identifier": "scheme"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "primary": {
+                                                "value": {
+                                                    "string": "\"\""
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "TOKEN": "="
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "op": [
+                                        {
+                                            "primary": {
+                                                "member": {
+                                                    "identifier": "scheme"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "op": [
+                                                {
+                                                    "primary": {
+                                                        "member": {
+                                                            "identifier": "scheme"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "primary": {
+                                                        "value": {
+                                                            "string": "\"CREATE TABLE people(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\""
+                                                        }
+                                                    }
+                                                }
+                                            ],
+                                            "TOKEN": "+"
+                                        }
+                                    ],
+                                    "TOKEN": "="
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "op": [
+                                        {
+                                            "primary": {
+                                                "member": {
+                                                    "identifier": "scheme"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "op": [
+                                                {
+                                                    "primary": {
+                                                        "member": {
+                                                            "identifier": "scheme"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "primary": {
+                                                        "value": {
+                                                            "string": "\"name TEXT NOT NULL DEFAULT 'John Doe',\""
+                                                        }
+                                                    }
+                                                }
+                                            ],
+                                            "TOKEN": "+"
+                                        }
+                                    ],
+                                    "TOKEN": "="
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "op": [
+                                        {
+                                            "primary": {
+                                                "member": {
+                                                    "identifier": "scheme"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "op": [
+                                                {
+                                                    "primary": {
+                                                        "member": {
+                                                            "identifier": "scheme"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "primary": {
+                                                        "value": {
+                                                            "string": "\"shirt TEXT NOT NULL DEFAULT 'Purple');\""
+                                                        }
+                                                    }
+                                                }
+                                            ],
+                                            "TOKEN": "+"
+                                        }
+                                    ],
+                                    "TOKEN": "="
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": [
+                                                "transaction",
+                                                "executeSql"
+                                            ],
+                                            "TOKEN": [
+                                                ".",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "arguments": {
+                                                "expression": [
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "scheme"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "value": {
+                                                                    "matrix": {
+                                                                        "TOKEN": [
+                                                                            "[",
+                                                                            "]"
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "dataHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "errorHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ",",
+                                                    ","
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": [
+                                                "transaction",
+                                                "executeSql"
+                                            ],
+                                            "TOKEN": [
+                                                ".",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "arguments": {
+                                                "expression": [
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "value": {
+                                                                    "string": "\"insert into people (name, shirt) VALUES ('Joe', 'Green');\""
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "value": {
+                                                                    "matrix": {
+                                                                        "TOKEN": [
+                                                                            "[",
+                                                                            "]"
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "dataHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "errorHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ",",
+                                                    ","
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": [
+                                                "transaction",
+                                                "executeSql"
+                                            ],
+                                            "TOKEN": [
+                                                ".",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "arguments": {
+                                                "expression": [
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "value": {
+                                                                    "string": "\"insert into people (name, shirt) VALUES ('Mark', 'Blue');\""
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "value": {
+                                                                    "matrix": {
+                                                                        "TOKEN": [
+                                                                            "[",
+                                                                            "]"
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "dataHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "errorHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ",",
+                                                    ","
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": [
+                                                "transaction",
+                                                "executeSql"
+                                            ],
+                                            "TOKEN": [
+                                                ".",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "arguments": {
+                                                "expression": [
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "value": {
+                                                                    "string": "\"insert into people (name, shirt) VALUES ('Phil', 'Orange');\""
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "value": {
+                                                                    "matrix": {
+                                                                        "TOKEN": [
+                                                                            "[",
+                                                                            "]"
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "dataHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "errorHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ",",
+                                                    ","
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": [
+                                                "transaction",
+                                                "executeSql"
+                                            ],
+                                            "TOKEN": [
+                                                ".",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "arguments": {
+                                                "expression": [
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "value": {
+                                                                    "string": "\"insert into people (name, shirt) VALUES ('jdoe', 'Purple');\""
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "value": {
+                                                                    "matrix": {
+                                                                        "TOKEN": [
+                                                                            "[",
+                                                                            "]"
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "dataHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "operation": {
+                                                            "primary": {
+                                                                "member": {
+                                                                    "identifier": "errorHandler"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "TOKEN": [
+                                                    ",",
+                                                    ",",
+                                                    ","
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "db"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "core",
+                                        "openSQLDatabase"
+                                    ],
+                                    "TOKEN": [
+                                        ".",
+                                        "(",
+                                        ")"
+                                    ],
+                                    "arguments": {
+                                        "expression": [
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "string": "\"Test\""
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "string": "\"1.0\""
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "string": "\"Test\""
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "operation": {
+                                                    "primary": {
+                                                        "value": {
+                                                            "real": "65536"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": [
+                                            ",",
+                                            ",",
+                                            ","
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "statement": {
+                    "if": {
+                        "TOKEN": [
+                            "if",
+                            "(",
+                            ")",
+                            "{",
+                            "}"
+                        ],
+                        "expression": [
+                            {
+                                "operation": {
+                                    "op": [
+                                        {
+                                            "primary": {
+                                                "member": {
+                                                    "identifier": [
+                                                        "core",
+                                                        "type"
+                                                    ],
+                                                    "TOKEN": [
+                                                        ".",
+                                                        "(",
+                                                        ")"
+                                                    ],
+                                                    "arguments": {
+                                                        "expression": {
+                                                            "operation": {
+                                                                "primary": {
+                                                                    "member": {
+                                                                        "identifier": "db"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "primary": {
+                                                "value": {
+                                                    "string": "\"undefined\""
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "TOKEN": "!="
+                                }
+                            },
+                            {
+                                "operation": {
+                                    "primary": {
+                                        "member": {
+                                            "identifier": [
+                                                "db",
+                                                "transaction"
+                                            ],
+                                            "TOKEN": [
+                                                ".",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "arguments": {
+                                                "expression": {
+                                                    "operation": {
+                                                        "primary": {
+                                                            "member": {
+                                                                "identifier": "createTable"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,58 @@
+#!/usr/bin/env maiascript
+
+tries = 10
+
+if (system.argc == 2) {
+    tries = system.argv[1]
+}
+
+system.println("Testing the array functions " + tries + " times.")
+
+system.println("core.push...")
+a = ["Hello", "World"]
+test (tries; a; 0) {
+    b = []
+    core.push(b, "Hello")
+    core.push(b, "World")
+    c = b
+} catch (v) {
+    system.print("TEST: Fail testing function core.push.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.pop...")
+a = ["Hello", "World"]
+b = core.new(a)
+core.pop(a)
+test (tries; b; 0) {
+    c = core.new(a)
+    core.pop(c)
+} catch (v) {
+    system.print("TEST: Fail testing function core.pop.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.slice...")
+a = [3, 6, 7, 9, 4]
+test (tries; a; 0) {
+    b = [1, 2, 3, 6, 7, 9, 4, "hello", "world"]
+    c = core.slice(b, 2, 7)
+} catch (v) {
+    system.print("TEST: Fail testing function core.slice.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.splitCSV...")
+separator = " ,;"
+a = [0,1,2,3,4,5,6,7,8,9]
+test (tries; a; 0) {
+    data = "0 1,2,3,4;5;6;;7  8   9"
+    record = core.splitCSV(data, separator, true, true)
+} catch (v) {
+    system.print("TEST: Fail testing function core.slice.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}

@@ -1,0 +1,50 @@
+kernel task1() {
+    i = 0
+    kernel timedCount() {
+        i = i + 1
+        postMessage(i)
+        if (i < 10) {
+            setTimeout(timedCount(), 500)
+        }
+    }
+    timedCount()
+}
+
+kernel task2() {
+    i = 0
+    kernel timedCount() {
+        i = i + 1
+        postMessage(i)
+        if (i < 10) {
+            setTimeout(timedCount(), 500)
+        }
+    }
+    timedCount()
+}
+
+function onMessage1(m) {
+    system.log("Task 1: " + m.data)
+    if (m.data >= 5) {
+        t1.terminate()
+    }
+}
+
+function onMessage2(m) {
+    system.log("Task 2: " + m.data)
+    if (m.data >= 5) {
+        t2.terminate()
+    }
+}
+
+function showMessage() {
+    system.log("Main thread saying hello!")
+}
+
+try {
+    t1 = task.new(task1)
+    t1.onmessage = onMessage1
+    t2 = task.new(task2)
+    t2.onmessage = onMessage2
+} catch (e) {
+    system.log(e.message)
+}

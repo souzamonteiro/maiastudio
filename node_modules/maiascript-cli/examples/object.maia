@@ -1,0 +1,29 @@
+object a {
+    x = 1
+}
+
+namespace b {
+    x = 2
+}
+
+constructor c(x) {
+    if (core.type(x) != "undefined") {
+        this.x = x
+    } else {
+        this.x = 2
+    }
+}
+
+d := c()
+e := c(4)
+f = core.clone(a)
+
+f.x = 5
+
+system.println("a.x: " + a.x)
+system.println("b.x: " + b.x)
+system.println("c.x: " + c.x)
+system.println("d.x: " + d.x)
+system.println("e.x: " + e.x)
+system.println("f.x: " + f.x)
+

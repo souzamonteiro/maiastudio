@@ -1,0 +1,35 @@
+a = 1
+b = 2
+d = c = b
+e = 4 * a ^ 2 + 2 * b + c
+f = 2 * ((a + b) * 3 - 4)
+
+g = null
+h = true
+i = false
+
+mat1 = [3, 4; 5, 6]
+vet1 = ["c", "d"]
+obj1 = {"e": "f", "g": 7}
+
+j = []
+j.push("Hello")
+j.push("World")
+
+system.println("a = " + a)
+system.println("b = " + b)
+system.println("c = " + c)
+system.println("d = " + d)
+system.println("e = " + e)
+system.println("f = " + f)
+system.println("g = " + g)
+system.println("h = " + h)
+system.println("i = " + i)
+system.println("j = " + j)
+j.pop()
+system.println("j = " + j)
+system.println("mat1 = " + mat1)
+system.println("vet1 = " + vet1)
+system.println("obj1 = " + core.toString(obj1))
+system.showMessageDialog(core.toString(a))
+system.println("mat1[1,1] = " + mat1[1,1])

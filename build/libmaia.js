@@ -6213,7 +6213,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.8.7";
+    this.version = "3.8.8";
 
     this.testResult = {
         "expected": {},
@@ -7613,7 +7613,7 @@ function Core() {
                 if (dimLeft[1] == dimRight[0]) {
                     for (var i = 0; i < dimLeft[0]; i++) {
                         for (var j = 0; j < dimRight[1]; j++) {
-                            for (var k = 0; k < dimRight[1]; k++) {
+                            for (var k = 0; k < dimRight[0]; k++) {
                                 res[i][j] = res[i][j] + left[i][k] * right[k][j];
                             }
                         }
@@ -7668,6 +7668,26 @@ function Core() {
                 res = left / right;
             } else {
                 throw new Error('Invalid operand for operator "/", in the expression ' + core.toString(left) + ' / ' + core.toString(right) + '.');
+            }
+        } else if (core.type(left) == 'matrix') {
+            if (core.type(right) == 'matrix') {
+                var dimLeft = core.dim(left);
+                var dimRight = core.dim(right);
+                if (dimLeft[0] == dimRight[1]) {
+                    res = core.mul(core.inv(right), left);
+                } else {
+                    throw new Error('Operand invalid for operator "*", in the expression ' + core.toString(left) + ' * ' + core.toString(right) + '. The matrices must have compatible dimensions.');
+                }
+            } else if (core.type(right) == 'number') {
+                dimLeft = core.dim(left);
+                res = core.matrix(0, dimLeft[0], dimLeft[1]);
+                for (var i = 0; i < dimLeft[0]; i++) {
+                    for (var j = 0; j < dimLeft[1]; j++) {
+                        res[i][j] = left[i][j] * right;
+                    }
+                }
+            } else {
+                throw new Error('Invalid operand for operator "*", in the expression ' + core.toString(left) + ' * ' + core.toString(right) + '.');
             }
         } else {
             res = left / right;

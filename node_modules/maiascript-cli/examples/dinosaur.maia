@@ -1,0 +1,48 @@
+constructor Dinosaur(n) {
+    name = n
+    
+    function walk(d, s) {
+        system.println("I, " + this.name + ", walked distance " + d + " at speed " + s + ".")
+    }
+}
+
+constructor Tyrannosaurus(n) {
+    include(Dinosaur)
+    
+    function eat(d) {
+        system.println("I, " + this.name + ", ate " + d.name)
+    }
+}
+
+constructor Raptor(n) {
+    include(Dinosaur)
+    
+    function run(d, s) {
+        system.println("I, " + this.name + ", run at a distance " + d + " at a speed of " + s + ".")
+    }
+}
+
+constructor Indominus(n) {
+    include(Tyrannosaurus)
+    include(Raptor)
+    
+    function kill(d) {
+        system.println("I, " + this.name + ", killed " + d.name)
+    }
+}
+
+toto := Dinosaur("Toto")
+rex := Tyrannosaurus("Rex")
+flash := Raptor("Flash")
+dom := Indominus("Dom")
+
+toto.walk(10,2)
+rex.walk(15,3)
+rex.eat(toto)
+flash.walk(15,3)
+flash.run(50,5)
+dom.walk(15,3)
+dom.eat(flash)
+dom.run(50,5)
+dom.kill(rex)
+

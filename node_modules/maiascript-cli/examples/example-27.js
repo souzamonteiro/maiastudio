@@ -1,0 +1,1 @@
+function a_() {this.b=1;this.c=2;this.d=null;this.e=true;this.f=false;this.f1 = function (x) {return (x);};this.f2 = function (x) {return (core.mul(2,x));};};a = new a_();d=a.b;e=a.c;f=a.d;g=a.e;h=a.f;i=a.f1(2);j=a.f2(2);system.println(d);system.println(e);system.println(f);system.println(g);system.println(h);system.println(i);system.println(j);

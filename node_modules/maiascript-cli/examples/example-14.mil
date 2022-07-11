@@ -1,0 +1,316 @@
+{
+    "maiascript": {
+        "expression": [
+            {
+                "comment": "// Namespace test."
+            },
+            {
+                "statement": {
+                    "namespace": {
+                        "TOKEN": [
+                            "namespace",
+                            "{",
+                            "}"
+                        ],
+                        "identifier": "a",
+                        "expression": [
+                            {
+                                "operation": {
+                                    "op": [
+                                        {
+                                            "primary": {
+                                                "member": {
+                                                    "identifier": "x"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "primary": {
+                                                "value": {
+                                                    "real": "1"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "TOKEN": "="
+                                }
+                            },
+                            {
+                                "statement": {
+                                    "function": {
+                                        "TOKEN": [
+                                            "function",
+                                            "(",
+                                            ")",
+                                            "{",
+                                            "}"
+                                        ],
+                                        "identifier": "b",
+                                        "arguments": {
+                                            "expression": {
+                                                "operation": {
+                                                    "primary": {
+                                                        "member": {
+                                                            "identifier": "c"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "expression": {
+                                            "operation": {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "system",
+                                                            "showMessageDialog"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": "c"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "statement": {
+                                    "function": {
+                                        "TOKEN": [
+                                            "function",
+                                            "(",
+                                            ")",
+                                            "{",
+                                            "}"
+                                        ],
+                                        "identifier": "d",
+                                        "arguments": {
+                                            "expression": {
+                                                "operation": {
+                                                    "primary": {
+                                                        "member": {
+                                                            "identifier": "e"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "expression": {
+                                            "operation": {
+                                                "primary": {
+                                                    "member": {
+                                                        "identifier": [
+                                                            "system",
+                                                            "showMessageDialog"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "arguments": {
+                                                            "expression": {
+                                                                "operation": {
+                                                                    "primary": {
+                                                                        "member": {
+                                                                            "identifier": "e"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "a",
+                                "b"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "value": {
+                                                "string": "\"Hello, World!\""
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "a",
+                                "d"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "value": {
+                                                "string": "\"Ok!\""
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "a",
+                                "b"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "a",
+                                                    "x"
+                                                ],
+                                                "TOKEN": "."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "e"
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": "a"
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "op": [
+                        {
+                            "primary": {
+                                "member": {
+                                    "identifier": [
+                                        "e",
+                                        "x"
+                                    ],
+                                    "TOKEN": "."
+                                }
+                            }
+                        },
+                        {
+                            "primary": {
+                                "value": {
+                                    "real": "2"
+                                }
+                            }
+                        }
+                    ],
+                    "TOKEN": "="
+                }
+            },
+            {
+                "operation": {
+                    "primary": {
+                        "member": {
+                            "identifier": [
+                                "e",
+                                "b"
+                            ],
+                            "TOKEN": [
+                                ".",
+                                "(",
+                                ")"
+                            ],
+                            "arguments": {
+                                "expression": {
+                                    "operation": {
+                                        "primary": {
+                                            "member": {
+                                                "identifier": [
+                                                    "e",
+                                                    "x"
+                                                ],
+                                                "TOKEN": "."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,1 @@
+date=core.date();system.println(date.getFullYear());system.println(date.getMonth());system.println(date.getDay());system.println(date.getDate());system.println(date.getHours());system.println(date.getMinutes());system.println(date.getSeconds());system.println(date.getMilliseconds());system.println(date.getTime());system.println(Date.now());

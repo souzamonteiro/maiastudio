@@ -1,0 +1,1180 @@
+///
+/// @license
+/// Copyright 2020 Roberto Luiz Souza Monteiro,
+///                Renata Souza Barreto,
+///                Hernane Borges de Barros Pereira.
+///
+/// Licensed under the Apache License, Version 2.0 (the 'License');
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at;
+///
+///   http://www.apache.org/licenses/LICENSE-2.0;
+///
+/// Unless required by applicable law or agreed to in writing, software;
+/// distributed under the License is distributed on an 'AS IS' BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eitherMath.express or implied.
+/// See the License for the specific language governing permissions and;
+/// limitations under the License.
+///
+
+ ///
+ /// MaiaScript Social and Complex Network Analysis library.
+ /// @namespace cna
+ ///
+namespace cna {
+    ///
+    /// Creates an artificial network.
+    /// @method createNetwork
+    /// @memberof cna
+    /// @param {string}   topology - Graph topology. It can be:
+    ///                              complete, random, small world,
+    ///                              scale-free or hybrid.
+    /// @param {number}   numVertices - Number of vertices.
+    /// @param {number}   numEdges - Number of edges.
+    /// @param {number}   edgeProbability - Edge probability.
+    /// @param {number}   averageDegree - Average degree.
+    /// @return {object}  An artificial network.
+    ///
+    function createNetwork(topology, numVertices, numEdges, edgeProbability, averageDegree) {
+        adj = ann.createANN(topology, numVertices, numEdges, edgeProbability, averageDegree)
+        return(adj)
+    }
+
+    ///
+    /// Creates a Pajek file.
+    /// @method createPajekFile
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @param {string}   type - File type (edges, arcs or matrix).
+    /// @return {string}  A Pajek file.
+    ///
+    function createPajekFile(adj, type) {
+        if (core.type(type) == "undefined") {
+            type = "edges"
+        }
+        dimAdj = core.dim(adj)
+        dimI = dimAdj[0]
+        dimJ = dimAdj[1]
+        // Each line in a Pajek files must terminate with CR+LF.
+        newLine = "\r\n"
+        // Save vertices.
+        fileContents = "*Vertices " + (dimI - 1) + newLine
+        for (i = 1; i < dimI; i = i + 1) {
+            fileContents = fileContents + i + " \"" + adj[i, 0] + "\"" + newLine
+        }
+        // Save edges.
+        if (type == "edges") {
+            fileContents = fileContents + "*Edges" + newLine
+            for (i = 1; i < dimI; i = i + 1) {
+                for (j = 1; j < dimJ; j = j + 1) {
+                    if (adj[i, j] != 0) {
+                        fileContents = fileContents + i + " " + j + " " + adj[i, j] + newLine
+                    }
+                }
+            }
+        // Save arcs.
+        } elseif (type == "arcs") {
+            fileContents = fileContents + "*Arcs" + newLine
+            for (i = 1; i < dimI; i = i + 1) {
+                for (j = 1; j < dimJ; j = j + 1) {
+                    if (adj[i, j] != 0) {
+                        fileContents = fileContents + i + " " + j + " " + adj[i, j] + newLine
+                    }
+                }
+            }
+        // Save matrix.
+        } elseif (type == "matrix") {
+            fileContents = fileContents + "*Matrix" + newLine
+            for (i = 1; i < dimI; i = i + 1) {
+                for (j = 1; j < dimJ; j = j + 1) {
+                    fileContents = fileContents + " " + adj[i, j]
+                }
+                fileContents = fileContents + newLine
+            }
+        }
+        return(fileContents)
+    }
+    
+    ///
+    /// Parses a Pajek file.
+    /// @method parsePajekFile
+    /// @memberof cna
+    /// @param {string}   fileContents - Pajek file contents.
+    /// @param {object}   properties - Network properties (n, m and directed).
+    /// @return {object}  An adjascence matrix.
+    ///
+    function parsePajekFile(fileContents, properties) {
+        if (core.type(properties) == "undefined") {
+            properties = {
+                "n": 0,
+                "m": 0,
+                "directed": false
+            }
+        } else {
+            properties.n = 0
+            properties.m = 0
+            properties.directed = false
+        }
+
+        adj = []
+        fileSection = "none"
+        fileLines = core.split(core.replace(fileContents, "\r\n", "\n"), "\n")
+        for (l = 0; l < fileLines.length; l = l + 1) {
+            line = fileLines[l]
+            record = core.splitCSV(line.trim(), " ", true)
+            if ((core.toLowerCase(record[0]) == "*vertices") || (core.toLowerCase(record[0]) == "*edges") || (core.toLowerCase(record[0]) == "*arcs") || (core.toLowerCase(record[0]) == "*matrix")) {
+                fileSection = core.toLowerCase(record[0])
+                if (fileSection == "*vertices") {
+                    n = ""
+                    for (j = 1; j < record.length; j = j + 1) {
+                        if (record[j] == "") {
+                            continue
+                        }
+                        if (n == "") {
+                            n = core.toNumber(record[j])
+                            break
+                        }
+                    }
+                    if (n == "") {
+                        break
+                    } else {
+                        adj = core.matrix(0, n + 1, n + 1)
+                        properties.n = n
+                    }
+                } elseif (fileSection == "*arcs") {
+                    properties.directed = true
+                }
+                continue
+            }
+            if (core.length(record) >= 2) {
+                if (fileSection == "*vertices") {
+                    id = ""
+                    label = ""
+                    for (j = 0; j < record.length; j = j + 1) {
+                        if (record[j] == "") {
+                            continue
+                        }
+                        if (id == "") {
+                            id = core.toNumber(record[j])
+                            continue
+                        }
+                        if (label == "") {
+                            label = core.replace(record[j], core.regExp("\"", "g"), "")
+                            continue
+                        }
+                    }
+                    adj[0, id] = label
+                    adj[id, 0] = label
+                } elseif (fileSection == "*edges") {
+                    source = ""
+                    target = ""
+                    weight = ""
+                    for (j = 0; j < record.length; j = j + 1) {
+                        if (record[j] == "") {
+                            continue
+                        }
+                        if (source == "") {
+                            source = core.toNumber(record[j])
+                            continue
+                        }
+                        if (target == "") {
+                            target = core.toNumber(record[j])
+                            continue
+                        }
+                        if (weight == "") {
+                            weight = core.toNumber(record[j])
+                            continue
+                        }
+                    }
+                    if (weight == "") {
+                        weight = 1
+                    }
+                    adj[source, target] = weight
+                    adj[target, source] = weight
+                    properties.m = properties.m + 1
+                } elseif (fileSection == "*arcs") {
+                    source = ""
+                    target = ""
+                    weight = ""
+                    for (j = 0; j < record.length; j = j + 1) {
+                        if (record[j] == "") {
+                            continue
+                        }
+                        if (source == "") {
+                            source = core.toNumber(record[j])
+                            continue
+                        }
+                        if (target == "") {
+                            target = core.toNumber(record[j])
+                            continue
+                        }
+                        if (weight == "") {
+                            weight = core.toNumber(record[j])
+                            continue
+                        }
+                    }
+                    if (weight == "") {
+                        weight = 1
+                    }
+                    adj[source, target] = weight
+                    properties.m = properties.m + 1
+                }
+            }
+        }
+        return(adj)
+    }
+
+    ///
+    /// Parses a CSV matrix file.
+    /// @method parseMatrixFile
+    /// @memberof cna
+    /// @param {string}   fileContents - Pajek file contents.
+    /// @param {object}   properties - Network properties (n, m and directed).
+    /// @param {string}   char - The separator character.
+    /// @param {boolean}  replaceCommas - Replace commas by dots in edges weights.
+    /// @return {object}  An adjascence matrix.
+    ///
+    function parseMatrixFile(fileContents, properties, char, replaceCommas) {
+        if (core.type(properties) == "undefined") {
+            properties = {
+                "n": 0,
+                "m": 0,
+                "directed": false
+            }
+        } else {
+            properties.n = 0
+            properties.m = 0
+            properties.directed = false
+        }
+        if (core.type(char) == "undefined") {
+            char = ","
+        }
+        if (core.type(replaceCommas) == "undefined") {
+            replaceCommas = false
+        }
+
+        adj = []
+        fileSection = "none"
+        fileLines = core.split(core.replace(fileContents, "\r\n", "\n"), "\n")
+        properties.n = core.length(fileLines) - 1
+        for (l = 0; l < (fileLines.length - 1); l = l + 1) {
+            line = fileLines[l]
+            record = core.splitCSV(line.trim(), char, true)
+            row = []
+            if (l == 0) {
+                row.push("")
+            } else {
+                row.push(adj[0, l])
+            }
+            for (j = 1; j < record.length; j = j + 1) {
+                if (l == 0) {
+                    column = record[j]
+                } else {
+                    if (replaceCommas) {
+                        column = core.toNumber(core.replace(record[j], ",", "."))
+                    } else {
+                        column = core.toNumber(record[j])
+                    }
+                }
+                row.push(column)
+                if ((j > 0) && (column != "") && (column != 0)) {
+                    properties.m = properties.m + 1
+                }
+            }
+            if (row.length > 0) {
+                adj.push(row)
+            }
+        }
+        return(adj)
+    }
+    
+    ///
+    /// Convert a file in Pajek format to JSON.
+    /// @method pajekFileToJson
+    /// @memberof cna
+    /// @param {string}   fileContents - Pajek file contents.
+    /// @param {object}   properties - Network properties (n, m and directed).
+    /// @return {object}  A JSON containing the network.
+    ///
+    function pajekFileToJson(fileContents, properties) {
+        if (core.type(properties) == "undefined") {
+            properties = {
+                "n": 0,
+                "m": 0,
+                "directed": false
+            }
+        } else {
+            properties.n = 0
+            properties.m = 0
+            properties.directed = false
+        }
+        
+        network = {
+            "nodes": [],
+            "edges": []
+        }
+
+        fileSection = "none"
+        fileLines = core.split(core.replace(fileContents, "\r\n", "\n"), "\n")
+        for (l = 0; l < fileLines.length; l = l + 1) {
+            line = fileLines[l]
+            record = core.splitCSV(line.trim(), " ", true)
+            if ((core.toLowerCase(record[0]) == "*vertices") || (core.toLowerCase(record[0]) == "*edges") || (core.toLowerCase(record[0]) == "*arcs") || (core.toLowerCase(record[0]) == "*matrix")) {
+                fileSection = core.toLowerCase(record[0])
+                if (fileSection == "*vertices") {
+                    n = ""
+                    for (j = 1; j < record.length; j = j + 1) {
+                        if (record[j] == "") {
+                            continue
+                        }
+                        if (n == "") {
+                            n = core.toNumber(record[j])
+                            break
+                        }
+                    }
+                    if (n == "") {
+                        break
+                    } else {
+                        properties.n = n
+                    }
+                } elseif (fileSection == "*arcs") {
+                    properties.directed = true
+                }
+                i = 0
+                continue
+            }
+            if (core.length(record) >= 2) {
+                if (fileSection == "*vertices") {
+                    id = ""
+                    label = ""
+                    x = ""
+                    y = ""
+                    size = ""
+                    for (j = 0; j < record.length; j = j + 1) {
+                        if (record[j] == "") {
+                            continue
+                        }
+                        if (id == "") {
+                            id = core.toString(record[j])
+                            continue
+                        }
+                        if (label == "") {
+                            label = core.replace(record[j], core.regExp("\"", "g"), "")
+                            continue
+                        }
+                        if (x == "") {
+                            x = core.toNumber(record[j])
+                            continue
+                        }
+                        if (y == "") {
+                            y = core.toNumber(record[j])
+                            continue
+                        }
+                        if (size == "") {
+                            if (core.type(record[j]) == "number") {
+                                size = core.toNumber(record[j])
+                            }
+                        }
+                    }
+                    if (x == "") {
+                        x = math.random()
+                    }
+                    if (y == "") {
+                        y = math.random()
+                    }
+                    if (size == "") {
+                        size = 1
+                    }
+                    node = {
+                        "id": "n" + id,
+                        "label": label,
+                        "x": x,
+                        "y": y,
+                        "size": size
+                    }
+                    network.nodes.push(node)
+                    i = i + 1
+                } elseif (fileSection == "*edges") {
+                    source = ""
+                    target = ""
+                    weight = ""
+                    for (j = 0; j < record.length; j = j + 1) {
+                        if (record[j] == "") {
+                            continue
+                        }
+                        if (source == "") {
+                            source = core.toNumber(record[j])
+                            continue
+                        }
+                        if (target == "") {
+                            target = core.toNumber(record[j])
+                            continue
+                        }
+                        if (weight == "") {
+                            if (core.type(record[j]) == "number") {
+                                weight = core.toNumber(record[j])
+                            }
+                            continue
+                        }
+                    }
+                    if (weight == "") {
+                        weight = 1
+                    }
+                    edge = {
+                        "id": "e" + core.toString(i),
+                        "source": "n" + core.toString(source),
+                        "target": "n" + core.toString(target),
+                        "size": weight
+                    }
+                    network.edges.push(edge)
+                    i = i + 1
+                    properties.m = properties.m + 1
+                } elseif (fileSection == "*arcs") {
+                    source = ""
+                    target = ""
+                    weight = ""
+                    for (j = 0; j < record.length; j = j + 1) {
+                        if (record[j] == "") {
+                            continue
+                        }
+                        if (source == "") {
+                            source = core.toNumber(record[j])
+                            continue
+                        }
+                        if (target == "") {
+                            target = core.toNumber(record[j])
+                            continue
+                        }
+                        if (weight == "") {
+                            weight = core.toNumber(record[j])
+                            continue
+                        }
+                    }
+                    if (weight == "") {
+                        weight = 1
+                    }
+                    edge = {
+                        "id": "e" + core.toString(i),
+                        "source": "n" + core.toString(source),
+                        "target": "n" + core.toString(target),
+                        "size": weight
+                    }
+                    network.edges.push(edge)
+                    i = i + 1
+                    properties.m = properties.m + 1
+                }
+            }
+        }
+        return(network)
+    }
+
+    ///
+    /// Create a Pajek file from JSON.
+    /// @method jsonToPajekFile
+    /// @memberof cna
+    /// @param {object}   network - JSON containing the network.
+    /// @return {string}  A Pajek file.
+    ///
+    function jsonToPajekFile(network) {
+        n = network.nodes.length
+        m = network.edges.length
+        fileContents = "*Vertices " + core.toString(n) + "\r\n"
+        // Create a hash table to store each vertex id.
+        hash = []
+        for (i = 0; i < n; i = i + 1) {
+            node = network.nodes[i]
+            if (core.type(node) != "undefined") {
+                id = core.toString(i + 1)
+                hash[node.id] = id
+                if (core.type(node.label) == "undefined") {
+                    label = ""
+                } else {
+                    label = node.label
+                }
+                if (core.type(node.x) == "undefined") {
+                    x = 0
+                } else {
+                    x = core.toString(node.x)
+                }
+                if (core.type(node.y) == "undefined") {
+                    y = 0
+                } else {
+                    y = core.toString(node.y)
+                }
+                if (core.type(node.size) == "undefined") {
+                    size = 0
+                } else {
+                    size = core.toString(node.size)
+                }
+                if (node.label != "") {
+                    fileContents = fileContents + id + " \"" + label + "\" " + x + " " + y + " " + size + "\r\n"
+                }
+            }
+        }
+        fileContents = fileContents + "*Arcs\r\n"
+        for (i = 0; i < m; i = i + 1) {
+            edge = network.edges[i]
+            if (core.type(edge) != "undefined") {
+                if (core.type(edge.source) == "undefined") {
+                    source = ""
+                } else {
+                    source = hash[edge.source]
+                }
+                if (core.type(edge.target) == "undefined") {
+                    target = ""
+                } else {
+                    target = hash[edge.target]
+                }
+                if (core.type(edge.size) == "undefined") {
+                    size = 0
+                } else {
+                    size = core.toString(edge.size)
+                }
+                if (!((edge.source == "") || (edge.target == ""))) {
+                    fileContents = fileContents + source + " " + target + " " + size + "\r\n"
+                }
+            }
+        }
+        return(fileContents)
+    }
+
+    ///
+    /// Transitive closure between two matrices (A and B).
+    /// @method getTransitiveClosure
+    /// @memberof cna
+    /// @param {object}   a - Matrix A.
+    /// @param {object}   b - Matrix B.
+    /// @return {object}  Transitive closure between two matrices.
+    ///
+    function getTransitiveClosure(a, b) {
+        dimA = core.dim(a)
+        dimB = core.dim(b)
+
+        if (dimA[1] == dimB[0]) {
+            c = core.matrix(0, dimA[1], dimB[0])
+            for (i = 1; i < dimA[0]; i = i + 1) {
+                for (j = 1; j < dimB[1]; j = j + 1) {
+                    s = 0
+                    for (k = 1; k < dimB[0]; k = k + 1) {
+                        s = s || a[i,k] && b[k,j]
+                    }
+                    c[i,j] = s
+                }
+            }
+            return(c)
+        } else {
+            throw(Error("The number of columns in matrix A must equal the number of rows in matrix B"))
+        }
+    }
+    
+    ///
+    /// Boolean OR between two matrices (A and B).
+    /// @method getBooleanOr
+    /// @memberof cna
+    /// @param {object}   a - Matrix A.
+    /// @param {object}   b - Matrix B.
+    /// @return {object}  Boolean OR between two matrices.
+    ///
+    function getBooleanOr(a, b) {
+        dimA = core.dim(a)
+        dimB = core.dim(b)
+
+        if (dimA[0] == dimB[0]) {
+            c = core.matrix(0, dimA[0], dimA[1])
+            for (i = 1; i < dimA[0]; i = i + 1) {
+                for (j = 1; j < dimA[1]; j = j + 1) {    
+                    c[i,j] = a[i, j] || b[i, j]
+                }
+            }
+            return(c)
+        } else {
+            throw(Error("The dimensions of matrix A must be the same as that of matrix B"))
+        }
+    }
+    
+    ///
+    /// Calculates the network density.
+    /// @method getDensity
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @param {boolean}  directed - True if the network is directed.
+    /// @return {number}  The network density.
+    ///
+    function getDensity(adj, directed) {
+        if (core.type(directed) == "undefined") {
+            directed = false
+        }
+        dimAdj = core.dim(adj)
+        dimI = dimAdj[0]
+        n = dimI - 1
+        // Remove vertex data from the matrix.
+        for (i = 0; i < dimI; i = i + 1) {
+            adj[0, i] = 0
+            adj[i, 0] = 0
+        }
+        nedges = matrix.count(adj)
+        if (directed) {
+            density = nedges / (n * (n - 1))
+        } else {
+            density = (nedges / 2) / (n * (n - 1) / 2)
+        }
+        return(density)
+    }
+    
+    ///
+    /// Calculates the degrees of the vertices of the matrix.
+    /// @method getDegrees
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @param {boolean}  directed - True if the network is directed.
+    /// @return {object}  Returns a array containing the degrees of the vertices.
+    ///
+    function getDegrees(adj, directed) {
+        if (core.type(directed) == "undefined") {
+            directed = false
+        }
+        dimAdj = core.dim(adj)
+        dimI = dimAdj[0]
+        dimJ = dimAdj[1]
+        degrees = core.matrix(0, dimI, 3)
+        for (i = 1; i < dimI; i = i + 1) {
+            degrees[i, 0] = matrix.count(adj, i, 1, i, dimJ - 1)
+            degrees[i, 1] = matrix.count(adj, 1, i, dimI - 1, i)
+            if (directed) {
+                degrees[i, 2] = math.max(degrees[i, 0], degrees[i, 1])
+            } else {
+                if (degrees[i, 0] != 0) {
+                    degrees[i, 2] = degrees[i, 0]
+                } else {
+                    degrees[i, 2] = degrees[i, 1]
+                }
+            }
+        }
+        return(degrees)
+    }
+    
+    ///
+    /// Calculates the degrees distribution in the network.
+    /// @method getDegreeDistribution
+    /// @memberof cna
+    /// @param {object}   degrees - Array containing degrees of the vertices.
+    /// @return {object}  Returns an array containing the degrees distribution in the network.
+    ///
+    function getDegreeDistribution(degrees) {
+        dimDegrees = core.dim(degrees)
+        dimI = dimDegrees[0]
+        degDist = []
+        for (i = 1; i < dimI; i = i + 1) {
+            degree = degrees[i, 2]
+            if (core.type(degDist[degree]) == "undefined") {
+                degDist[degree] = 1
+            } else {
+                degDist[degree] = degDist[degree] + 1
+			}
+        }
+        hist = core.matrix(0, core.length(degDist), 3)
+        i = 0
+        foreach(degDist; deg; dist) {
+            hist[i, 0] = deg
+            hist[i, 1] = dist
+    		i = i + 1
+        }
+        dimHist = core.dim(hist)
+        sumDegs = matrix.sum(hist, 0, 1, dimHist[0] - 1, 1)
+        for (i = 0; i < dimHist[0]; i = i + 1) {
+            hist[i, 2] = (hist[i, 1] / sumDegs) * 100
+        }
+        // Sort data.
+        for (i = 0; i < dimHist[0] - 1; i = i + 1) {
+            for (j = i; j < dimHist[0]; j = j + 1) {
+                if (hist[i, 0] > hist[j, 0]) {
+                    degree = hist[i, 0]
+                    hist[i, 0] = hist[j, 0]
+                    hist[j, 0] = degree
+                    
+                    frequency = hist[i, 1]
+                    hist[i, 1] = hist[j, 1]
+                    hist[j, 1] = frequency
+
+                    percentual = hist[i, 2]
+                    hist[i, 2] = hist[j, 2]
+                    hist[j, 2] = percentual
+                }
+            }
+        }
+    	return(hist)
+    }
+    
+    ///
+    /// Calculates average degree of the network.
+    /// @method getAverageDegree
+    /// @memberof cna
+    /// @param {object}   degrees - Array containing degrees of the vertices.
+    /// @return {number}  Returns the average degree of the network.
+    ///
+    function getAverageDegree(degrees) {
+        dimDegrees = core.dim(degrees)
+        avgDeg = matrix.avg(degrees, 1, 2, (dimI - 1), 2)
+        return(avgDeg.avg)
+    }
+    
+    ///
+    /// Calculates the clustering coefficients of the vertices.
+    /// @method getClustering
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @param {boolean}  directed - True if the network is directed.
+    /// @return {object}  Returns an array containing the clustering coefficients of the vertices.
+    ///
+    function getClustering(adj, directed) {
+        if (core.type(directed) == "undefined") {
+            directed = false
+        }
+        dimAdj = core.dim(adj)
+        dimI = dimAdj[0]
+        dimJ = dimAdj[1]
+        // To calculate the clustering coefficient we need an undirected graph.
+        if (directed) {
+            for (i = 1; i < dimI; i = i + 1) {
+                for (j = 1; j < dimJ; j = j + 1) {
+                    if (adj[i, j] == 1) {
+                        adj[j, i] = 1
+                    }
+                }
+            }
+        }
+        clustering = core.matrix(0, dimI, 1)
+        // Calculate the clustering coefficient for each vertex.
+        for (i = 1; i < dimI; i = i + 1) {
+            neighbor = []
+            ki = matrix.count(adj, i, 1, i, (dimJ - 1))
+            // If the vertex has any neighbor.
+            if (ki > 0) {
+                // Get all neighbor indexes.
+                for (j = 1; j < dimJ; j = j + 1) {
+                    if (adj[i, j] == 1) {
+                        neighbor.push(j)
+                    }
+                }
+                if (core.length(neighbor) > 0) {
+                    // Calculate the number of neighbors connected one to other.
+                    n = 0
+                    for (n1 = 0; n1 < core.length(neighbor); n1 = n1 + 1) {
+                        for (n2 = 0; n2 < core.length(neighbor); n2 = n2 + 1) {
+                            if (n1 != n2) {
+                                if (adj[neighbor[n1], neighbor[n2]] == 1) {
+                                    n = n + 1
+                                }
+                            }
+                        }
+                    }
+                }
+                // Calculate the clustering coefficient to this vertex.
+                if ((ki == 0) || (ki == 1)) {
+                    clustering[i, 0] = 0
+                } else {
+                    clustering[i, 0] = n / (ki * (ki - 1))
+                }
+            }
+        }
+        return(clustering)
+    }
+    
+    ///
+    /// Calculates average clustering coefficient of the network.
+    /// @method getAverageClustering
+    /// @memberof cna
+    /// @param {object}   clustering - Array containing the clustering coefficients of the vertices.
+    /// @return {number}  Returns the average clustering coefficient of the network.
+    ///
+    function getAverageClustering(clustering) {
+        dimClustering = core.dim(clustering)
+        n = dimClustering[0] - 1
+        avgClustering = matrix.sum(clustering) / n
+        return(avgClustering)
+    }
+    
+    ///
+    /// Calculates the shortest parh between each two vetices in the matrix.
+    /// @method getShortestPath
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @param {boolean}  useGPU - Uses the GPU to speed up calculations.
+    /// @return {object}  Returns an array containing the shortest parh between each two vetice in the matrix.
+    ///
+    function getShortestPath(adj, useGPU) {
+        dimAdj = core.dim(adj)
+        dimI = dimAdj[0]
+        dimJ = dimAdj[1]
+        matrixOne = core.one(dimI, dimJ)
+        matrixZero = core.zero(dimI, dimJ)
+
+        if (core.type(useGPU) == "undefined") {
+            useGPU = false
+        }
+
+        //
+        // Compute shaders for GPU calculations.
+        //
+
+        // This function performs binary multiplication between two matrices a and b.
+        kernel mulShader(a, b, n) {
+            local c = false
+            for (local i = 1; i < n; i = i + 1) {
+                c = c || (a[this.thread.y, i] != 0) && (b[i, this.thread.x] != 0)
+            }
+            if (c) {
+                return(1)
+            } else {
+                return(0)
+            }
+        }
+
+        // This function performs binary OR between two matrices a and b.
+        kernel orShader(a, b) {
+            local c = false
+            c = (a[this.thread.x, this.thread.y] != 0) || (b[this.thread.x, this.thread.y] != 0)
+            if (c) {
+                return(1)
+            } else {
+                return(0)
+            }
+        }
+
+        if (useGPU) {
+            device = gpu.new()
+
+            mulMatrices = device.createKernel(mulShader)
+            mulMatrices.setOutput([dimI, dimI])
+
+            orMatrices = device.createKernel(orShader)
+            orMatrices.setOutput([dimI, dimI])
+        }
+
+        // Remove vertex data from the matrix.
+        for (i = 0; i < dimI; i = i + 1) {
+            adj[0, i] = 0
+            adj[i, 0] = 0
+        } 
+        geodesic = core.copyMatrix(adj)
+        if ((adj == matrixZero) || (adj == matrixOne)) {
+            return(geodesic)
+        }
+        old = core.copyMatrix(adj)
+        prod = core.copyMatrix(adj)
+        order = 1
+        while (true) {
+            if (useGPU) {
+                prod = mulMatrices(adj, old, dimI)
+                path = orMatrices(old, prod)
+            } else {
+                prod = this.getTransitiveClosure(adj, old)
+                path = this.getBooleanOr(old, prod)
+            }
+            order = order + 1      
+            for (i = 1; i < dimI; i = i + 1) {
+                for (j = 1; j < dimJ; j = j + 1) {
+                    if ((prod[i, j] == 1) && (geodesic[i, j] == 0) && (i != j)) {
+                        geodesic[i, j] = order
+                    }
+                }
+            } 
+            if (path == matrixOne) {
+                break
+            } elseif (path == old) {
+                break
+            } elseif (order == dimI) {
+                break
+            }
+            old = prod
+        }
+        return(geodesic)
+    }
+    
+    ///
+    /// Calculates average shortest path of the network.
+    /// @method getAverageShortestPath
+    /// @memberof cna
+    /// @param {object}   geodesic - Array the shortest parh between each two vetices in the matrix.
+    /// @return {number}  Returns the average shortest path of the network.
+    ///
+    function getAverageShortestPath(geodesic) {
+        dimGeodesic = core.dim(geodesic)
+        dimI = dimGeodesic[0]
+        dimJ = dimGeodesic[1]
+        n = matrix.count(geodesic, 1, 1, dimI - 1, dimJ - 1)
+        if (n > 0) {
+            avgshortestpath = matrix.sum(geodesic, 1, 1, dimI - 1, dimJ - 1) / n
+        } else {
+            avgshortestpath = 0
+        }
+        return(avgshortestpath)
+    }
+    
+    ///
+    /// Calculates the network diameter.
+    /// @method getDiameter
+    /// @memberof cna
+    /// @param {object}   geodesic - Array the shortest parh between each two vetices in the matrix.
+    /// @return {number}  Returns the network diameter.
+    ///
+    function getDiameter(geodesic) {
+        diameter = matrix.max(geodesic)
+        return(diameter)
+    }
+    
+    ///
+    /// Calculates the shortest parh between each two vetices in the matrix using Floyd Warshall method.
+    /// @method getFloydWarshallShortestPath
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @param {object}   path - Matrix to store paths.
+    /// @return {object}  Returns an array containing the shortest parh between each two vetice in the matrix.
+    ///
+    function getFloydWarshallShortestPath(adj, path) {
+        dimAdj = core.dim(adj)
+        dimI = dimAdj[0]
+        dimJ = dimAdj[1]
+        geodesic = core.matrix(Number.MAX_VALUE, dimI, dimJ)
+        for (i = 1; i < dimI; i = i + 1) {
+            for (j = 1; j < dimJ; j = j + 1) {
+                if (adj[i, j] != 0) {
+                    geodesic[i, j] = adj[i,j]
+                    if (core.type(path) != "undefined") {
+                        path[i, j] = j
+                    }
+                }
+            }
+        }
+        for (i = 0; i < dimI; i = i + 1) {
+            geodesic[i, i] = 0
+            if (core.type(path) != "undefined") {
+                path[i, i] = i
+            }
+        }
+        for (k = 1; k < dimI; k = k + 1) {
+            for (i = 1; i < dimI; i = i + 1) {
+                for (j = 1; j < dimJ; j = j + 1) {
+                    if ((geodesic[i, k] == Number.MAX_VALUE) || (geodesic[k, j] == Number.MAX_VALUE)) {
+                        continue
+                    }
+                    if (geodesic[i, j] > (geodesic[i, k] + geodesic[k, j])) {
+                        geodesic[i, j] = geodesic[i, k] + geodesic[k, j]
+                        if (core.type(path) != "undefined") {
+                            path[i, j] = path[i, k]
+                        }
+                    }
+                }
+            }
+        }
+        for (i = 0; i < dimI; i = i + 1) {
+            geodesic[i, i] = 0
+            geodesic[0, i] = 0
+            geodesic[i, 0] = 0
+        }
+        # Fix geodesics.
+        for (i = 1; i < dimI; i = i + 1) {
+            for (j = 1; j < dimI; j = j + 1) {
+                if (geodesic[i, j] == Infinity) {
+                    geodesic[i, j] = 0
+                }
+            }
+        }
+        return(geodesic)
+    }
+    
+    ///
+    /// Do a shortest parh walk in the network and returns the path.
+    /// @method doShortestPathWalk
+    /// @memberof cna
+    /// @param {object}   path - Paths matrix.
+    /// @param {number}   i - Element index.
+    /// @param {number}   j - Element index.
+    /// @return {object}  Returns an array containing the shortest parh walk between two vetice in the matrix.
+    ///
+    function doShortestPathWalk(path, i, j) {
+        if (path[i, j] == -1) {
+            return([])
+        }
+        pij = [i]
+        while (i != j) {
+            i = path[i, j]
+            pij.push(i)
+        }
+        return(pij)
+    }
+    
+    ///
+    /// Return the number os geodesics in the network.
+    /// @method getNumberOfGeodesics
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @param {object}   geodesic - Vector including the geodesics of the network.
+    /// @param {boolean}  directed - True if the network is directed. False otherwise.
+    /// @return {number}  Returns the number os geodesics in the network.
+    ///
+    function getNumberOfGeodesics(adj, geodesic, directed) {
+        dimGeodesic = core.dim(geodesic)
+        dimI = dimGeodesic[0]
+        dimJ = dimGeodesic[1]
+        gjk = core.copyMatrix(adj)
+        for (i = 0; i < dimI; i = i + 1) {
+            gjk[0, i] = 0
+            gjk[i, 0] = 0
+            gjk[i, i] = 1
+        }
+        diameter = this.getDiameter(geodesic)
+        // Count how many geodesics are there between vertices i and j.
+        for (p = 2; p <= diameter; p = p + 1) {
+            npaths = adj ^ p
+            for (i = 1; i < dimI; i = i + 1) {
+                for (j = 1; j < dimJ; j = j + 1) {
+                    if (i != j) {
+                        if (gjk[i, j] == 0) {
+                            gjk[i, j] = npaths[i, j]
+                        }
+                    }
+                }
+            }
+        }
+        return(gjk)
+    }
+    
+    ///
+    /// Returns an array containing the centralities of each pair of the network's vertices.
+    /// @method getCentrality
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @param {object}   geodesic - Vector including the geodesics of the network.
+    /// @param {boolean}  directed - True if the network is directed. False otherwise.
+    /// @return {object}  Returns an array containing the centralities of each pair of the network's vertices
+    ///
+    function getCentrality(adj, geodesic, directed) {
+        dimGeodesic = core.dim(geodesic)
+        dimI = dimGeodesic[0]
+        dimJ = dimGeodesic[1]
+        // Column 0 contains the closeness centrality,
+        // Column 1 contains the betweenness centrality.
+        // Column 2 contains the normalized closeness centrality,
+        // Column 3 contains the normalized betweenness centrality.
+        centrality = core.matrix(0, dimI, 5)
+        n = dimI - 1
+        // Calculate the closeness centrality for each vertex.
+        for (i = 1; i < dimI; i = i + 1) {
+            s = matrix.sum(geodesic, i, 1, i, dimJ - 1)
+            if (s > 0) {
+                centrality[i, 0] = 1 / s
+                centrality[i, 2] = (n - 1) / s
+                centrality[i, 4] = s
+            }
+        }
+        // Calculate the betweenness centrality for each vertex.
+        gjk = this.getNumberOfGeodesics(adj, geodesic, directed)
+        for (i = 1; i < dimI; i = i + 1) {
+            bc = 0
+            for (j = 1; j < dimI; j = j + 1) {
+                for (k = 1; k < dimJ; k = k + 1) {
+                    // Must insert an if to test if it is a directed graph.
+                    if ((j < k) && (j != i) && (i != k)) {
+                        spjk = geodesic[j, k]
+                        if ((geodesic[j, i] + geodesic[i, k]) == spjk) {
+                            bc = bc + math.max(gjk[j, i], gjk[i, k]) / gjk[j, k]
+                        }
+                    }
+                }
+            }
+            centrality[i, 1] = bc
+            // BC normalized: (N-1)(N-2)/2 in symmetric nets or (N-1)(N-2) otherwise.
+            centrality[i, 3] = bc / (((n - 1) * (n - 2)) / 2)
+        }
+        return(centrality)
+    }
+    
+    ///
+    /// Returns an array containing the vertex efficiency of each pair of the network's vertices.
+    /// @method getVertexEfficiency
+    /// @memberof cna
+    /// @param {object}   geodesic - Vector including the geodesics of the network.
+    /// @return {object}  Returns an array containing the vertex efficiency of each pair of the network's vertices
+    ///
+    function getVertexEfficiency(geodesic) {
+        dimGeodesic = core.dim(geodesic)
+        dimI = dimGeodesic[0]
+        dimJ = dimGeodesic[1]
+        efficiency = core.matrix(0, dimI, dimJ)
+        for (i = 1; i < dimI; i = i + 1) {
+            for (j = 1; j < dimJ; j = j + 1) {
+                if (geodesic[i, j] != 0) {
+                    efficiency[i, j] = 1 / geodesic[i, j]
+                }
+            }
+        }
+        return(efficiency)
+    }
+    
+    ///
+    /// Returns the network's global efficiency.
+    /// @method getGlobalEfficiency
+    /// @memberof cna
+    /// @param {object}   efficiency - Array containing the vertex efficiency of each vertex of the network.
+    /// @return {number}  Returns the network's global efficiency.
+    ///
+    function getGlobalEfficiency(efficiency) {
+        dimEfficiency = core.dim(efficiency)
+        n = dimEfficiency[0] - 1
+        avgeff = matrix.sum(efficiency) / (n * (n - 1))
+        return(avgeff)
+    }
+
+    ///
+    /// Returns the network vertices labels.
+    /// @method getLabels
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @return {object}  Returns the network vertices labels.
+    ///
+    function getLabels(adj) {
+        dimAdj = core.dim(adj)
+        dimI = dimAdj[0]
+        labels = []
+        for (i = 1; i < dimI; i = i + 1) {
+            labels[i] = adj[i, 0]
+        }
+        return(labels)
+    }
+    
+    ///
+    /// Sets the network vertices labels.
+    /// @method setLabels
+    /// @memberof cna
+    /// @param {object}  adj - Adjascence matrix.
+    /// @param {object}  labels - Array containing the vertices labels.
+    /// @return {obj}    Matrix with vertex labels set.
+    ///
+    function setLabels(adj, labels) {
+        dimAdj = core.dim(adj)
+        dimI = dimAdj[0]
+        for (i = 0; i < dimI; i = i + 1) {
+            adj[i, 0] = labels[i]
+            adj[0, i] = labels[i]
+        }
+        return(adj)
+    }
+    
+    ///
+    /// Removes the network vertices labels.
+    /// @method removeLabels
+    /// @memberof cna
+    /// @param {object}   adj - Adjascence matrix.
+    /// @return {number}  Removes the network vertices labels.
+    ///
+    function removeLabels(adj) {
+        dimAdj = core.dim(adj)
+        dimI = dimAdj[0]
+        for (i = 0; i < dimI; i = i + 1) {
+            adj[i, 0] = 0
+            adj[0, i] = 0
+        }
+        return(adj)
+    }
+}

@@ -1,0 +1,169 @@
+maiascript               ::= expression*
+                           | eof
+
+operation                ::= variableAssignment
+variableAssignment       ::= logicalORExpression (('=' | ':=' | '?=') logicalORExpression)*
+logicalORExpression      ::= logicalXORExpression ('||' logicalXORExpression)*
+logicalXORExpression     ::= logicalANDExpression ('||||' logicalANDExpression)*
+logicalANDExpression     ::= bitwiseORExpression ('&&' bitwiseORExpression)*
+bitwiseORExpression      ::= bitwiseXORExpression ('|' bitwiseXORExpression)*
+bitwiseXORExpression     ::= bitwiseANDExpression ('|||' bitwiseANDExpression)*
+bitwiseANDExpression     ::= equalityExpression ('&' equalityExpression)*
+equalityExpression       ::= relationalExpression (('==' | '!=') relationalExpression)*
+relationalExpression     ::= shiftExpression (('<' | '>' | '<=' | '>=') shiftExpression)*
+shiftExpression          ::= additiveExpression (('<<' | '>>') additiveExpression)*
+additiveExpression       ::= multiplicativeExpression (('+' | '-') multiplicativeExpression)*
+multiplicativeExpression ::= powerExpression (('*' | '/' | '%') powerExpression)*
+powerExpression          ::= unaryExpression ('^' unaryExpression)*
+unaryExpression          ::= '~' primary
+                           | '!' primary
+                           | primary
+                           
+primary                  ::= member
+                           | value
+                           | parenthesizedExpression
+
+statement                ::= namespace
+                           | function
+                           | include
+                           | local
+                           | if
+                           | do
+                           | while
+                           | for
+                           | foreach
+                           | try
+                           | test
+                           | break
+                           | continue
+                           | return
+                           | throw
+                           
+namespace                ::= 'namespace' identifier '{' expression* '}'
+                           | 'object' identifier '{' expression* '}'
+function                 ::= 'async' identifier '(' arguments? ')' '{' expression* '}'
+                           | 'constructor' identifier '(' arguments? ')' '{' expression* '}'
+                           | 'kernel' identifier '(' arguments? ')' '{' expression* '}'
+                           | 'function' identifier '(' arguments? ')' '{' expression* '}'
+include                  ::= 'include' '(' expression ')'
+local                    ::= 'local' expression
+if                       ::= 'if' '(' expression ')' '{' expression* '}' elseif* else?
+elseif                   ::= 'elseif' '(' expression ')' '{' expression* '}'
+else                     ::= 'else' '{' expression* '}'
+do                       ::= 'do' '{' expression* '}' 'while' '(' expression ')'
+while                    ::= 'while' '(' expression ')' '{' expression* '}'
+for                      ::= 'for' '(' expression? ';' expression? ';' expression? ')' '{' expression* '}'
+foreach                  ::= 'foreach' '(' expression? ';' expression? ';' expression? ')' '{' expression* '}'
+try                      ::= 'try' '{' expression* '}' catch?
+test                     ::= 'test' '(' expression? (';' expression? (';' expression?)?)? ')' '{' expression* '}' catch?
+catch                    ::= 'catch' '(' expression ')' '{' expression* '}'
+break                    ::= 'break'
+continue                 ::= 'continue'
+return                   ::= 'return' '(' expression? ')'
+throw                    ::= 'throw' '(' expression? ')'
+                           
+expression               ::= statement
+                           | operation
+                           | comment
+
+arguments                ::= expression (',' expression)*
+
+member                   ::= identifier ('.' identifier)* '(' arguments* ')'
+                           | identifier ('.' identifier)* ('[' arguments ']')*
+
+array                    ::= '{' element (',' element)* '}'
+matrix                   ::= '[' row? (';' row)* ']'
+
+element                  ::= (key ':')? expression
+key                      ::= string
+
+row                      ::= column (',' column)*
+column                   ::= expression
+
+parenthesizedExpression  ::= '(' expression ')'
+
+value                    ::= real
+                           | complex
+                           | string
+                           | array
+                           | matrix
+                           | null
+                           | true
+                           | false
+                           
+whitespace               ::= whitespace^token
+                          /* ws: definition */
+
+<?TOKENS?>
+
+eof                      ::= $
+
+identifier               ::= (firstIdentifierChar (identifierChar)*) - reservedWord
+                           
+reservedWord             ::= keyword
+                           | nullLiteral
+                           | booleanLiteral
+
+keyword  ::= 'namespace'
+           | 'object'
+           | 'async'
+           | 'constructor'
+           | 'kernel'
+           | 'function'
+           | 'include'
+           | 'local'
+           | 'if'
+           | 'elseif'
+           | 'else'
+           | 'do'
+           | 'while'
+           | 'for'
+           | 'foreach'
+           | 'try'
+           | 'catch'
+           | 'test'
+           | 'break'
+           | 'continue'
+           | 'return'
+           | 'throw'
+           
+nullLiteral              ::= null
+booleanLiteral           ::= true
+                           | false
+
+null                     ::= 'null'
+true                     ::= 'true'
+false                    ::= 'false'
+
+firstIdentifierChar      ::= '$' | '_' | [A-Za-z]
+identifierChar           ::= '$' | '_' | [0-9] | [A-Za-z]
+
+string                   ::= '"' (unicode | '\"' | '\\' | '\/' | '\b' | '\f' | '\n' | '\r' | '\t')* '"'
+
+unicode                  ::= alphabet - ["#x005C]
+alphabet                 ::= #x0009
+                           | #x000A
+                           | #x000D
+                           | [#x0020-#xD7FF]
+                           | [#xE000-#xFFFD]
+                           | [#x10000-#x10FFFF]
+
+complex                  ::= real? imaginary
+real                     ::= '-'? digit+ ('.' digit+)? (('e' | 'E') ('+' | '-')? digit+)?
+imaginary                ::= (('+' | '-')? real '*' 'i')
+digit                    ::= [0-9]
+
+comment                  ::= singleLineComment
+
+singleLineComment        ::= '//' (sourceCharacter - lineTerminator)*
+                           | '#'  (sourceCharacter - lineTerminator)*
+
+sourceCharacter          ::= .
+
+lineTerminator
+         ::= #x000A
+           | #x000D
+           | #x2028
+           | #x2029
+
+whitespace               ::= [#x0009#x000A#x000D#x0020]+

@@ -1,0 +1,41 @@
+#!/usr/bin/env maiascript
+
+tries = 10
+
+if (system.argc == 2) {
+    tries = system.argv[1]
+}
+
+system.println("Testing the string functions " + tries + " times.")
+
+system.println("core.split...")
+a = [1,2,3]
+test (tries; [1,2,3]; 0) {
+    b = "1,2,3"
+    c = core.split(b, ",")
+} catch (v) {
+    system.print("TEST: Fail testing function core.split.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("core.search...")
+a = "Hello, World!"
+test (tries; 5; 0) {
+    core.search(a, ",")
+} catch (v) {
+    system.print("TEST: Fail testing function core.search.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+
+system.println("string.camelize...")
+a = "Hello World"
+test (tries; "helloWorld"; 0) {
+    string.camelize(a)
+} catch (v) {
+    system.print("TEST: Fail testing function string.camelize.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
+

@@ -1,0 +1,19 @@
+#!/usr/bin/env maiascript
+
+tries = 10
+
+if (system.argc == 2) {
+    tries = system.argv[1]
+}
+
+system.println("Testing sprintf functions " + tries + " times.")
+
+system.println("string.sprintf...")
+test (tries; "a = 1e-2, b = 1.23456789, c = A, d = abc") { 
+    a = string.sprintf("a = %e, b = %f, c = %c, d = %s", 0.01, 1.23456789, 65, "abc")
+    a
+} catch (v) {
+    system.print("TEST: Fail testing function string.sprintf.")
+    system.print("      Expected result " + core.testResult.expected)
+    system.print("      But got " + core.testResult.obtained)
+}
