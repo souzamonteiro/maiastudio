@@ -322,6 +322,34 @@ function Mathematics() {
     }
 
     /**
+     * Returns the base 10 logarithm of a number x.
+     * @param {object}   x - Value of X.
+     * @return {number}  The value of the base 10 logarithm of x.
+     */
+    this.log10 = function(x)
+    {
+        var y;
+        if (core.type(x) == 'number') {
+            y = Math.log10(x);
+        }
+        return y;
+    }
+
+    /**
+     * Returns the base 2 logarithm of a number x.
+     * @param {object}   x - Value of X.
+     * @return {number}  The value of the base 10 logarithm of x.
+     */
+    this.log2 = function(x)
+    {
+        var y;
+        if (core.type(x) == 'number') {
+            y = Math.log2(x);
+        }
+        return y;
+    }
+ 
+    /**
      * Returns the largest value between x and y.
      * @param {object}   x - Value of X.
      * @param {object}   y - Value of y.
@@ -401,6 +429,20 @@ function Mathematics() {
         return y;
     }
 
+    /**
+     * Returns the sign of a number, indicating whether the number is positive, negative, or zero.
+     * @param {object}   x - Value of X.
+     * @return {number}  Value of the sign of the number.
+     */
+     this.sign = function(x)
+     {
+         var y;
+         if (core.type(x) == 'number') {
+             y = Math.sign(x);
+         }
+         return y;
+     }
+ 
     /**
      * Returns the sine value of x.
      * @param {object}   x - Value of X.
