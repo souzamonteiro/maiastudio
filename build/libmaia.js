@@ -6213,7 +6213,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.0";
+    this.version = "3.9.1";
 
     this.testResult = {
         "expected": {},
@@ -6617,6 +6617,9 @@ function Core() {
      * @return {array}  A (rows x columns) matrix.
      */
     this.matrix = function(obj, rows, columns) {
+        if (typeof columns == 'undefined') {
+            var columns = 1;
+        }
         var mtx = [];
         if (rows > 1) {
             for (var i = 0; i < rows; i++) {
@@ -6642,7 +6645,7 @@ function Core() {
      * @param {object}   properties - The object properties.
      * @return {number}  A new instance of an object.
      */
-    this.new = function(obj) {
+    this.new = function(obj, properties) {
         if (typeof properties == 'undefined') {
             var newObject = Object.create(obj);
         } else {
