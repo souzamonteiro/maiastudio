@@ -6214,7 +6214,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.1";
+    this.version = "3.9.2";
 
     this.testResult = {
         "expected": {},
@@ -6624,9 +6624,13 @@ function Core() {
         var mtx = [];
         if (rows > 1) {
             for (var i = 0; i < rows; i++) {
-                var row = [];
-                for (var j = 0; j < columns; j++) {
-                    row.push(obj);
+                if (columns > 1) {
+                    var row = [];
+                    for (var j = 0; j < columns; j++) {
+                        row.push(obj);
+                    }
+                } else {
+                    var row = obj;
                 }
                 mtx.push(row);
             }
