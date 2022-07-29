@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.2";
+    this.version = "3.9.3";
 
     this.testResult = {
         "expected": {},
@@ -430,13 +430,10 @@ function Core() {
      * @return {array}  A (rows x columns) matrix.
      */
     this.matrix = function(obj, rows, columns) {
-        if (typeof columns == 'undefined') {
-            var columns = 1;
-        }
         var mtx = [];
         if (rows > 1) {
             for (var i = 0; i < rows; i++) {
-                if (columns > 1) {
+                if (typeof columns != 'undefined') {
                     var row = [];
                     for (var j = 0; j < columns; j++) {
                         row.push(obj);
