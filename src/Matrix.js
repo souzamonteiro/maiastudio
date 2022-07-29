@@ -40,8 +40,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  Mean and standard deviation of the values contained in a matrix.
      */
-    this.avg = function(mtx, r1, c1, r2, c2)
-    {
+    this.avg = function(mtx, r1, c1, r2, c2) {
         var res = {
             'avg': 0,
             'dev': 0
@@ -119,8 +118,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  The number of non-zero elements in the matrix.
      */
-    this.count = function(mtx, r1, c1, r2, c2)
-    {
+    this.count = function(mtx, r1, c1, r2, c2) {
         var res;
         if (core.type(mtx) == 'matrix') {
             dimMatrix = core.dim(mtx);
@@ -183,8 +181,7 @@ function Matrix() {
      * @param {object}  b - The matrix B.
      * @return {array}  A (rows x columns) matrix.
      */
-    this.cross = function(a, b)
-    {
+    this.cross = function(a, b) {
         var mtx;
         if ((core.type(a) == 'matrix') && (core.type(b) == 'matrix')) {
             var dimA = core.dim(a);
@@ -215,8 +212,7 @@ function Matrix() {
      * @param {object}  b - The matrix B.
      * @return {array}  A (rows x columns) matrix.
      */
-    this.dot = function(a, b)
-    {
+    this.dot = function(a, b) {
         var res;
         if ((core.type(a) == 'matrix') && (core.type(b) == 'matrix')) {
             var dimA = core.dim(a);
@@ -246,8 +242,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  The smallest value in an array.
      */
-    this.max = function(mtx, r1, c1, r2, c2)
-    {
+    this.max = function(mtx, r1, c1, r2, c2) {
         var res;
         if (core.type(mtx) == 'matrix') {
             dimMatrix = core.dim(mtx);
@@ -321,8 +316,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  The smallest value in an array.
      */
-    this.min = function(mtx, r1, c1, r2, c2)
-    {
+    this.min = function(mtx, r1, c1, r2, c2) {
         var res;
         if (core.type(mtx) == 'matrix') {
             dimMatrix = core.dim(mtx);
@@ -395,8 +389,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  Sum of the values contained in a matrix.
      */
-    this.sum = function(mtx, r1, c1, r2, c2)
-    {
+    this.sum = function(mtx, r1, c1, r2, c2) {
         var res;
         var sx;
         if (core.type(mtx) == 'matrix') {
@@ -460,8 +453,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  Sum of the values contained in a matrix.
      */
-    this.sum2 = function(mtx, r1, c1, r2, c2)
-    {
+    this.sum2 = function(mtx, r1, c1, r2, c2) {
         var res;
         var sx;
         if (core.type(mtx) == 'matrix') {
@@ -525,8 +517,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  The transpose of an array.
      */
-    this.trans = function(mtx, r1, c1, r2, c2)
-    {
+    this.trans = function(mtx, r1, c1, r2, c2) {
         var res;
         if (core.type(mtx) == 'matrix') {
             dimMatrix = core.dim(mtx);
@@ -568,8 +559,7 @@ function Matrix() {
      * @param {object}  mtx - The matrix to calculate the triangular equivalent matrix.
      * @return {array}  A (rows x columns) matrix.
      */
-    this.triang = function(mtx)
-    {
+    this.triang = function(mtx) {
         if (core.type(mtx) == 'matrix') {
             var dim = core.dim(mtx);
             var m = dim[0];

@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.3";
+    this.version = "3.9.4";
 
     this.testResult = {
         "expected": {},
@@ -156,33 +156,37 @@ function Core() {
             var dim = core.dim(obj);
             var m = dim[0];
             var n = dim[1];
-            // Convert to the diagonal equivalent matrix.
-            var cpy = this.copyMatrix(obj);
-            mtx = core.ident(m);
-            for (var j = 0; j < m; j++) {
-                if (cpy[j][j] != 0) {
-                    for (var i = 0; i < m; i++) {
-                        if (i != j) {
-                            var scale = -cpy[i][j] / cpy[j][j];
-                            for (k = j; k < n; k++) {
-                                cpy[i][k] = cpy[i][k] + scale * cpy[j][k];
-                            }
-                            for (k = 0; k < n; k++) {
-                                mtx[i][k] = mtx[i][k] + scale * mtx[j][k];
+            if (m == n) {
+                // Convert to the diagonal equivalent matrix.
+                var cpy = this.copyMatrix(obj);
+                mtx = core.ident(m);
+                for (var j = 0; j < m; j++) {
+                    if (cpy[j][j] != 0) {
+                        for (var i = 0; i < m; i++) {
+                            if (i != j) {
+                                var scale = -cpy[i][j] / cpy[j][j];
+                                for (k = j; k < n; k++) {
+                                    cpy[i][k] = cpy[i][k] + scale * cpy[j][k];
+                                }
+                                for (k = 0; k < n; k++) {
+                                    mtx[i][k] = mtx[i][k] + scale * mtx[j][k];
+                                }
                             }
                         }
                     }
                 }
-            }
-            for (i = 0; i < m; i++) {
-                for (j = 0; j < n; j++) {
-                    mtx[i][j] = mtx[i][j] / cpy[i][i];
+                for (i = 0; i < m; i++) {
+                    for (j = 0; j < n; j++) {
+                        mtx[i][j] = mtx[i][j] / cpy[i][i];
+                    }
                 }
-            }
-            // Calculates the determinant of the matrix.
-            var det = 1;
-            for (i = 0; i < m; i++) {
-                det = det * cpy[i][i];
+                // Calculates the determinant of the matrix.
+                var det = 1;
+                for (i = 0; i < m; i++) {
+                    det = det * cpy[i][i];
+                }
+            } else {
+                throw new Error('The matrix must for function det() must be square, in the expression det(' + core.toString(obj) + ').');
             }
         } else {
             throw new Error('The argument for function det() must be a matrix, in the expression det(' + core.toString(obj) + ').');
@@ -1126,7 +1130,7 @@ function Core() {
      * @return {string}  An string represening the result of the operation.
      */
     this.different = function(left, right) {
-        return left != right;
+        return !this.equal(left, right);
     }
 
     /**

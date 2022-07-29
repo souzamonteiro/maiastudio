@@ -52,8 +52,7 @@ function System() {
      * @param {array}    header - Column descriptors.
      * @return {string}  The CSV file data.
      */
-     this.createCSV = function(csvData, recordSeparator, header)
-     {
+    this.createCSV = function(csvData, recordSeparator, header) {
         if (typeof separator != 'undefined') {
             var separator = ',';
         }
@@ -88,7 +87,7 @@ function System() {
         } else {
             throw new Error('Invalid argument for function createCSV. Argument must be an array.');
         }
-     }
+    }
 
     /**
      * Download a file.
@@ -119,8 +118,7 @@ function System() {
      * @param {boolean}  doEval - Run core.eval before adding the column to the record.
      * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
      */
-     this.parseCSV = function(csvData, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval)
-     {
+    this.parseCSV = function(csvData, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval) {
         if (typeof csvData != 'undefined') {
             var fileLines = core.split(csvData, '\r\n');
             var csvArray = [];
@@ -132,14 +130,13 @@ function System() {
         } else {
             throw new Error('Invalid argument for function loadCSV. Argument must be a string.');
         }
-     }
+    }
 
     /**
      * Displays a message in the console.
      * @param {string}  text - Text to display.
      */
-    this.log = function(text)
-    {
+    this.log = function(text) {
         console.log(text);
     }
 
@@ -152,8 +149,7 @@ function System() {
      * @param {boolean}  doEval - Run core.eval before adding the column to the record.
      * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
      */
-    this.loadCSV = function(inputFile, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval)
-    {
+    this.loadCSV = function(inputFile, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval) {
         if (typeof process != 'undefined') {
             var fs = require('fs');
             var readTextFile = fs.readFileSync;
@@ -184,8 +180,7 @@ function System() {
      * Displays a message in the console.
      * @param {string}  text - Text to display.
      */
-    this.print = function(text)
-    {
+    this.print = function(text) {
         this.log(text);
     }
 
@@ -195,8 +190,7 @@ function System() {
      * @param {object}   arguments - Objects to be formatted.
      * @return {string}  A formatted string based on format specifiers passed to the function.
      */
-    this.printf = function(fmt)
-    {
+    this.printf = function(fmt) {
         this.log(string.sprintFormat(string.sprintfParse(fmt), arguments));
     }
 
@@ -204,8 +198,7 @@ function System() {
      * Displays a message on the console and advances the cursor to the next line.
      * @param {string}  text - Text to display.
      */
-    this.println = function(text)
-    {
+    this.println = function(text) {
         this.log(text + '\r\n');
     }
 
@@ -233,8 +226,7 @@ function System() {
      * @param {string}   moduleName - Module name.
      * @return {object}  The native module reference.
      */
-    this.require = function(moduleName)
-    {
+    this.require = function(moduleName) {
         var moduleReference;
         if (typeof process !== 'undefined') {
             var moduleReference = require(moduleName);
@@ -247,8 +239,7 @@ function System() {
      * @param {string}   text - Text to display.
      * @return {string}  User choice.
      */
-    this.showConfirmDialog = function(text)
-    {
+    this.showConfirmDialog = function(text) {
         return confirm(text);
     }
 
@@ -258,8 +249,7 @@ function System() {
      * @param {string}   defaultText - Default text to display in the text box.
      * @return {string}  User-typed text.
      */
-    this.showInputDialog = function(text, defaultText = '')
-    {
+    this.showInputDialog = function(text, defaultText = '') {
         return prompt(text, defaultText);
     }
 
@@ -267,8 +257,7 @@ function System() {
      * Displays a message in a dialog box.
      * @param {string}  text - Text to display.
      */
-    this.showMessageDialog = function(text)
-    {
+    this.showMessageDialog = function(text) {
         alert(text);
     }
 
@@ -277,8 +266,7 @@ function System() {
      * @param {string}   inputFile - Module name.
      * @return {object}  The MaiaScript module loaded.
      */
-    this.source = function(inputFile)
-    {
+    this.source = function(inputFile) {
         if (typeof process != 'undefined') {
             var fs = require('fs');
             var readTextFile = fs.readFileSync;

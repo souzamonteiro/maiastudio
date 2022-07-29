@@ -69,8 +69,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The positive value of x.
      */
-    this.abs = function(x)
-    {
+    this.abs = function(x) {
         var y;
         if (core.type(x) == 'complex') {
             y = Math.sqrt(x.real * x.real + x.imaginary * x.imaginary);
@@ -85,8 +84,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The arccosine value of x.
      */
-    this.acos = function(x)
-    {
+    this.acos = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.acos(x);
@@ -99,8 +97,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic arccosine value of x.
      */
-    this.acosh = function(x)
-    {
+    this.acosh = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.acosh(x);
@@ -112,8 +109,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The complex number argument.
      */
-    this.arg = function(x)
-    {
+    this.arg = function(x) {
         // t=arg(a+b*i)=atan(b/a)
         var y;
         if (core.type(x) == 'complex') {
@@ -127,8 +123,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The arcsine value of x.
      */
-    this.asin = function(x)
-    {
+    this.asin = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.asin(x);
@@ -141,8 +136,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic arcsine value of x.
      */
-    this.asinh = function(x)
-    {
+    this.asinh = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.asinh(x);
@@ -155,8 +149,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The arctangent value of x.
      */
-    this.atan = function(x)
-    {
+    this.atan = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.atan(x);
@@ -170,8 +163,7 @@ function Mathematics() {
      * @param {object}   y - Value of Y.
      * @return {number}  The arctangent value of x.
      */
-    this.atan2 = function(x, y)
-    {
+    this.atan2 = function(x, y) {
         var z;
         if (core.type(x) == 'number') {
             z = Math.atan2(x, y);
@@ -184,8 +176,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic arctangent value of x.
      */
-    this.atanh = function(x)
-    {
+    this.atanh = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.atanh(x);
@@ -198,8 +189,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The cubic root of x.
      */
-    this.cbrt = function(x)
-    {
+    this.cbrt = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.cbrt(x);
@@ -212,8 +202,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The cosine value of x.
      */
-    this.cos = function(x)
-    {
+    this.cos = function(x) {
         // cos(a+b*i)=cos(a)*cosh(b)-i*sin(a)*sinh(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -229,8 +218,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic cosine value of x.
      */
-    this.cosh = function(x)
-    {
+    this.cosh = function(x) {
         // cosh(a+b*i)=cosh(a)*cos(b)+i*sinh(a)sin(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -246,8 +234,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x rounded up.
      */
-    this.ceil = function(x)
-    {
+    this.ceil = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.ceil(x);
@@ -260,8 +247,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x in decimal degrees.
      */
-    this.deg = function(x)
-    {
+    this.deg = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = x * (180 / Math.PI);;
@@ -274,8 +260,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of E^x.
      */
-    this.exp = function(x)
-    {
+    this.exp = function(x) {
         // exp(a+b*i)=exp(a)*cos(b)+i*sin(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -291,8 +276,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x rounded down.
      */
-    this.floor = function(x)
-    {
+    this.floor = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.floor(x);
@@ -305,8 +289,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The value of the natural logarithm of x.
      */
-    this.log = function(x)
-    {
+    this.log = function(x) {
         // r=abs(a+b*i)=sqrt(a*a+b*b)
         // t=arg(a+b*i)=atan(b/a)
         // log(a+b*i)=log(r)+i*t
@@ -326,8 +309,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The value of the base 10 logarithm of x.
      */
-    this.log10 = function(x)
-    {
+    this.log10 = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.log10(x);
@@ -340,8 +322,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The value of the base 10 logarithm of x.
      */
-    this.log2 = function(x)
-    {
+    this.log2 = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.log2(x);
@@ -355,8 +336,7 @@ function Mathematics() {
      * @param {object}   y - Value of y.
      * @return {number}  The largest value between x and y.
      */
-    this.max = function(x, y)
-    {
+    this.max = function(x, y) {
         var y;
         if ((core.type(x) == 'number') && (core.type(y) == 'number')) {
             y = Math.max(x, y);
@@ -370,8 +350,7 @@ function Mathematics() {
      * @param {object}   y - Value of y.
      * @return {number}  The smallest value between x and y.
      */
-    this.min = function(x, y)
-    {
+    this.min = function(x, y) {
         var y;
         if ((core.type(x) == 'number') && (core.type(y) == 'number')) {
             y = Math.min(x, y);
@@ -385,8 +364,7 @@ function Mathematics() {
      * @param {object}   y - Value of y.
      * @return {number}  Value of x to the power of y.
      */
-    this.pow = function(x, y)
-    {
+    this.pow = function(x, y) {
         var z = core.power(x, y);
         return z;
     }
@@ -396,8 +374,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x in radians.
      */
-    this.rad = function(x)
-    {
+    this.rad = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = x * (Math.PI / 180);;
@@ -409,8 +386,7 @@ function Mathematics() {
      * Returns a random number between 0 and 1.
      * @return {number}  A random number.
      */
-    this.random = function()
-    {
+    this.random = function() {
         var y = Math.random();
         return y;
     }
@@ -420,8 +396,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x rounding to the nearest value.
      */
-    this.round = function(x)
-    {
+    this.round = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.round(x);
@@ -448,8 +423,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The sine value of x.
      */
-    this.sin = function(x)
-    {
+    this.sin = function(x) {
         // sin(a+b*i)=sin(a)*cosh(b)+i*cos(a)*sinh(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -465,8 +439,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic sine value of x.
      */
-    this.sinh = function(x)
-    {
+    this.sinh = function(x) {
         // sinh(a+b*i)=sinh(a)*cos(b)+i*cosh(a)sin(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -482,8 +455,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of the square root of x.
      */
-    this.sqrt = function(x)
-    {
+    this.sqrt = function(x) {
         // r=abs(a+b*i)=sqrt(a*a+b*b)
         // t=arg(a+b*i)=atan(b/a)
         // sqrt(a+b*i)=sqrt(r)*cos(t/2)+i*sqrt(r)*sin(t/2)
@@ -503,8 +475,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The tangent value of x.
      */
-    this.tan = function(x)
-    {
+    this.tan = function(x) {
         // tan(a+b*i)=sin(a+b*i)/cos(a+b*i)
         var y;
         if (core.type(x) == 'complex') {
@@ -520,8 +491,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic tangent value of x.
      */
-    this.tanh = function(x)
-    {
+    this.tanh = function(x) {
         // tanh(a+b*i)=sinh(a+b*i)/cosh(a+b*i)
         var y;
         if (core.type(x) == 'complex') {
@@ -537,8 +507,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The integer part of a number
      */
-    this.trunc = function(x)
-    {
+    this.trunc = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.trunc(x);

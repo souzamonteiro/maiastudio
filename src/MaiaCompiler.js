@@ -90,8 +90,7 @@ function MaiaCompiler() {
      * @param {xml}    xml - The XML data.
      * @return {json}  XML data converted to a JSON object.
      */
-    this.xmlToJson = function(xml)
-    {
+    this.xmlToJson = function(xml) {
         try {
             var obj = {};
             if (xml.children.length > 0) {
@@ -124,8 +123,7 @@ function MaiaCompiler() {
      * @param {string} itemName - Name of the item being analyzed.
      * @return {json}  XML data converted to a MIL object.
      */
-    this.xmlToMil = function(xml, itemName = '')
-    {
+    this.xmlToMil = function(xml, itemName = '') {
         try {
             var obj = {};
 

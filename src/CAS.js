@@ -38,8 +38,7 @@ function CAS() {
      * @param {string}   expr - Algebraic expression.
      * @return {object}  Result of the expression.
      */
-    this.eval = function(expr)
-    {
+    this.eval = function(expr) {
         var res;
         if (typeof Algebrite != 'undefined') {
             res = Algebrite.run(expr);

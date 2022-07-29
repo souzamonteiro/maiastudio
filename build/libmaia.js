@@ -4859,8 +4859,7 @@ function MaiaCompiler() {
      * @param {xml}    xml - The XML data.
      * @return {json}  XML data converted to a JSON object.
      */
-    this.xmlToJson = function(xml)
-    {
+    this.xmlToJson = function(xml) {
         try {
             var obj = {};
             if (xml.children.length > 0) {
@@ -4893,8 +4892,7 @@ function MaiaCompiler() {
      * @param {string} itemName - Name of the item being analyzed.
      * @return {json}  XML data converted to a MIL object.
      */
-    this.xmlToMil = function(xml, itemName = '')
-    {
+    this.xmlToMil = function(xml, itemName = '') {
         try {
             var obj = {};
 
@@ -6213,7 +6211,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.3";
+    this.version = "3.9.4";
 
     this.testResult = {
         "expected": {},
@@ -6343,33 +6341,37 @@ function Core() {
             var dim = core.dim(obj);
             var m = dim[0];
             var n = dim[1];
-            // Convert to the diagonal equivalent matrix.
-            var cpy = this.copyMatrix(obj);
-            mtx = core.ident(m);
-            for (var j = 0; j < m; j++) {
-                if (cpy[j][j] != 0) {
-                    for (var i = 0; i < m; i++) {
-                        if (i != j) {
-                            var scale = -cpy[i][j] / cpy[j][j];
-                            for (k = j; k < n; k++) {
-                                cpy[i][k] = cpy[i][k] + scale * cpy[j][k];
-                            }
-                            for (k = 0; k < n; k++) {
-                                mtx[i][k] = mtx[i][k] + scale * mtx[j][k];
+            if (m == n) {
+                // Convert to the diagonal equivalent matrix.
+                var cpy = this.copyMatrix(obj);
+                mtx = core.ident(m);
+                for (var j = 0; j < m; j++) {
+                    if (cpy[j][j] != 0) {
+                        for (var i = 0; i < m; i++) {
+                            if (i != j) {
+                                var scale = -cpy[i][j] / cpy[j][j];
+                                for (k = j; k < n; k++) {
+                                    cpy[i][k] = cpy[i][k] + scale * cpy[j][k];
+                                }
+                                for (k = 0; k < n; k++) {
+                                    mtx[i][k] = mtx[i][k] + scale * mtx[j][k];
+                                }
                             }
                         }
                     }
                 }
-            }
-            for (i = 0; i < m; i++) {
-                for (j = 0; j < n; j++) {
-                    mtx[i][j] = mtx[i][j] / cpy[i][i];
+                for (i = 0; i < m; i++) {
+                    for (j = 0; j < n; j++) {
+                        mtx[i][j] = mtx[i][j] / cpy[i][i];
+                    }
                 }
-            }
-            // Calculates the determinant of the matrix.
-            var det = 1;
-            for (i = 0; i < m; i++) {
-                det = det * cpy[i][i];
+                // Calculates the determinant of the matrix.
+                var det = 1;
+                for (i = 0; i < m; i++) {
+                    det = det * cpy[i][i];
+                }
+            } else {
+                throw new Error('The matrix must for function det() must be square, in the expression det(' + core.toString(obj) + ').');
             }
         } else {
             throw new Error('The argument for function det() must be a matrix, in the expression det(' + core.toString(obj) + ').');
@@ -7313,7 +7315,7 @@ function Core() {
      * @return {string}  An string represening the result of the operation.
      */
     this.different = function(left, right) {
-        return left != right;
+        return !this.equal(left, right);
     }
 
     /**
@@ -7782,8 +7784,7 @@ function System() {
      * @param {array}    header - Column descriptors.
      * @return {string}  The CSV file data.
      */
-     this.createCSV = function(csvData, recordSeparator, header)
-     {
+    this.createCSV = function(csvData, recordSeparator, header) {
         if (typeof separator != 'undefined') {
             var separator = ',';
         }
@@ -7818,7 +7819,7 @@ function System() {
         } else {
             throw new Error('Invalid argument for function createCSV. Argument must be an array.');
         }
-     }
+    }
 
     /**
      * Download a file.
@@ -7849,8 +7850,7 @@ function System() {
      * @param {boolean}  doEval - Run core.eval before adding the column to the record.
      * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
      */
-     this.parseCSV = function(csvData, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval)
-     {
+    this.parseCSV = function(csvData, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval) {
         if (typeof csvData != 'undefined') {
             var fileLines = core.split(csvData, '\r\n');
             var csvArray = [];
@@ -7862,14 +7862,13 @@ function System() {
         } else {
             throw new Error('Invalid argument for function loadCSV. Argument must be a string.');
         }
-     }
+    }
 
     /**
      * Displays a message in the console.
      * @param {string}  text - Text to display.
      */
-    this.log = function(text)
-    {
+    this.log = function(text) {
         console.log(text);
     }
 
@@ -7882,8 +7881,7 @@ function System() {
      * @param {boolean}  doEval - Run core.eval before adding the column to the record.
      * @return {array}   The array containing the parts of the CSV or NULL if the CSV record is not well formed.
      */
-    this.loadCSV = function(inputFile, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval)
-    {
+    this.loadCSV = function(inputFile, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval) {
         if (typeof process != 'undefined') {
             var fs = require('fs');
             var readTextFile = fs.readFileSync;
@@ -7914,8 +7912,7 @@ function System() {
      * Displays a message in the console.
      * @param {string}  text - Text to display.
      */
-    this.print = function(text)
-    {
+    this.print = function(text) {
         this.log(text);
     }
 
@@ -7925,8 +7922,7 @@ function System() {
      * @param {object}   arguments - Objects to be formatted.
      * @return {string}  A formatted string based on format specifiers passed to the function.
      */
-    this.printf = function(fmt)
-    {
+    this.printf = function(fmt) {
         this.log(string.sprintFormat(string.sprintfParse(fmt), arguments));
     }
 
@@ -7934,8 +7930,7 @@ function System() {
      * Displays a message on the console and advances the cursor to the next line.
      * @param {string}  text - Text to display.
      */
-    this.println = function(text)
-    {
+    this.println = function(text) {
         this.log(text + '\r\n');
     }
 
@@ -7963,8 +7958,7 @@ function System() {
      * @param {string}   moduleName - Module name.
      * @return {object}  The native module reference.
      */
-    this.require = function(moduleName)
-    {
+    this.require = function(moduleName) {
         var moduleReference;
         if (typeof process !== 'undefined') {
             var moduleReference = require(moduleName);
@@ -7977,8 +7971,7 @@ function System() {
      * @param {string}   text - Text to display.
      * @return {string}  User choice.
      */
-    this.showConfirmDialog = function(text)
-    {
+    this.showConfirmDialog = function(text) {
         return confirm(text);
     }
 
@@ -7988,8 +7981,7 @@ function System() {
      * @param {string}   defaultText - Default text to display in the text box.
      * @return {string}  User-typed text.
      */
-    this.showInputDialog = function(text, defaultText = '')
-    {
+    this.showInputDialog = function(text, defaultText = '') {
         return prompt(text, defaultText);
     }
 
@@ -7997,8 +7989,7 @@ function System() {
      * Displays a message in a dialog box.
      * @param {string}  text - Text to display.
      */
-    this.showMessageDialog = function(text)
-    {
+    this.showMessageDialog = function(text) {
         alert(text);
     }
 
@@ -8007,8 +7998,7 @@ function System() {
      * @param {string}   inputFile - Module name.
      * @return {object}  The MaiaScript module loaded.
      */
-    this.source = function(inputFile)
-    {
+    this.source = function(inputFile) {
         if (typeof process != 'undefined') {
             var fs = require('fs');
             var readTextFile = fs.readFileSync;
@@ -8153,8 +8143,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The positive value of x.
      */
-    this.abs = function(x)
-    {
+    this.abs = function(x) {
         var y;
         if (core.type(x) == 'complex') {
             y = Math.sqrt(x.real * x.real + x.imaginary * x.imaginary);
@@ -8169,8 +8158,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The arccosine value of x.
      */
-    this.acos = function(x)
-    {
+    this.acos = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.acos(x);
@@ -8183,8 +8171,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic arccosine value of x.
      */
-    this.acosh = function(x)
-    {
+    this.acosh = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.acosh(x);
@@ -8196,8 +8183,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The complex number argument.
      */
-    this.arg = function(x)
-    {
+    this.arg = function(x) {
         // t=arg(a+b*i)=atan(b/a)
         var y;
         if (core.type(x) == 'complex') {
@@ -8211,8 +8197,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The arcsine value of x.
      */
-    this.asin = function(x)
-    {
+    this.asin = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.asin(x);
@@ -8225,8 +8210,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic arcsine value of x.
      */
-    this.asinh = function(x)
-    {
+    this.asinh = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.asinh(x);
@@ -8239,8 +8223,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The arctangent value of x.
      */
-    this.atan = function(x)
-    {
+    this.atan = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.atan(x);
@@ -8254,8 +8237,7 @@ function Mathematics() {
      * @param {object}   y - Value of Y.
      * @return {number}  The arctangent value of x.
      */
-    this.atan2 = function(x, y)
-    {
+    this.atan2 = function(x, y) {
         var z;
         if (core.type(x) == 'number') {
             z = Math.atan2(x, y);
@@ -8268,8 +8250,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic arctangent value of x.
      */
-    this.atanh = function(x)
-    {
+    this.atanh = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.atanh(x);
@@ -8282,8 +8263,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The cubic root of x.
      */
-    this.cbrt = function(x)
-    {
+    this.cbrt = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.cbrt(x);
@@ -8296,8 +8276,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The cosine value of x.
      */
-    this.cos = function(x)
-    {
+    this.cos = function(x) {
         // cos(a+b*i)=cos(a)*cosh(b)-i*sin(a)*sinh(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -8313,8 +8292,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic cosine value of x.
      */
-    this.cosh = function(x)
-    {
+    this.cosh = function(x) {
         // cosh(a+b*i)=cosh(a)*cos(b)+i*sinh(a)sin(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -8330,8 +8308,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x rounded up.
      */
-    this.ceil = function(x)
-    {
+    this.ceil = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.ceil(x);
@@ -8344,8 +8321,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x in decimal degrees.
      */
-    this.deg = function(x)
-    {
+    this.deg = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = x * (180 / Math.PI);;
@@ -8358,8 +8334,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of E^x.
      */
-    this.exp = function(x)
-    {
+    this.exp = function(x) {
         // exp(a+b*i)=exp(a)*cos(b)+i*sin(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -8375,8 +8350,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x rounded down.
      */
-    this.floor = function(x)
-    {
+    this.floor = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.floor(x);
@@ -8389,8 +8363,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The value of the natural logarithm of x.
      */
-    this.log = function(x)
-    {
+    this.log = function(x) {
         // r=abs(a+b*i)=sqrt(a*a+b*b)
         // t=arg(a+b*i)=atan(b/a)
         // log(a+b*i)=log(r)+i*t
@@ -8410,8 +8383,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The value of the base 10 logarithm of x.
      */
-    this.log10 = function(x)
-    {
+    this.log10 = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.log10(x);
@@ -8424,8 +8396,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The value of the base 10 logarithm of x.
      */
-    this.log2 = function(x)
-    {
+    this.log2 = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.log2(x);
@@ -8439,8 +8410,7 @@ function Mathematics() {
      * @param {object}   y - Value of y.
      * @return {number}  The largest value between x and y.
      */
-    this.max = function(x, y)
-    {
+    this.max = function(x, y) {
         var y;
         if ((core.type(x) == 'number') && (core.type(y) == 'number')) {
             y = Math.max(x, y);
@@ -8454,8 +8424,7 @@ function Mathematics() {
      * @param {object}   y - Value of y.
      * @return {number}  The smallest value between x and y.
      */
-    this.min = function(x, y)
-    {
+    this.min = function(x, y) {
         var y;
         if ((core.type(x) == 'number') && (core.type(y) == 'number')) {
             y = Math.min(x, y);
@@ -8469,8 +8438,7 @@ function Mathematics() {
      * @param {object}   y - Value of y.
      * @return {number}  Value of x to the power of y.
      */
-    this.pow = function(x, y)
-    {
+    this.pow = function(x, y) {
         var z = core.power(x, y);
         return z;
     }
@@ -8480,8 +8448,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x in radians.
      */
-    this.rad = function(x)
-    {
+    this.rad = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = x * (Math.PI / 180);;
@@ -8493,8 +8460,7 @@ function Mathematics() {
      * Returns a random number between 0 and 1.
      * @return {number}  A random number.
      */
-    this.random = function()
-    {
+    this.random = function() {
         var y = Math.random();
         return y;
     }
@@ -8504,8 +8470,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of x rounding to the nearest value.
      */
-    this.round = function(x)
-    {
+    this.round = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.round(x);
@@ -8532,8 +8497,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The sine value of x.
      */
-    this.sin = function(x)
-    {
+    this.sin = function(x) {
         // sin(a+b*i)=sin(a)*cosh(b)+i*cos(a)*sinh(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -8549,8 +8513,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic sine value of x.
      */
-    this.sinh = function(x)
-    {
+    this.sinh = function(x) {
         // sinh(a+b*i)=sinh(a)*cos(b)+i*cosh(a)sin(b)
         var y;
         if (core.type(x) == 'complex') {
@@ -8566,8 +8529,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  Value of the square root of x.
      */
-    this.sqrt = function(x)
-    {
+    this.sqrt = function(x) {
         // r=abs(a+b*i)=sqrt(a*a+b*b)
         // t=arg(a+b*i)=atan(b/a)
         // sqrt(a+b*i)=sqrt(r)*cos(t/2)+i*sqrt(r)*sin(t/2)
@@ -8587,8 +8549,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The tangent value of x.
      */
-    this.tan = function(x)
-    {
+    this.tan = function(x) {
         // tan(a+b*i)=sin(a+b*i)/cos(a+b*i)
         var y;
         if (core.type(x) == 'complex') {
@@ -8604,8 +8565,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The hyperbolic tangent value of x.
      */
-    this.tanh = function(x)
-    {
+    this.tanh = function(x) {
         // tanh(a+b*i)=sinh(a+b*i)/cosh(a+b*i)
         var y;
         if (core.type(x) == 'complex') {
@@ -8621,8 +8581,7 @@ function Mathematics() {
      * @param {object}   x - Value of X.
      * @return {number}  The integer part of a number
      */
-    this.trunc = function(x)
-    {
+    this.trunc = function(x) {
         var y;
         if (core.type(x) == 'number') {
             y = Math.trunc(x);
@@ -8674,8 +8633,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  Mean and standard deviation of the values contained in a matrix.
      */
-    this.avg = function(mtx, r1, c1, r2, c2)
-    {
+    this.avg = function(mtx, r1, c1, r2, c2) {
         var res = {
             'avg': 0,
             'dev': 0
@@ -8753,8 +8711,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  The number of non-zero elements in the matrix.
      */
-    this.count = function(mtx, r1, c1, r2, c2)
-    {
+    this.count = function(mtx, r1, c1, r2, c2) {
         var res;
         if (core.type(mtx) == 'matrix') {
             dimMatrix = core.dim(mtx);
@@ -8817,8 +8774,7 @@ function Matrix() {
      * @param {object}  b - The matrix B.
      * @return {array}  A (rows x columns) matrix.
      */
-    this.cross = function(a, b)
-    {
+    this.cross = function(a, b) {
         var mtx;
         if ((core.type(a) == 'matrix') && (core.type(b) == 'matrix')) {
             var dimA = core.dim(a);
@@ -8849,8 +8805,7 @@ function Matrix() {
      * @param {object}  b - The matrix B.
      * @return {array}  A (rows x columns) matrix.
      */
-    this.dot = function(a, b)
-    {
+    this.dot = function(a, b) {
         var res;
         if ((core.type(a) == 'matrix') && (core.type(b) == 'matrix')) {
             var dimA = core.dim(a);
@@ -8880,8 +8835,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  The smallest value in an array.
      */
-    this.max = function(mtx, r1, c1, r2, c2)
-    {
+    this.max = function(mtx, r1, c1, r2, c2) {
         var res;
         if (core.type(mtx) == 'matrix') {
             dimMatrix = core.dim(mtx);
@@ -8955,8 +8909,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  The smallest value in an array.
      */
-    this.min = function(mtx, r1, c1, r2, c2)
-    {
+    this.min = function(mtx, r1, c1, r2, c2) {
         var res;
         if (core.type(mtx) == 'matrix') {
             dimMatrix = core.dim(mtx);
@@ -9029,8 +8982,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  Sum of the values contained in a matrix.
      */
-    this.sum = function(mtx, r1, c1, r2, c2)
-    {
+    this.sum = function(mtx, r1, c1, r2, c2) {
         var res;
         var sx;
         if (core.type(mtx) == 'matrix') {
@@ -9094,8 +9046,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  Sum of the values contained in a matrix.
      */
-    this.sum2 = function(mtx, r1, c1, r2, c2)
-    {
+    this.sum2 = function(mtx, r1, c1, r2, c2) {
         var res;
         var sx;
         if (core.type(mtx) == 'matrix') {
@@ -9159,8 +9110,7 @@ function Matrix() {
      * @param {number}   c2 - Last column.
      * @return {number}  The transpose of an array.
      */
-    this.trans = function(mtx, r1, c1, r2, c2)
-    {
+    this.trans = function(mtx, r1, c1, r2, c2) {
         var res;
         if (core.type(mtx) == 'matrix') {
             dimMatrix = core.dim(mtx);
@@ -9202,8 +9152,7 @@ function Matrix() {
      * @param {object}  mtx - The matrix to calculate the triangular equivalent matrix.
      * @return {array}  A (rows x columns) matrix.
      */
-    this.triang = function(mtx)
-    {
+    this.triang = function(mtx) {
         if (core.type(mtx) == 'matrix') {
             var dim = core.dim(mtx);
             var m = dim[0];
@@ -10479,8 +10428,7 @@ function CAS() {
      * @param {string}   expr - Algebraic expression.
      * @return {object}  Result of the expression.
      */
-    this.eval = function(expr)
-    {
+    this.eval = function(expr) {
         var res;
         if (typeof Algebrite != 'undefined') {
             res = Algebrite.run(expr);
