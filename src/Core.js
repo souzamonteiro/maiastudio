@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.4";
+    this.version = "3.9.5";
 
     this.testResult = {
         "expected": {},
@@ -50,6 +50,23 @@ function Core() {
     /*
      * The following functions allow you to manipulate MaiaScript objects.
      */
+
+    /**
+     * Convert an array to a n x 1 matrix.
+     * @param {array}   obj - Array to be Converted.
+     * @return {array}  The array converted to a matrix.
+     */
+    this.arrayToMatrix = function(obj) {
+        var newMatrix = [];
+        for (var i = 0; i < obj.length; i++) {
+            if (Array.isArray(obj[i])) {
+                newMatrix.push(obj[i]);
+            } else {
+                newMatrix.push([obj[i]]);
+            }
+        }
+        return newMatrix;
+    }
 
     /**
      * Copies a matrix.
@@ -455,6 +472,23 @@ function Core() {
             mtx = row;
         }
         return mtx;
+    }
+
+    /**
+     * Convert an n x 1 matrix to an array.
+     * @param {array}   obj - Matrix to be Converted.
+     * @return {array}  The matrix converted to an array.
+     */
+    this.matrixToArray = function(obj) {
+        var newMatrix = [];
+        for (var i = 0; i < obj.length; i++) {
+            if (Array.isArray(obj[i])) {
+                newMatrix.push(obj[i][0]);
+            } else {
+                newMatrix.push(obj[i]);
+            }
+        }
+        return newMatrix;
     }
 
     /**
