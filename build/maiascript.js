@@ -6212,7 +6212,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.8";
+    this.version = "3.9.9";
 
     this.testResult = {
         "expected": {},
@@ -6687,17 +6687,15 @@ function Core() {
         var newMatrix = [];
         for (i = 0; i < obj.length; i++) {
             if (core.type(obj[i]) != "undefined") {
-                var row = [];
+                var row = Object();
                 for (j = 0; j < core.length(obj[i]); j++) {
                     if (members[j] != "") {
                         if (core.type(obj[i][j]) != "undefined") {
-                            var col = Object();
-                            col[members[j]] = obj[i][j];
-                            row.push(col);
+                            row[members[j]] = obj[i][j];
                         }
                     }
                 }
-                if (row.length > 0) {
+                if (Object.keys(row).length != 0) {
                     newMatrix.push(row);
                 }
             }
