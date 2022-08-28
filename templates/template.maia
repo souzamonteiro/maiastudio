@@ -51,7 +51,7 @@ namespace maiaApp {
             if (system.argc > 1) {
                 i = 1
                 while (i < system.argc) {
-                    if ((system.argv[i] == "-h") | (system.argv[i] == "--help")) {
+                    if ((system.argv[i] == "-h") || (system.argv[i] == "--help")) {
                         system.log(this.appTitle + " Command Line Interface (CLI)")
                         system.log("Usage: " + this.appName + " [options] [input file] [--] [arguments]")
                         system.log("Options:")

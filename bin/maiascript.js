@@ -6212,7 +6212,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.10";
+    this.version = "3.9.11";
 
     this.testResult = {
         "expected": {},
@@ -10851,7 +10851,7 @@ function MaiaVM() {
                     } else if (argv[i] == '-x') {
                         justCompile = true;
                         outputFileType = 'xml';
-                    } else if ((argv[i] == '-h') | (argv[i] == '--help')) {
+                    } else if ((argv[i] == '-h') || (argv[i] == '--help')) {
                         system.log('MaiaScript Command Line Interface (CLI)');
                         system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
                         system.log('Options:');

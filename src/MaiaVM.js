@@ -189,7 +189,7 @@ function MaiaVM() {
                     } else if (argv[i] == '-x') {
                         justCompile = true;
                         outputFileType = 'xml';
-                    } else if ((argv[i] == '-h') | (argv[i] == '--help')) {
+                    } else if ((argv[i] == '-h') || (argv[i] == '--help')) {
                         system.log('MaiaScript Command Line Interface (CLI)');
                         system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
                         system.log('Options:');
