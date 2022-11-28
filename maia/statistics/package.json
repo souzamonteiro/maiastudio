@@ -1,0 +1,17 @@
+{
+  "name": "statistics",
+  "version": "1.4.4",
+  "description": "Statistics Library.",
+  "keywords": [
+    "maia",
+    "maiascript",
+    "programming language",
+    "scientific computing",
+    "statistics",
+    "detrended fluctuation analysis",
+    "correlation"
+  ],
+  "author": "The MaiaScript Team (https://www.maiascript.com)",
+  "license": "Apache-2.0",
+  "homepage": "https://www.maiascript.com"
+}

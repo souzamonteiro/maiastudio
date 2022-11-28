@@ -26,7 +26,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.11";
+    this.version = "4.0.0";
 
     this.testResult = {
         "expected": {},
@@ -285,7 +285,7 @@ function Core() {
         var s = new MaiaScript.XmlSerializer(getXml, true);
         var maiaScriptParser = new MaiaScript(script, s);
         try {
-            maiaScriptParser.parse_maiascript();
+            maiaScriptParser.parse_Program();
         } catch (pe) {
             if (!(pe instanceof maiaScriptParser.ParseException)) {
                 throw pe;
@@ -670,6 +670,19 @@ function Core() {
     }
 
     /**
+     * Returns a string filled with n spaces.
+     * @param {number}   n - The number of spaces.
+     * @return {string}  The string filled with n spaces.
+     */
+    this.space = function(n) {
+        var str = ''
+        for (var i = 0; i < n; i++) {
+            str += ' ';
+        }
+        return str;
+    }
+    
+    /**
      * Removes or replaces an object from the specified position in an array.
      * @param {array}   mtx - The array to remove elements.
      * @param {number}  pos - Position from which objects will be removed.
@@ -833,7 +846,7 @@ function Core() {
      * Return a part of a string.
      * @param {string}   str - The string containing the other one.
      * @param {number}   start - The start position.
-     * @param {number}   size - The the size of the slice.
+     * @param {number}   size - The size of the slice.
      * @return {string}  The selected part of the string.
      */
     this.substr = function(str, start, size) {
@@ -1017,15 +1030,15 @@ function Core() {
      */
     this.type = function(obj) {
         var classType;
-        if (typeof obj == 'boolean') {
+        if (typeof(obj) == 'boolean') {
             classType = 'boolean';
-        } else if (typeof obj == 'function') {
+        } else if (typeof(obj) == 'function') {
             classType = 'function';
-        } else if (typeof obj == 'number') {
+        } else if (typeof(obj) == 'number') {
             classType = 'number';
-        } else if (typeof obj == 'string') {
+        } else if (typeof(obj) == 'string') {
             classType = 'string';
-        } else if (typeof obj == 'object') {
+        } else if (typeof(obj) == 'object') {
             if (Array.isArray(obj)) {
                 classType = 'matrix';
             } else {
@@ -1035,7 +1048,7 @@ function Core() {
                     classType = 'object';
                 }
             }
-        } else if (typeof obj == 'undefined') {
+        } else if (typeof(obj) == 'undefined') {
             classType = 'undefined';
         }
         return classType;

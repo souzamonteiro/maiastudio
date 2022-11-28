@@ -1,0 +1,17 @@
+fs = system.require("fs")
+
+realPath = fs.realpathSync(system.argv[0])
+filePath = realPath.split("/")
+filePath = core.slice(filePath, 0, filePath.length - 2)
+filePath = filePath.join("/")
+scriptPath = filePath
+
+wasmBuffer = fs.readFileSync(scriptPath + "/examples/add.wasm")
+wasmModule := WebAssembly.Module(wasmBuffer)
+
+wasmInstance := WebAssembly.Instance(wasmModule, {})
+add = wasmInstance.exports.add
+
+for (i = 0; i < 10; i++) {
+  system.log(add(i, i))
+}

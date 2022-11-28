@@ -132,7 +132,7 @@ function downloadMil() {
     var s = new MaiaScript.XmlSerializer(getXml, true);
     var maiaScriptParser = new MaiaScript(code, s);
     try {
-        maiaScriptParser.parse_maiascript();
+        maiaScriptParser.parse_Program();
     } catch (pe) {
         if (!(pe instanceof maiaScriptParser.ParseException)) {
             throw pe;
@@ -164,7 +164,7 @@ function downloadJs() {
     var s = new MaiaScript.XmlSerializer(getXml, true);
     var maiaScriptParser = new MaiaScript(code, s);
     try {
-        maiaScriptParser.parse_maiascript();
+        maiaScriptParser.parse_Program();
     } catch (pe) {
         if (!(pe instanceof maiaScriptParser.ParseException)) {
             throw pe;
@@ -218,7 +218,7 @@ function compileAndRun() {
         var s = new MaiaScript.XmlSerializer(getXml, true);
         var maiaScriptParser = new MaiaScript(code, s);
         try {
-            maiaScriptParser.parse_maiascript();
+            maiaScriptParser.parse_Program();
         } catch (pe) {
             if (!(pe instanceof maiaScriptParser.ParseException)) {
                 throw pe;

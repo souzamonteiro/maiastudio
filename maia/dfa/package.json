@@ -1,0 +1,16 @@
+{
+  "name": "dfa",
+  "version": "1.0.0",
+  "description": "Detrended Fluctuation Analysis (DFA) Library.",
+  "keywords": [
+    "maia",
+    "maiascript",
+    "programming language",
+    "scientific computing",
+    "detrended fluctuation analysis",
+    "correlation"
+  ],
+  "author": "The MaiaScript Team (https://www.maiascript.com)",
+  "license": "Apache-2.0",
+  "homepage": "https://www.maiascript.com"
+}

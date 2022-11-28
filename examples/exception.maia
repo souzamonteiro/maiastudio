@@ -1,0 +1,17 @@
+try {
+    x = "50"
+    if (x == "")
+        throw ("empty")
+    if (isNaN(x)) {
+        throw ("not a number")
+    }
+    x = Number(x)
+    if (x < 5) {
+        throw ("too low")
+    }
+    if (x > 10)
+        throw ("too high")
+} catch(err) {
+    system.print("Error: ")
+    system.println("input is " + err + "!")
+}

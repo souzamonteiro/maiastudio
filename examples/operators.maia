@@ -1,0 +1,50 @@
+a = 1
+b = 2.0
+
+d = a + b
+system.println(d)
+d = a - b
+system.println(d)
+d = a * b
+system.println(d)
+d = a / b
+system.println(d)
+d = a % b
+system.println(d)
+// Python-like power operator.
+d = a ** b
+system.println(d)
+
+// C-like operators.
+d = a += b
+system.println(d)
+d = a -= b
+system.println(d)
+
+d = a & b
+system.println(d)
+d = a | b
+system.println(d)
+d = a ^ b
+system.println(d)
+d = a && b
+system.println(d)
+d = a || b
+system.println(d)
+
+d = a++
+system.println(d)
+d = b--
+system.println(d)
+d = ++a
+system.println(d)
+d = --b
+system.println(d)
+
+/*
+ * Complex numbers support.
+ */
+e = 1.0+2.0*i
+f = 3.0+4.0*i
+g = e + f
+system.println(e)

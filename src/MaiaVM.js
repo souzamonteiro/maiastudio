@@ -32,7 +32,10 @@ function MaiaVM() {
         compiledCode = {
             'xml': '',
             'mil': '',
-            'js': ''
+            'js': '',
+            'wat': '',
+            'wasm': '',
+            'exports': []
         }
     }
 
@@ -73,7 +76,7 @@ function MaiaVM() {
                                         var s = new MaiaScript.XmlSerializer(getXml, true);
                                         var maiaScriptParser = new MaiaScript(code, s);
                                         try {
-                                            maiaScriptParser.parse_maiascript();
+                                            maiaScriptParser.parse_Program();
                                         } catch (pe) {
                                             if (!(pe instanceof maiaScriptParser.ParseException)) {
                                                 throw pe;
@@ -86,7 +89,7 @@ function MaiaVM() {
                                         var parser = new DOMParser();
                                         var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
                                         var compiler = new MaiaCompiler();
-                                        compiledCode.js = compiler.compile(xml);
+                                        compiledCode = compiler.compile(xml, false, indentationLength);
                                         try {
                                             var script = document.createElement('script');
                                             script.type = 'text/javascript';
@@ -114,7 +117,7 @@ function MaiaVM() {
                     var s = new MaiaScript.XmlSerializer(getXml, true);
                     var maiaScriptParser = new MaiaScript(code, s);
                     try {
-                        maiaScriptParser.parse_maiascript();
+                        maiaScriptParser.parse_Program();
                     } catch (pe) {
                         if (!(pe instanceof maiaScriptParser.ParseException)) {
                             throw pe;
@@ -127,7 +130,7 @@ function MaiaVM() {
                     var parser = new DOMParser();
                     var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
                     var compiler = new MaiaCompiler();
-                    compiledCode.js = compiler.compile(xml);
+                    compiledCode = compiler.compile(xml, false, indentationLength);
                     try {
                         var script = document.createElement('script');
                         script.type = 'text/javascript';
@@ -153,13 +156,9 @@ function MaiaVM() {
         if (typeof process !== 'undefined') {
             var command = 'node';
             var argv = process.argv.slice();
-            compiledCode.xml = '';
+            
             var fs = require('fs');
             var readTextFile = fs.readFileSync;
-
-            function getXml(data) {
-                compiledCode.xml += data;
-            }
 
             function read(input) {
                 if (/^{.*}$/.test(input)) {
@@ -170,38 +169,70 @@ function MaiaVM() {
                 }
             }
 
+            var buffer = require("buffer");
+            var Buffer = buffer.Buffer;
+
+            compiledCode.xml = '';
+
+            function getXml(data) {
+                compiledCode.xml += data;
+            }
+
             system.argv = argv.slice();
             system.argc = argv.length;
-            var justCompile = false;
             var inputFile;
             var outputFile;
+            var justCompile = false;
+            var indentCode = false;
+            var indentationLength = 4;
             var outputFileType = 'js';
             var outputContents = '';
+            
+            var saveWasm = false;
+            var saveWat = false;
+            
             if (argv.length > 2) {
                 var i = 2;
                 while (i < argv.length) {
-                    if (argv[i] == '-c') {
+                    if ((argv[i] == '-h') || (argv[i] == '--help')) {
+                        system.log('MaiaScript Command Line Interface (CLI)');
+                        system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
+                        system.log('Options:');
+                        system.log('-h     --help               Displays this help message.');
+                        system.log('-o     <script.js>          Output file name.');
+                        system.log('       --indent             Indent the output code.');
+                        system.log('       --spaces             Number of spaces in the indentation.');
+                        system.log('-c                          Just compile to JS, don\'t run the script.');
+                        system.log('       --json               Just compile to JSON, don\'t run the script.');
+                        system.log('-m                          Just compile to MIL, don\'t run the script.');
+                        system.log('-x                          Just compile to XML, don\'t run the script.');
+                        system.log('       --wasm               Save the WebAssembly code in binary format.');
+                        system.log('       --wat                Save the WebAssembly code in text format.');
+                        system.log('       --                   End of compiler options.\n');
+                    } else if (argv[i] == '-o') {
+                        i++;
+                        outputFile = argv[i];
+                    } else if (argv[i] == '--indent') {
+                        indentCode = true;
+                    } else if (argv[i] == '--spaces') {
+                        i++;
+                        indentationLength = core.toNumber(argv[i]);
+                    } else if (argv[i] == '-c') {
                         justCompile = true;
                         outputFileType = 'js';
+                    } else if (argv[i] == '--json') {
+                        justCompile = true;
+                        outputFileType = 'json';
                     } else if (argv[i] == '-m') {
                         justCompile = true;
                         outputFileType = 'mil';
                     } else if (argv[i] == '-x') {
                         justCompile = true;
                         outputFileType = 'xml';
-                    } else if ((argv[i] == '-h') || (argv[i] == '--help')) {
-                        system.log('MaiaScript Command Line Interface (CLI)');
-                        system.log('Usage: maiascript [options] [script.maia] [--] [arguments]');
-                        system.log('Options:');
-                        system.log('-c                          Just compile to JS, don\'t run the script;');
-                        system.log('-m                          Just compile to MIL, don\'t run the script;');
-                        system.log('-x                          Just compile to XML, don\'t run the script;');
-                        system.log('-h     --help               Displays this help message;');
-                        system.log('-o     <script.js>          Output file name;');
-                        system.log('       --                   End of compiler options.\n');
-                    } else if (argv[i] == '-o') {
-                        i++;
-                        outputFile = argv[i];
+                    } else if (argv[i] == '--wasm') {
+                        saveWasm = true;
+                    } else if (argv[i] == '--wat') {
+                        saveWat = true;
                     } else if (argv[i] == '--') {
                         break;
                     } else {
@@ -217,7 +248,7 @@ function MaiaVM() {
                     var s = new MaiaScript.XmlSerializer(getXml, false);
                     var maiaScriptParser = new MaiaScript(code, s);
                     try {
-                        maiaScriptParser.parse_maiascript();
+                        maiaScriptParser.parse_Program();
                     } catch (pe) {
                         if (!(pe instanceof maiaScriptParser.ParseException)) {
                             throw pe;
@@ -230,17 +261,51 @@ function MaiaVM() {
                     var parser = new DOMParser();
                     var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
                     var compiler = new MaiaCompiler();
-                    compiledCode.mil = compiler.xmlToMil(xml);
-                    compiledCode.js = compiler.compile(xml);
+                    compiledCode = compiler.compile(xml, indentCode, indentationLength);
+
+                    var js = '';
+
+                    if (compiledCode.wat.length > 0) {
+                        var serialNumber = Date.now();
+                        var textWasmVar = 'textWasm_' + serialNumber;
+                        var binaryWasmVar = 'binaryWasm_' + serialNumber;
+                        var wasmModuleVar = 'wasmModule_' + serialNumber;
+                        var wasmInstanceVar = 'wasmInstance_' + serialNumber;
+                        js += 'var ' + textWasmVar + ' = ' + JSON.stringify(compiledCode.wat) + ';' + (indentCode ? '\n' : '');
+                        js += 'var ' + binaryWasmVar + ' = system.wat2wasm(' + textWasmVar + ');' + (indentCode ? '\n' : '');
+                        js += 'var ' + wasmModuleVar + ' = new WebAssembly.Module(' + binaryWasmVar + ');' + (indentCode ? '\n' : '');
+                        js += 'var ' + wasmInstanceVar + ' = new WebAssembly.Instance(' + wasmModuleVar + ', {});' + (indentCode ? '\n' : '');
+                    }
+                    if (compiledCode.exports.length > 0) {
+                        var names = '';
+                        for (j = 0; j < compiledCode.exports.length; j++) {
+                            var wasmExport = compiledCode.exports[j];
+                            names += wasmExport.target + (j < compiledCode.exports.length - 1 ? ', ' : '');
+                        }
+                        js += 'var {' + names + '} = ' + wasmInstanceVar + '.exports;' + (indentCode ? '\n' : '');
+                    }
+                    compiledCode.js = js + compiledCode.js;
+
                     if (justCompile) {
                         if (typeof outputFile == 'undefined') {
                             var fileName = inputFile.split('.').shift();
                             if (outputFileType == 'js') {
                                 outputFile = fileName + '.js';
                                 outputContents = compiledCode.js;
+                            } else if (outputFileType == 'json') {
+                                outputFile = fileName + '.json';
+                                if (indentCode) {
+                                    outputContents = JSON.stringify(compiledCode.mil, null, indentationLength);
+                                } else {
+                                    outputContents = JSON.stringify(compiledCode.mil);
+                                }
                             } else if (outputFileType == 'mil') {
                                 outputFile = fileName + '.mil';
-                                outputContents = JSON.stringify(compiledCode.mil);
+                                if (indentCode) {
+                                    outputContents = JSON.stringify(compiledCode.mil, null, indentationLength);
+                                } else {
+                                    outputContents = JSON.stringify(compiledCode.mil);
+                                }
                             } else if (outputFileType == 'xml') {
                                 outputFile = fileName + '.xml';
                                 outputContents = compiledCode.xml;
@@ -251,11 +316,24 @@ function MaiaVM() {
                         } else {
                             outputContents = compiledCode.js;
                         }
-                        fs.writeFile(outputFile, outputContents, function(err) {
-                            if (err) {
-                                throw err;
+                        fs.writeFileSync(outputFile, outputContents);
+
+                        if (saveWat) {
+                            if (compiledCode.wat.length > 0) {
+                                outputFile = fileName + '.wat';
+                                outputContents = compiledCode.wat;
+                                fs.writeFileSync(outputFile, outputContents);
                             }
-                        });
+                        }
+                        if (saveWasm) {
+                            if (compiledCode.wat.length > 0) {
+                                var wasmBinary = system.wat2wasm(compiledCode.wat);
+                                compiledCode.wasm = Buffer.from(wasmBinary);
+                                outputFile = fileName + '.wasm';
+                                outputContents = compiledCode.wasm
+                                fs.writeFileSync(outputFile, outputContents);
+                            }
+                        }
                     } else {
                         try {
                             const vm = require('vm');

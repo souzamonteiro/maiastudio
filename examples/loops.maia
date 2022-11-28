@@ -1,0 +1,33 @@
+a = 0
+b = [1, 2, 3]
+c = {a: 1, b: 2}
+
+do {
+    system.println(a)
+    a++
+} while (a < 10)
+
+while (a < 10) {
+    if (a % 2 == 0) {
+        continue
+    }
+    if (a >= 5) {
+        system.println("Break the loop.")
+        break
+    }
+    system.println(a)
+    a++
+}
+
+for (a = 0; a < 10; ++a) {
+    system.println(a)
+}
+
+for (i = 0; i < b.length; i++) {
+    system.println(b[i])
+}
+
+// A TCL-like foreach statement.
+foreach(c; key; value) {
+    system.println(key + ": " + value)
+}

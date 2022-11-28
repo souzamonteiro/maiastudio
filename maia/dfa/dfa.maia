@@ -1,0 +1,462 @@
+///
+/// @license
+/// Copyright 2020 Roberto Luiz Souza Monteiro,
+///                Renata Souza Barreto,
+///                Hernane Borges de Barros Pereira.
+///
+/// Licensed under the Apache License, Version 2.0 (the 'License');
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at;
+///
+///   http://www.apache.org/licenses/LICENSE-2.0;
+///
+/// Unless required by applicable law or agreed to in writing, software;
+/// distributed under the License is distributed on an 'AS IS' BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eitherMath.express or implied.
+/// See the License for the specific language governing permissions and;
+/// limitations under the License.
+///
+
+///
+/// MaiaScript Detrended Fluctuation Analysis (DFA) library.
+/// @namespace dfa
+///
+namespace dfa {
+    ///
+    /// Calculates the average and the deviation of a time series.
+    /// @method getAverage
+    /// @memberof maiastatistics
+    /// @param {object}   data - The time series.
+    /// @return {object}  Returns the average and the deviation of the time series.
+    ///
+    function getAverage(data) {
+        average = 0
+        deviation = 0
+        minimum = data[0, 0]
+        maximum = data[0, 0]
+        sx = 0
+        sx2 = 0
+        n = data.length
+        for (i = 0; i < data.length; i = i + 1) {
+            if (core.type(data[i]) == "undefined") {
+                continue
+            }
+            if (core.type(data[i]) == "number") {
+                x = data[i]
+            } else {
+                x = data[i, 0]
+            }
+            if (core.type(x) == "number") {
+                if (core.type(minimum) == "undefined") {
+                    minimum = x
+                }
+                if (core.type(maximum) == "undefined") {
+                    maximum = x
+                }
+                if (minimum > x) {
+                    minimum = x
+                }
+                if (maximum < x) {
+                    maximum = x
+                }
+                sx = sx + x
+                sx2 = sx2 + x * x
+            }
+        }
+        average = sx / n
+        deviation = math.sqrt((sx2 - (sx * sx) / n) / (n - 1))
+        error = deviation / math.sqrt(n)
+        returnObject = {
+            "average": average,
+            "deviation": deviation,
+            "error": error,
+            "minimum": minimum,
+            "maximum": maximum,
+            "n": n
+        }
+        return(returnObject)
+    }
+    
+    ///
+    /// Performs a cumulative sum of the values in the series.
+    /// @method getCumulativeSum
+    /// @memberof maiastatistics
+    /// @param {object}   data - The time series.
+    /// @param {number}   minusAverage - Remove the average from the series.
+    /// @return {object}  Returns the cumulative sum of the values in the series.
+    ///
+    function getCumulativeSum(data, minusAverage) {
+        if (core.type(minusAverage) == "undefined") {
+            minusAverage = false
+        }
+        n = core.length(data)
+        y = core.matrix(0.0, n)
+        s = 0.0
+        avgData = this.getAverage(data)
+        y[0] = 0.0
+        for (i = 0; i <= n; i = i + 1) {
+            if (core.type(data[i]) == "undefined") {
+                continue
+            }
+            if (core.type(data[i]) == "number") {
+                x = data[i]
+            } else {
+                x = data[i, 0]
+            }
+            if (core.type(x) == "undefined") {
+                continue
+            }
+            if (minusAverage) {
+                s = s + (x - avgData.average)
+            } else {
+                s = s + x
+            }
+            y[i + 1] = s
+        }
+        return(y)
+    }
+    
+    ///
+    /// Creates a vector containing the Fibonacci series for the indicated range.
+    /// @method getFibonacciSeries
+    /// @memberof dfa
+    /// @param {number}   begin - The start value.
+    /// @param {number}   end - The final value.
+    /// @return {object}  Returns the Fibonacci series for the indicated range.
+    ///
+    function getFibonacciSeries(begin, end) {
+        function fibonacci(n) {
+            if (n <= 1) {
+                return(n)
+            }
+            return(fibonacci(n - 1) + fibonacci(n - 2))
+        }
+        fibonacciSeries = []
+        for (i = begin; i <= end; i = i + 1) {
+            fibonacciSeries.push(fibonacci(i))
+        }
+        return(fibonacciSeries )
+    }
+
+    ///
+    /// Allocates and fills rs[], the array of box sizes used by getDfa() below.
+    /// The box sizes range from (exactly) minbox to (approximately) maxbox,
+    /// and are arranged in a geometric series such that the ratio between
+    /// consecutive box sizes is (approximately) boxratio (Peng algorithm).
+    /// The return value is box sizes array.
+    /// @method getRScale
+    /// @memberof dfa
+    /// @param {number}   minbox - The minimum box size.
+    /// @param {number}   maxbox - The maximum box size.
+    /// @param {number}   boxratio - The ratio between successive box sizes.
+    /// @param {number}   alg - The algorithm for scaling.
+    /// @return {object}  Returns the box sizes array.
+    ///
+    function getRScale(minbox, maxbox, boxratio, mode) {
+        if (core.type(mode) == "undefined") {
+            mode = "peng"
+        }
+        rs = []
+        if (mode == "peng") {
+            // Determine how many scales are needed.
+            // Does a binary OR with the result to convert to Integer.
+            rslen = (math.log10(maxbox / minbox) / math.log10(boxratio) + 1.5) | 0
+            rs = core.matrix(0, rslen)
+            ir = 1
+            rs[1] = minbox
+            for (n = 2; n < rslen && rs[n - 1] < maxbox; ir = ir + 1) {
+                // Does a binary OR with the result to convert to Integer.
+                if ((rw = (minbox * math.pow(boxratio, ir) + 0.5) | 0) > rs[n - 1]) {
+                    rs[n] = rw
+                    n = n + 1
+                }
+            }
+            // It guarantees that exactly the number of values requested will be returned.
+            n = n - 1
+            if (rs[n] > maxbox) {
+                n = n - 1
+            }
+            rs = rs.slice(0, n)
+        } elseif (mode == "mesquita") {
+            rslen = (maxbox - minbox) / boxratio + 1
+            rs = core.matrix(0, rslen)
+            rs[1] = minbox
+            
+            m = 1
+            next = 0
+            for(n = 1; n < rslen; n = n + 1) {
+                while (next < maxbox) {
+                    next = rs[1]
+                    m = m + 1
+                    n = n + 1
+                    rs[n] = math.ceil(boxratio * rs[n - 1])
+                    next = rs[n] + 4
+                }
+            }
+            m = m + 1
+            rs = rs.slice(0, m)
+        } elseif (mode == "fibonacci") {
+            rs = this.getFibonacciSeries(minbox, maxbox)
+        }
+        return(rs)
+    }
+
+    ///
+    /// This function is based on lfit() and gaussj() from Numerical Recipes in C
+    /// (Press, Teukolsky, Vetterling, and Flannery; Cambridge U. Press, 1992).  It
+    /// fits a polynomial of degree (nfit-1) to a set of boxsize points given by
+    /// x[1...boxsize,2] and y[1...boxsize].  The return value is the sum of the
+    /// squared errors (chisq) between the (x,y) pairs and the fitted polynomial
+    /// and the fitness coefficients.
+    /// @method getPolyfit
+    /// @memberof dfa
+    /// @param {object}   x - Array containing the values of X.
+    /// @param {object}   y - Array containing the values of Y.
+    /// @param {object}   start - Start point in array containing the values of Y.
+    /// @param {number}   boxsize - The box size.
+    /// @param {number}   nfit - Order of detrending (2: linear, 3: quadratic, etc).
+    /// @return {object}  Returns the mean squared fluctuations in mse.
+    ///
+    function getPolyfit(x, y, start, boxsize, nfit) {
+        local i
+        local j
+        beta = core.matrix(0.0, nfit + 1)
+        covar = core.matrix(0.0, nfit + 1, nfit + 1)
+        covar0 = core.matrix(0.0, nfit + 1, nfit + 1)
+        indxc = core.matrix(0.0, nfit + 1)
+        indxr = core.matrix(0.0, nfit + 1)
+        ipiv = core.matrix(0.0, nfit + 1)
+        pboxsize = 0
+
+        // This block sets up the covariance matrix.  Provided that boxsize
+        // never decreases (which is true in this case), covar0 can be calculated
+        // incrementally from the previous value.
+        // This will be false most of the time.
+        if (pboxsize != boxsize) {
+            // This should never happen.
+            if (pboxsize > boxsize) {
+                pboxsize = 0
+            }
+            for (i = pboxsize + 1; i <= boxsize; i = i + 1) {
+                for (j = 1; j <= nfit; j = j + 1) {
+                    temp = x[i, j]
+                    for (k = 1; k <= j; k = k + 1) {
+                        covar0[j, k] = covar0[j, k] + temp * x[i, k]
+                    }
+                }
+            }
+            for (j = 2; j <= nfit; j = j + 1) {
+                for (k = 1; k < j; k = k + 1) {
+                    covar0[k, j] = covar0[j, k]
+                }
+            }
+            pboxsize = boxsize
+        }
+        for (j = 1; j <= nfit; j = j + 1) {
+            for (k = 1; k <= nfit; k = k + 1) {
+                covar[j, k] = covar0[j, k]
+            }
+        }
+        for (i = 1; i <= boxsize; i = i + 1) {
+            beta[1] = beta[1] + (temp = y[i + start])
+            beta[2] = beta[2] + temp * i
+        }
+        if (nfit > 2) {
+            for (i = 1; i <= boxsize; i = i + 1) {
+                temp = y[i + start]
+                for (j = 3; j <= nfit; j = j + 1) {
+                    beta[j] = beta[j] + temp * x[i, j]
+                }
+            }
+        }
+        for (i = 1; i <= nfit; i = i + 1) {
+            big = 0.0
+            for (j = 1; j <= nfit; j = j + 1) {
+                if (ipiv[j] != 1) {
+                    for (k = 1; k <= nfit; k = k + 1) {
+                        if (ipiv[k] == 0) {
+                            if ((temp = covar[j, k]) >= big || (temp = -1 * temp) >= big) {
+                                big = temp
+                                irow = j
+                                icol = k
+                            }
+                        } elseif (ipiv[k] > 1) {
+                            throw("The matrix is singular")
+                        }
+                    }
+                }
+            }
+            ipiv[icol] = ipiv[icol] + 1
+            if (irow != icol) {
+                for (j = 1; j <= nfit; j = j + 1) {
+                    temp = covar[irow, j]
+                    covar[irow, j] = covar[icol, j]
+                    covar[icol, j] = temp
+                }
+                temp = beta[irow]
+                beta[irow] = beta[icol]
+                beta[icol] = temp
+            }
+            indxr[i] = irow
+            indxc[i] = icol
+            if (covar[icol, icol] == 0.0) {
+               throw("The matrix is singular")
+            }
+            pivinv = 1.0 / covar[icol, icol]
+            covar[icol, icol] = 1.0
+            for (j = 1; j <= nfit; j = j + 1) {
+                covar[icol, j] = covar[icol, j] * pivinv
+            }
+            beta[icol] = beta[icol] * pivinv
+            for (j = 1; j <= nfit; j = j + 1) {
+                if (j != icol) {
+                    temp = covar[j, icol]
+                    covar[j, icol] = 0.0
+                    for (k = 1; k <= nfit; k = k + 1) {
+                        covar[j, k] = covar[j, k] - covar[icol, k] * temp
+                    }
+                    beta[j] = beta[j] - beta[icol] * temp
+                }
+            }
+        }
+        chisq = 0.0
+        if (nfit <= 2) {
+            for (i = 1; i <= boxsize; i = i + 1) {
+                temp = beta[1] + beta[2] * i - y[i + start]
+                chisq = chisq + temp * temp
+            }
+        } else {
+            for (i = 1; i <= boxsize; i = i + 1) {
+                temp = beta[1] + beta[2] * i - y[i + start]
+                for (j = 3; j <= nfit; j = j + 1) {
+                    temp = temp + beta[j] * x[i, j]
+                }
+                chisq = chisq + temp * temp
+            }
+        }
+        returnObject = {
+            "coefficient": beta,
+            "rss": chisq
+        }
+        return(returnObject)
+    }
+
+    ///
+    /// Performs the detrended fluctuation analysis.
+    /// @method getDfa
+    /// @memberof dfa
+    /// @param {object}   seq - Input data array.
+    /// @param {number}   nfit - Order of detrending (2: linear, 3: quadratic, etc).
+    /// @param {object}   rs - Array of box sizes (uniformly distributed on log scale).
+    /// @param {number}   sw - Mode (0: non-overlapping windows, 1: sliding window).
+    /// @return {object}  Returns the mean squared fluctuations in mse.
+    ///
+    function getDfa(seq, nfit, rs, sw) {
+        if (core.type(nfit) == "undefined") {
+            nfit = 2
+        }
+        if (core.type(sw) == "undefined") {
+            sw = 0
+        }
+
+        npts = seq.length - 1
+        nr = rs.length - 1
+        mse = core.matrix(0.0, nr + 1)
+        x = core.matrix(0.0, rs[nr] + 1, nfit + 1)
+        for (i = 1; i <= rs[nr]; i = i + 1) {
+            x[i, 1] = 1.0
+            x[i, 2] = i
+            for (j = 3; j <= nfit; j = j + 1) {
+                x[i, j] = x[i, j - 1] * i
+            }
+        }
+        for (i = 1; i <= nr; i = i + 1) {
+            boxsize = rs[i]
+            if (sw) {
+                inc = 1
+                // Does a binary OR with the result to convert to Integer.
+                stat = ((npts - boxsize + 1) | 0) * boxsize
+            } else {
+                inc = boxsize
+                // Does a binary OR with the result to convert to Integer.
+                stat = ((npts / boxsize) | 0) * boxsize
+            }
+            mse[i] = 0.0
+            for (j = 0; j <= npts - boxsize; j = j + inc) {
+                fit = this.getPolyfit(x, seq, j, boxsize, nfit)
+                rss = fit.rss
+                mse[i] = mse[i] + rss
+            }
+            mse[i] = mse[i] / stat
+        }
+        return(mse)
+    }
+
+    ///
+    /// Performs the detrended cross-Correlation analysis.
+    /// @method getDcca
+    /// @memberof dfa
+    /// @param {object}   seq1 - Input data array 1.
+    /// @param {object}   seq2 - Input data array 2.
+    /// @param {number}   nfit - Order of detrending (2: linear, 3: quadratic, etc).
+    /// @param {object}   rs - Array of box sizes (uniformly distributed on log scale).
+    /// @return {object}  Returns the detrended cross-Correlation analysis values.
+    ///
+    function getDcca(seq1, seq2, nfit, rs) {
+        if (core.type(nfit) == "undefined") {
+            nfit = 2
+        }
+        
+        npts = seq1.length - 1
+        nr = rs.length - 1
+        dcca = core.matrix(0.0, nr + 1)
+        x = core.matrix(0.0, rs[nr] + 1, nfit + 1)
+        for (i = 1; i <= rs[nr]; i = i + 1) {
+            x[i, 1] = 1.0
+            x[i, 2] = i
+            for (j = 3; j <= nfit; j = j + 1) {
+                x[i, j] = x[i, j - 1] * i
+            }
+        }
+        for (i = 1; i <= nr; i = i + 1) {
+            boxsize = rs[i]
+            inc = 1
+            // Does a binary OR with the result to convert to Integer.
+            stat = ((npts - boxsize + 1) | 0) * boxsize
+
+            dcca[i] = 0.0
+            for (j = 0; j <= npts - boxsize; j = j + inc) {
+                fit1 = this.getPolyfit(x, seq1, j, boxsize, nfit)
+                fit2 = this.getPolyfit(x, seq2, j, boxsize, nfit)
+                coefficient1 = fit1.coefficient
+                coefficient2 = fit2.coefficient
+                for (k = 1; k <= boxsize; k = k + 1) {
+                    erro1 = coefficient1[1] + coefficient1[2] * k - seq1[k + j]
+                    erro2 = coefficient2[1] + coefficient2[2] * k - seq2[k + j]
+                    dcca[i] = dcca[i] + erro1 * erro2
+                }
+            }
+            dcca[i] = dcca[i] / stat
+        }
+        return(dcca)
+    }
+
+    ///
+    /// Performs the detrended cross-Correlation analysis.
+    /// @method getRhoDcca
+    /// @memberof maiastatistics
+    /// @param {object}   dfa1 - DFA array of first series.
+    /// @param {object}   dfa2 - DFA array of second series.
+    /// @param {object}   dcca - DCCA array for the two series.
+    /// @return {object}  Returns the detrended cross-Correlation analysis values.
+    ///
+    function getRhoDcca(dfa1, dfa2, dcca) {
+        // Calculates the rhoDCCA.
+        n = dcca.length
+        rhodcca = core.matrix(0.0, n)
+        for (i = 1; i < n; i = i + 1) {
+            rhodcca[i] = dcca[i] / (math.sqrt(dfa1[i]) * math.sqrt(dfa2[i]))
+        }
+        return(rhodcca)
+    }
+}

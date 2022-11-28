@@ -14,11 +14,11 @@ Prism.languages.maiascript = {
 		pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,
 		greedy: true
 	},
-	'keyword': /\b(?:namespace|object|async|constructor|include|kernel|function|local|if|elseif|else|do|while|for|foreach|try|test|catch|break|continue|return|throw|null)\b/,
+	'keyword': /\b(?:break|case|catch|continue|default|do|else|export|f32|f64|for|foreach|i32|i64|if|import|include|global|local|null|return|switch|test|throw|try|while)\b/,
 	'boolean': /\b(?:true|false)\b/,
 	'function': /\w+(?=\()/,
 	'number': /\b0x[\da-f]+\b|(?:\b\d+\.?\d*|\B\.\d+)(?:e[+-]?\d+)?/i,
-	'operator': /[<>]=?|[:=]|[\?=]|[!=]=?=?|`|&&?|\|\|?|&\||[?*/~^%]/,
+	'operator': /[<>]=?|[\?=][:=][#=]|[!=]=?=?|`|&&?|\|\||--|\+\+|[?:*/~^%]/,
 	'punctuation': /[{}[\];(),.]/
 };
 

@@ -59,7 +59,8 @@ namespace snet {
                 "nodes": [],
                 "edges": [],
                 "numberOfSentences": 0,
-                "vocabulary": 0
+                "vocabulary": 0,
+                "density": []
             }
         }
         if (core.type(allowLoops) == "undefined") {
@@ -110,7 +111,7 @@ namespace snet {
         system.println("Processing " + fileLines.length + " lines ...")
 
         for (l = 0; l < fileLines.length; l = l + 1) {
-            if ((l != 0) && (l % 1000 == 0)) {
+            if ((l != 0) || (l % 100 == 0)) {
                 system.println("Processed " + l.toString() + " lines of " + fileLines.length.toString() + ".")
             }
 
@@ -275,6 +276,16 @@ namespace snet {
                             }
                         }
                     }
+
+                    properties.n = network.nodes.length
+                    properties.m = network.edges.length
+                    if (properties.directed) {
+                        density = (properties.m / (properties.n * (properties.n - 1)))
+                    } else {
+                        density = (2 * properties.m / (properties.n * (properties.n - 1)))
+                    }
+                    network.density.push(density)
+
                     nodes = []
                     endOfRecord = false
                 }
@@ -330,7 +341,8 @@ namespace snet {
                 "nodes": [],
                 "edges": [],
                 "numberOfSentences": 0,
-                "vocabulary": 0
+                "vocabulary": 0,
+                "density": []
             }
         }
         if (core.type(allowLoops) == "undefined") {
@@ -380,11 +392,15 @@ namespace snet {
         network.numberOfSentences = jsonData.length
 
         for (r = 0; r < jsonData.length; r = r + 1) {
-            if ((r != 0) && (r % 1000 == 0)) {
+            if ((r != 0) || (r % 100 == 0)) {
                 system.println("Processed " + r.toString() + " records of " + jsonData.length.toString() + ".")
             }
 
             record = jsonData[r]
+
+            if (record.length == 0) {
+                continue
+            }
             
             for (w = 0; w < record.length; w = w + 1) {
                 word = record[w]
@@ -532,6 +548,16 @@ namespace snet {
                     }
                 }
             }
+
+            properties.n = network.nodes.length
+            properties.m = network.edges.length
+            if (properties.directed) {
+                density = (properties.m / (properties.n * (properties.n - 1)))
+            } else {
+                density = (2 * properties.m / (properties.n * (properties.n - 1)))
+            }
+            network.density.push(density)
+
             nodes = []
         }
 

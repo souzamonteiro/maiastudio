@@ -1,0 +1,777 @@
+///
+/// @license
+/// Copyright 2020 Roberto Luiz Souza Monteiro,
+///                Renata Souza Barreto,
+///                Hernane Borges de Barros Pereira.
+///
+/// Licensed under the Apache License, Version 2.0 (the "License")
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///   http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eitherMath.express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+///
+
+///
+///
+/// MaiaScript Statistics library.
+/// @namespace statistics
+///
+namespace statistics {
+    // Random number generator initialization variables.
+    // Based on POSIX.1-2001. 
+    RAND_MAX = 32768
+    next = BigInt(1)
+
+    // Marsaglia xorshift RNG random number generator initialization variables.
+    XOR64_RAND_MAX = 18446744073709551615
+    xorshiftSeed = BigInt(88172645463325252)
+
+    // Marsaglia polar method initialization variables.
+    spareRandom = ""
+    
+    ///
+    /// Random number generator.
+    /// Based on POSIX.1-2001. 
+    /// @method rand
+    /// @memberof statistics
+    /// @return {object}  Returns a pseudo-random number.
+    ///
+    function rand() {
+        this.next = BigInt(this.next * BigInt(1103515245) + BigInt(12345))
+        return(Number((this.next / BigInt(65536)) % BigInt(32768)) / (this.RAND_MAX + 1))
+    }
+
+    ///
+    /// Defines a new seed for the random number generator.
+    /// Based on POSIX.1-2001. 
+    /// @method srand
+    /// @memberof statistics
+    /// @param {number}   seed - The random number generator's seed.
+    /// @return {object}  Returns a new seed for the random number generator.
+    ///
+    function srand(seed) {
+        this.next = BigInt(seed)
+    }
+
+    function xor64() {
+        x = this.xorshiftSeed
+        x = BigInt.asUintN(64, x ||| (x << BigInt(13)))
+        x = BigInt.asUintN(64, x ||| (x >> BigInt(7)))
+        x = BigInt.asUintN(64, x ||| (x << BigInt(17)))
+        this.xorshiftSeed = x
+        return(x)
+    }
+
+    ///
+    /// Marsaglia xorshift RNG random number generator
+    /// @method random
+    /// @memberof statistics
+    /// @return {object}  Returns a pseudo-random number.
+    ///
+    function random() {
+        return(Number(this.xor64()) / (this.XOR64_RAND_MAX + 1))
+    }
+
+    ///
+    /// Marsaglia xorshift RNG random number generator
+    /// @method srandom
+    /// @method srandom
+    /// @memberof statistics
+    /// @param {number}   seed - The random number generator's seed.
+    /// @return {object}  Returns a new seed for the random number generator.
+    ///
+    function srandom(seed) {
+        this.xorshiftSeed = BigInt(seed)
+    }
+
+    ///
+    /// Generate a random sequence using the POSIX.1-2001 algorithm.
+    /// @method getRandomSequence
+    /// @memberof statistics
+    /// @param {number}   numberOfElements - Number of elements in the sequence that will be generated.
+    /// @return {number}  Returns a random number sequence using the POSIX.1-2001 algorithm.
+    ///
+    function getRandomSequence(numberOfElements) {
+        sequence = []
+        for (i = 0; i < numberOfElements; i = i + 1) {
+            noise = this.rand()
+            sequence.push(noise)
+        }
+        return(sequence)
+    }
+    
+    ///
+    /// Generate a random sequence using the Marsaglia xorshift RNG algorithm.
+    /// @method getXor64Sequence
+    /// @memberof statistics
+    /// @param {number}   numberOfElements - Number of elements in the sequence that will be generated.
+    /// @return {number}  Returns a random number sequence using the Marsaglia xorshift RNG algorithm.
+    ///
+    function getXor64Sequence(numberOfElements) {
+        sequence = []
+        for (i = 0; i < numberOfElements; i = i + 1) {
+            noise = this.random()
+            sequence.push(noise)
+        }
+        return(sequence)
+    }
+
+    ///
+    /// The Marsaglia polar method for generating a random number with a Gaussian distribution.
+    /// @method getGaussianNoise
+    /// @memberof statistics
+    /// @return {number}  Returns a random number with a Gaussian distribution.
+    ///
+    function getGaussianNoise() {
+        if (this.spareRandom != "") {
+            noise = this.spareRandom
+            this.spareRandom = ""
+        } else {
+            u = this.rand() * 2.0 - 1.0
+            v = this.rand() * 2.0 - 1.0
+            //u = this.random() * 2.0 - 1.0
+            //v = this.random() * 2.0 - 1.0
+            s = u * u + v * v
+            while (s >= 1.0 || s == 0.0) {
+                u = this.rand() * 2.0 - 1.0
+                v = this.rand() * 2.0 - 1.0
+                //u = this.random() * 2.0 - 1.0
+                //v = this.random() * 2.0 - 1.0
+                s = u * u + v * v
+            }
+            s = math.sqrt(-2.0 * math.log(s) / s)
+            this.spareRandom = v * s
+            noise = u * s
+        }
+        return(noise)
+    }
+
+    ///
+    /// The Marsaglia polar method for generating a random number with a Gaussian distribution scaled.
+    /// @method getGaussianNoiseScaled
+    /// @memberof statistics
+    /// @param {number}   mean - The mean of the series.
+    /// @param {number}   deviation - The standard deviation of the series.
+    /// @return {number}  Returns a random number with a Gaussian distribution.
+    ///
+    function getGaussianNoiseScaled(mean, deviation) {
+        r = this.getGaussianNoise()
+        r = r * deviation + mean
+        //return(math.round(r))
+        return(r)
+    }
+
+    ///
+    /// The Marsaglia polar method for generating a random number with a Gaussian distribution log scaled.
+    /// @method getRandomNoiseLogScaled
+    /// @memberof statistics
+    /// @param {number}   mean - The mean of the series.
+    /// @param {number}   deviation - The standard deviation of the series.
+    /// @return {number}  Returns a random number with a Gaussian distribution.
+    ///
+    function getGaussianNoiseLogScaled(mean, deviation) {
+        r = this.getGaussianNoise()
+        r = r * math.log(deviation) + math.log(mean)
+        //return(math.round(math.exp(r)))
+        return(math.exp(r))
+    }
+
+    ///
+    /// The Marsaglia polar method for generating a random number with a Gaussian distribution in a given range.
+    /// @method getGaussianNoiseInRange
+    /// @memberof statistics
+    /// @param {number}   minimum - The minimum value.
+    /// @param {number}   maximum - The maximum value.
+    /// @return {number}  Returns a random number with a Gaussian distribution.
+    ///
+    function getGaussianNoiseInRange(minimum, maximum) {
+        r = this.getGaussianNoise()
+        while(r < minimum || r > maximum) {
+            r = this.getGaussianNoise()
+        } 
+        return(r)
+    }
+
+    ///
+    /// Generate a random sequence using the Marsaglia polar method for generating a random number with a Gaussian distribution.
+    /// @method getGaussianSequence
+    /// @memberof statistics
+    /// @param {number}   numberOfElements - Number of elements in the sequence that will be generated.
+    /// @param {number}   mean - The mean of the series.
+    /// @param {number}   deviation - The standard deviation of the series.
+    /// @return {number}  Returns a random number sequence with a Gaussian distribution.
+    ///
+    function getGaussianSequence(numberOfElements, mean, deviation) {
+        sequence = []
+        for (i = 0; i < numberOfElements; i = i + 1) {
+            noise = this.getGaussianNoiseScaled(mean, deviation)
+            sequence.push(noise)
+        }
+        return(sequence)
+    }
+
+    ///
+    /// Creates a new time series containing only the specified column.
+    /// @method getNextSteps
+    /// @memberof statistics
+    /// @param {object}   data - The time series.
+    /// @param {number}   columnNumber - columnNumber.
+    /// @return {object}  Returns a new time series containing only the specified column.
+    ///
+    function getColumn(data, columnNumber) {
+        newSeriesData = []
+        for (i = 0; i < data.length; i = i + 1) {
+            x = data[i, columnNumber]
+            newSeriesData.push([x])
+        }
+        return(newSeriesData)
+    }
+
+    ///
+    /// Create a matrix containing the columns from two other matrices.
+    /// @method mergeMatrices
+    /// @memberof statistics
+    /// @param {object}   m1 - The first matrix.
+    /// @param {object}   m2 - The second matrix.
+    /// @param {number}   interlace - Interlace the columns.
+    /// @return {object}  Returns a matrix containing the columns from two other matrices.
+    ///
+    function mergeMatrices(m1, m2, interlace) {
+        if (core.type(interlace) == "undefined") {
+            interlace = false
+        }
+        m1Dim = core.dim(m1)
+        m = []
+        for (i = 0; i < m1Dim[0]; i = i + 1) {
+            row = []
+            if (m1Dim.length == 2) {
+                if (interlace) {
+                    for (j = 0; j < m1Dim[1]; j = j + 1) {
+                        row.push(m1[i, j])
+                        row.push(m2[i, j])
+                    }
+                } else {
+                    for (j = 0; j < m1Dim[1]; j = j + 1) {
+                        row.push(m1[i, j])
+                    }
+                    for (j = 0; j < m1Dim[1]; j = j + 1) {
+                        row.push(m2[i, j])
+                    }
+                }
+            } else {
+                row.push(m1[i])
+                row.push(m2[i])
+            }
+            m.push(row)
+        }
+        return(m)
+    }
+
+    ///
+    /// Loads a CSV file and converts it to an object, using the character indicated as the column separator.
+    /// @method loadCSV
+    /// @memberof statistics
+    /// @param {string}   inputFile - CSV file.
+    /// @param {number}   numberOfHeaderLines - Number of header lines and column descriptors to ignore.
+    /// @param {string}   recordSeparator - The separator characters.
+    /// @param {boolean}  allowRepeatChar - The separator character can be repeated (for formatting).
+    /// @param {boolean}  doEval - Run core.eval before adding the column to the record.
+    /// @param {array}    members - Object member names.
+    /// @return {array}   The object containing the parts of the CSV or NULL if the CSV record is not well formed.
+    ///
+    function loadCSV(inputFile, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval, members) {
+        obj = core.matrixToObject(system.loadCSV(inputFile, numberOfHeaderLines, recordSeparator, allowRepeatChar, doEval), members)
+        return(obj)
+    }
+
+    ///
+    /// Replaces a given pattern in a time series.
+    /// @method replacePattern
+    /// @memberof statistics
+    /// @param {object}   data - The time series.
+    /// @param {string}   pattern - The search pattern.
+    /// @param {string}   replacementString - The replacement value for the given pattern.
+    /// @param {boolean}  asNumber - Converts the series data to number.
+    /// @return {object}  Returns the replaced time series.
+    ///
+    function replacePattern(data, pattern, replacementString, asNumber) {
+        if (core.type(asNumber) == "undefined") {
+            asNumber = false
+        }
+        replacedData = []
+        for (i = 0; i < data.length; i = i + 1) {
+            x = data[i, 0]
+            if (asNumber) {
+                if (x == pattern) {
+                    replacedData.push([core.toNumber(replacementString)])
+                } else {
+                    replacedData.push([core.toNumber(x)])
+                }
+            } else {
+                if (x == pattern) {
+                    replacedData.push([replacementString])
+                } else {
+                    replacedData.push([x])
+                }
+            }
+        }
+        return(replacedData)
+    }
+
+    ///
+    /// Split an array into two parts.
+    /// @method splitData
+    /// @memberof statistics
+    /// @param {object}   data - The data to be split.
+    /// @param {number}   nFirst - Number of rows of the first part of the array.
+    /// @return {object}  Returns two arrays.
+    ///
+    function splitData(data, nFirst) {
+        part1 = []
+        part2 = []
+        for (i = 0; i < data.length; i = i + 1) {
+            x = data[i, 0]
+            if (i < nFirst) {
+                part1.push([core.toNumber(x)])
+            } else {
+                part2.push([core.toNumber(x)])
+            }
+        }
+        returnObject = {
+            "part1": part1,
+            "part2": part2
+        }
+        return(returnObject)
+    }
+
+    ///
+    /// Calculates the average and the deviation of a time series.
+    /// @method getAverage
+    /// @memberof statistics
+    /// @param {object}   data - The time series.
+    /// @return {object}  Returns the average and the deviation of the time series.
+    ///
+    function getAverage(data) {
+        average = 0
+        deviation = 0
+        minimum = data[0, 0]
+        maximum = data[0, 0]
+        sx = 0
+        sx2 = 0
+        n = data.length
+        for (i = 0; i < data.length; i = i + 1) {
+            if (core.type(data[i]) == "undefined") {
+                continue
+            }
+            if (core.type(data[i]) == "number") {
+                x = data[i]
+            } else {
+                x = data[i, 0]
+            }
+            if (core.type(x) == "number") {
+                if (core.type(minimum) == "undefined") {
+                    minimum = x
+                }
+                if (core.type(maximum) == "undefined") {
+                    maximum = x
+                }
+                if (minimum > x) {
+                    minimum = x
+                }
+                if (maximum < x) {
+                    maximum = x
+                }
+                sx = sx + x
+                sx2 = sx2 + x * x
+            }
+        }
+        average = sx / n
+        deviation = math.sqrt((sx2 - (sx * sx) / n) / (n - 1))
+        error = deviation / math.sqrt(n)
+        returnObject = {
+            "average": average,
+            "deviation": deviation,
+            "error": error,
+            "minimum": minimum,
+            "maximum": maximum,
+            "n": n
+        }
+        return(returnObject)
+    }
+
+    ///
+    /// Returns the distribution probability for a normal distribution.
+    /// @method getNormalProbability
+    /// @memberof statistics
+    /// @param {number}   x - The value of x.
+    /// @param {number}   m - The mean of the series.
+    /// @param {number}   s - The standard deviation of the series.
+    /// @return {number}  Returns the distribution probability for a normal distribution.
+    ///
+    function getNormalProbability(x, m, s) {
+        p = (1 / (s * math.sqrt(2 * math.PI))) * math.exp((-1 * math.pow(x - m, 2)) / (2 * math.pow(s, 2)))
+        if (isNaN(p)) {
+            return(0.0)
+        } else {
+            return(p)
+        }
+    }
+
+    ///
+    /// Returns an array containing the distribution probability for a normal distribution.
+    /// @method getNormalProbability
+    /// @memberof statistics
+    /// @param {object}   x - The array containing the values of x.
+    /// @param {number}   m - The mean of the series.
+    /// @param {number}   s - The standard deviation of the series.
+    /// @return {number}  Returns the distribution probability for a normal distribution.
+    ///
+    function getNormalDistribution(x, m, s) {
+        normalDistribution = []
+        for (i = 0; i < x.length; i = i + 1) {
+            p = this.getNormalProbability(x[i], m, s)
+            normalDistribution.push(p)
+        }
+        return(normalDistribution)
+    }
+
+    ///
+    /// Returns the frequency distribution of the values in a time series.
+    /// @method getFrequencyDistribution
+    /// @memberof statistics
+    /// @param {object}   x - The array containing the values of x.
+    /// @return {number}  Returns the frequency distribution of the given time series.
+    ///
+    function getFrequencyDistribution(x) {
+        frequencyDistribution = Object()
+        for (i = 0; i < x.length; i = i + 1) {
+            if (core.type(frequencyDistribution[x[i]]) == "undefined") {
+                frequencyDistribution[x[i]] = 1
+            } else {
+                frequencyDistribution[x[i]] = frequencyDistribution[x[i]] + 1
+            }
+        }
+        frequencyDistributionMatrix = []
+        foreach (frequencyDistribution; key; value) {
+            frequencyDistributionMatrix.push([core.toNumber(key), value])
+        }
+        return(frequencyDistributionMatrix)
+    }
+    
+    /// Returns an approximation to the inverse of the normal distribution.
+    /// Based on John D. Cook, A literate program to compute the inverse of the normal CDF.
+    /// https://www.johndcook.com/blog/normal_cdf_inverse/
+    /// @method getInverseNormalDistribution
+    /// @memberof statistics
+    /// @param {object}   p - The probability.
+    /// @return {number}  Returns an approximation to the inverse of the normal distribution.
+    ///
+    function getInverseNormalDistribution(p) {
+        if (p < 0.5) {
+            t = math.sqrt(-2.0 * math.log(p))
+        } else {
+            t = math.sqrt(-2.0 * math.log(1 - p))
+        }
+        c = [2.515517, 0.802853, 0.010328]
+        d = [1.432788, 0.189269, 0.001308]
+        x = t - ((c[2] * t + c[1]) * t + c[0]) / (((d[2] * t + d[1]) * t + d[0]) * t + 1.0)
+        if (p < 0.5) {
+            return(-1.0 * x)
+        } else {
+            return(x)
+        }
+    }
+
+    ///
+    /// Normalizes a time series.
+    /// @method normalize
+    /// @memberof statistics
+    /// @param {object}   data - The time series.
+    /// @param {number}   minimum - The minimum value of the time series.
+    /// @param {number}   maximum - The maximum value of the time series.
+    /// @return {object}  Returns the normalized time series.
+    ///
+    function normalize(data, minimum, maximum) {
+        if ((core.type(minimum) == "undefined") || (core.type(maximum) == "undefined")) {
+            avgData = this.getAverage(data)
+            minimum = avgData.minimum
+            maximum = avgData.maximum
+        }
+        normalizedData = []
+        for (i = 0; i < data.length; i = i + 1) {
+            x = data[i, 0]
+            if (core.type(x) == "number") {
+                normalizedX = (x - minimum) / (maximum - minimum)
+                normalizedData.push([normalizedX])
+            }
+        }
+        return(normalizedData)
+    }
+
+    ///
+    /// Denormalizes a time series.
+    /// @method denormalize
+    /// @memberof statistics
+    /// @param {object}   data - The time series.
+    /// @param {number}   minimum - The minimum value of the time series.
+    /// @param {number}   maximum - The maximum value of the time series.
+    /// @return {object}  Returns the denormalized time series.
+    ///
+    function denormalize(data, minimum, maximum) {
+        denormalizedData = []
+        for (i = 0; i < data.length; i = i + 1) {
+            x = data[i, 0]
+            if (core.type(x) == "number") {
+                denormalizedX = x * maximum - x * minimum + minimum
+                denormalizedData.push([denormalizedX])
+            }
+        }
+        return(denormalizedData)
+    }
+
+    ///
+    /// Creates a new series containing the next steps for each value of the given series.
+    /// @method getNextSteps
+    /// @memberof statistics
+    /// @param {object}   data - The time series.
+    /// @param {number}   steps - Number of next steps.
+    /// @return {object}  Returns a new series containing the next steps for each value of the given series.
+    ///
+    function getNextSteps(data, steps) {
+        nextStepData = []
+        for (i = 0; i < data.length - steps; i = i + 1) {
+            row = []
+            for (j = i; j < i + steps; j = j + 1) {
+                x = data[j, 0]
+                if (core.type(x) == "number") {
+                    row.push(x)
+                }
+            }
+            if (row.length > 0) {
+                nextStepData.push(row)
+            }
+        }
+        return(nextStepData)
+    }
+
+    ///
+    /// Calculates the Pearson coefficient.
+    /// @method getPearson
+    /// @memberof statistics
+    /// @param {object}   data - The time series.
+    /// @return {object}  Returns the Pearson coefficient.
+    ///
+    function getPearson(data) {
+        r = 0
+        dimData = core.dim(data)
+        n = dimData[0]
+        avgDataX = matrix.avg(data, 0, 0, n - 1, 0)
+        avgDataY = matrix.avg(data, 0, 1, n - 1, 1)
+        avgX = avgDataX.avg
+        devX = avgDataX.dev
+        avgY = avgDataY.avg
+        devY = avgDataY.dev
+        sumXY = 0
+        for (i = 0; i < n; i = i + 1) {
+            sumXY = sumXY + data[i, 0] * data[i, 1]
+        }
+        r = (sumXY - n * avgX * avgY) / ((n - 1) * devX * devY)
+        return(r)
+    }
+
+    ///
+    /// Obtains the best curve that approximates a set of points, using the least squares method.
+    /// References:
+    /// Weisstein, Eric W. "Least Squares Fitting".
+    /// From MathWorld--A Wolfram Web Resource.
+    /// http://mathworld.wolfram.com/LeastSquaresFitting.html 
+    /// @method getLsqr
+    /// @memberof statistics
+    /// @param {object}   data - The time series.
+    /// @param {number}   begin - The the first point of time series.
+    /// @param {number}   end - The the last point of time series.
+    /// @return {object}  Returns the best curve that approximates a set of points.
+    ///
+    function getLsqr(data, begin, end) {
+        dimData = core.dim(data)
+        dimI = dimData[0]
+        dimJ = dimData[1]
+        
+        if (core.type(begin) == "undefined") {
+            begin = 0
+        }
+        if (core.type(end) == "undefined") {
+            end = dimI - 1
+        }
+
+        x = 0.0
+        y = 0.0
+        sx = 0.0
+        sy = 0.0
+        sxy = 0.0
+        sx2 = 0.0
+        sy2 = 0.0
+        n = 0
+
+        // Read each value of the series and calculates
+        // a and b to f(a, b) = a + b * x.
+        for (i = begin; i <= end; i = i + 1) {
+            if (dimJ == 2) {
+                x = data[i, 0]
+                y = data[i, 1]
+            } else {
+                x = i
+                y = data[i, 0]
+            }
+            if (core.type(x) == "undefined") {
+                continue
+            }
+            if (core.type(y) == "undefined") {
+                continue
+            }
+            sx = sx + x
+            sy = sy + y
+            sxy = sxy + x * y
+            sx2 = sx2 + x * x
+            sy2 = sy2 + y * y
+            n = n + 1
+        }
+        
+        if (n == 0) {
+            return([0; 0; 0])
+        }
+
+        m1 = [n, sx; sx, sx2]
+        m2 = [sy; sxy]
+
+        //ab = m1^-1 * m2
+        ab = m2 / m1
+        r2 = ((sxy - sx * (sy / n)) ^ 2) / ((sx2 - (sx * sx) / n) * (sy2 - (sy * sy) / n))
+
+        returnObject = {
+            "a": ab[0, 0],
+            "b": ab[1, 0],
+            "r2": r2
+        }
+        return(returnObject)
+    }
+
+    ///
+    /// Performs the detrended fluctuation analysis.
+    /// @method getDfa
+    /// @memberof statistics
+    /// @param {object}   seq - Input data array.
+    /// @param {number}   nfit - Order of detrending (2: linear, 3: quadratic, etc).
+    /// @param {object}   rs - Array of box sizes (uniformly distributed on log scale).
+    /// @param {number}   sw - Mode (0: non-overlapping windows, 1: sliding window).
+    /// @return {object}  Returns the mean squared fluctuations in mse.
+    ///
+    function getDfa(seq, nfit, rs, sw) {
+        if (core.type(nfit) == "undefined") {
+            nfit = 2
+        }
+        if (core.type(sw) == "undefined") {
+            sw = 0
+        }
+        
+        // Calculates the DFA.
+        mse = dfa.getDfa(seq, nfit, rs, sw)
+
+        n = mse.length
+        dfaData = []
+        dfaLog10Data = []
+        dfaData.push(["scale", "dfa", "log10(scale)", "log10(dfa)"])
+        for (i = 1; i < n; i = i + 1) {
+            x = math.log10(rs[i])
+            y = math.log10(mse[i]) / 2.0
+            dfaData.push([rs[i], math.sqrt(mse[i]), x, y])
+            dfaLog10Data.push([x, y])
+        }
+
+        // Calculates the least squares fit.
+        lsqr = this.getLsqr(dfaLog10Data)
+
+        returnObject = {
+            "dfa": dfaData,
+            "lsqr": lsqr
+        }
+        return(returnObject)
+    }
+
+    ///
+    /// Performs the detrended cross-Correlation analysis.
+    /// @method getDcca
+    /// @memberof statistics
+    /// @param {object}   seq1 - Input data array 1.
+    /// @param {object}   seq2 - Input data array 2.
+    /// @param {number}   nfit - Order of detrending (2: linear, 3: quadratic, etc).
+    /// @param {object}   rs - Array of box sizes (uniformly distributed on log scale).
+    /// @return {object}  Returns the detrended cross-Correlation analysis values.
+    ///
+    function getDcca(seq1, seq2, nfit, rs) {
+        if (core.type(nfit) == "undefined") {
+            nfit = 2
+        }
+
+        // Calculates the DFA.
+        dcca = dfa.getDcca(seq1, seq2, nfit, rs)
+
+        n = dcca.length
+        dccaData = []
+        dccaData.push(["scale", "dcca"])
+        for (i = 1; i < n; i = i + 1) {
+            dccaData.push([rs[i], dcca[i]])
+        }
+        return(dccaData)
+    }
+
+    ///
+    /// Performs the detrended cross-Correlation analysis.
+    /// @method getRhoDcca
+    /// @memberof statistics
+    /// @param {object}   dfa1 - DFA array of first series.
+    /// @param {object}   dfa2 - DFA array of second series.
+    /// @param {object}   dcca - DCCA array for the two series.
+    /// @return {object}  Returns the detrended cross-Correlation analysis values.
+    ///
+    function getRhoDcca(dfa1, dfa2, dcca) {
+        // Calculates the rhoDCCA.
+        rhodcca = dfa.getRhoDcca(dfa1, dfa2, dcca)
+
+        n = rhodcca.length
+        rhoDccaData = []
+        rhoDccaData.push(["scale", "dfa1", "dfa2", "dcca", "rhodcca"])
+        for (i = 1; i < n; i = i + 1) {
+            rhoDccaData.push([rs[i], math.sqrt(dfa1[i]), math.sqrt(dfa2[i]), dcca[i], rhodcca[i]])
+        }
+        return(rhoDccaData)
+    }
+
+    ///
+    /// Draw a graphic and save it in PNG format.
+    /// @method createChart
+    /// @memberof statistics
+    /// @param {string}   outputFile - Output file in PNG format.
+    /// @param {string}   type - File output format.
+    /// @param {number}   width - Chart width.
+    /// @param {number}   height - Chart height.
+    /// @param {string}   backgroundColor - Chart background color.
+    /// @param {object}   configuration - Chart configuration in chartjs-node-canvas format.
+    /// @return {object}  Saves a graphic in PNG format.
+    ///
+    function createChart(outputFile, type, width, height, backgroundColor, configuration) {
+        ChartJSNodeCanvas = system.require("chartjs-node-canvas")
+        fs = system.require("fs")
+        
+        chartJSNodeCanvas := ChartJSNodeCanvas.ChartJSNodeCanvas({"type": type, "width": width, "height": height, "backgroundColour": backgroundColor})
+
+        image = chartJSNodeCanvas.renderToBufferSync(configuration)
+        fs.writeFileSync(outputFile, image, "base64")
+    }
+}

@@ -1,0 +1,13 @@
+// Creating a namespace (an object)
+a {
+    b = 1
+    f(n) {
+        if (n == 0 || n == 1) {
+            return 1
+        }
+        return n * this.f(n - 1)
+    }
+}
+
+system.println(a.b)
+system.println(a.f(5))

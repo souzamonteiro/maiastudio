@@ -1,0 +1,38 @@
+a = 1
+b = 2
+
+c = a == 1 ? "Hello" : "World"
+
+// A C-like if statement.
+if (a < b) {
+    system.println("a = " + a)
+    system.println("b = " + b)
+    system.println("a < b")
+    if (a == 1)
+        system.println("a == 1")
+    else
+        system.println("a != 1")
+} else if (a > b) {
+    system.println("a = " + a)
+    system.println("b = " + b)
+    system.println("a > b")
+} else {
+    system.println("a = " + a)
+    system.println("b = " + b)
+    system.println("a == b")
+}
+
+// A C-like switch statement.
+switch (a) {
+    case 0:
+    case 1:
+        system.println("a == 0 || a == 1 || a == 2")
+    case 2:
+        system.println("a == 2")
+        break
+    default:
+        system.println("a = " + a)
+        system.println("a != 1 && a != 2")
+}
+
+system.println(c == 1 ? "Maia" : "Script")

@@ -39,9 +39,10 @@ function CAS() {
      * @return {object}  Result of the expression.
      */
     this.eval = function(expr) {
+        var casExpr = core.replace(expr, "**", "^")
         var res;
         if (typeof Algebrite != 'undefined') {
-            res = Algebrite.run(expr);
+            res = core.replace(Algebrite.run(casExpr), "^", "**");
         } else {
             throw new Error("The Algebrite CAS was not loaded");
         }

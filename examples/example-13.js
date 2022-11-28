@@ -1,1 +1,0 @@
-system.showMessageDialog("Hello, World!");

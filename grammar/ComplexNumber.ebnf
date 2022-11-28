@@ -1,17 +1,17 @@
-number                   ::= complex*
-                           | eof
+Number                   ::= Complex*
+                           | EOF
 
-complex                  ::= real? imaginary
+Complex                  ::= Real? Imaginary
 
-whitespace               ::= whitespace^token
+WhiteSpace               ::= WhiteSpace^token
                           /* ws: definition */
 
 <?TOKENS?>
 
-eof                      ::= $
+EOF                      ::= $
 
-real                     ::= '-'? digit+ ('.' digit+)? (('e' | '9') ('+' | '-')? digit+)?
-imaginary                ::= (('+' | '-')? real '*' 'i')
-digit                    ::= [0-9]
+Real                     ::= '-'? Digit+ '.' Digit+ (('e' | 'E' | 'p' | 'P') ('+' | '-')? Digit+)?
+Imaginary                ::= (('+' | '-')? Real '*' 'i')
+Digit                    ::= [0-9]
 
-whitespace               ::= [#x0009#x000A#x000D#x0020]+
+WhiteSpace               ::= [#x0009#x000A#x000D#x0020]+

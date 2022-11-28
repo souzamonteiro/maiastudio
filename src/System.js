@@ -320,6 +320,50 @@ function System() {
     }
 
     /**
+     * Disassemble a code in WebAssembly in binary format.
+     * @param {object}  wasm - WebAssembly in binary format.
+     * @return          WebAssembly module in text format.
+     */
+     this.wasm2wat = function(wasm) {
+        if (typeof process != 'undefined') {
+            var fs = require('fs');
+            var realPath = fs.realpathSync(process.argv[1]);
+            var filePath = realPath.split("/");
+            filePath = core.slice(filePath, 0, filePath.length - 2);
+            filePath = filePath.join("/");
+            var scriptPath = filePath;
+            var wasmLibrary = scriptPath + "/js/wast.js";
+            var wast = require(wasmLibrary);
+
+            return wast.WebAssemblyText.decode(wasm, wasm.length);
+        } else {
+            return WebAssemblyText.decode(wasm, wasm.length);
+        }
+    }
+
+    /**
+     * Assemble a code in WebAssembly in text format.
+     * @param {object}  wat - WebAssembly in text format.
+     * @return          WebAssembly module in binary format.
+     */
+    this.wat2wasm = function(wat) {
+        if (typeof process != 'undefined') {
+            var fs = require('fs');
+            var realPath = fs.realpathSync(process.argv[1]);
+            var filePath = realPath.split("/");
+            filePath = core.slice(filePath, 0, filePath.length - 2);
+            filePath = filePath.join("/");
+            var scriptPath = filePath;
+            var wasmLibrary = scriptPath + "/js/wast.js";
+            var wast = require(wasmLibrary);
+
+            return wast.WebAssemblyText.encode(wat);
+        } else {
+            return WebAssemblyText.encode(wat);
+        }
+    }
+    
+    /**
      * Writes data to storage.
      * @param {object}  obj - Object to store data: {'key': value, 'key': value, ...}
      * @param {object}  callBack - Callback function to call after access to storage.

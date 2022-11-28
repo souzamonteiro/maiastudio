@@ -1,0 +1,81 @@
+// An in-line function.
+f(x) = 2 * x ** 2 + x - 1
+system.println(f(2))
+
+// A simple function.
+g(n) {
+    if (n == 0 || n == 1) {
+        return 1
+    }
+    return n * g(n - 1)
+}
+system.println(g(5))
+
+h(x, y, z) {
+    return x + y + z
+}
+
+// An asynchronous function.
+f1(x) ?= {
+    return x
+}
+// A synchronous function call.
+//a ?= f1(2)
+//system.println(a)
+
+// A parallel function.
+f2(x) #= {
+    return x
+}
+// A parallel function runs synchronously if a thread is not created for it.
+b = f2(2)
+system.println(b)
+
+// An object constructor.
+f3(x) := {
+    y = x
+    return this.y
+}
+// Creating an object.
+c := f3(2)
+system.println(JSON.stringify(c))
+
+// A function in MaiaAssembly.
+i32 f4(i32 a, i32 b) {
+    c = a + b;
+    return c;
+}
+// Calling an MaiaAssembly function.
+d = f4(1, 2)
+system.println(d)
+
+// A function in JavaScript.
+f5(x) /{
+    y = x + 1;
+    return y;
+}/
+// Calling a JavaScript function.
+e = f5(2)
+system.println(e)
+
+// A function in WebAssembly.
+i32 f6(i32 a, i32 b) /{
+    (i32.add
+      (local.get $a)
+      (local.get $b)
+    )
+}/
+// Calling an WebAssembly function.
+f = f6(3, 4)
+system.println(f)
+
+// A function in WebAssembly.
+i32 f7(i32 a, i32 b) /{
+    (i32.mul
+      (local.get $a)
+      (local.get $b)
+    )
+}/
+// Calling an WebAssembly function.
+f = f7(5, 6)
+system.println(f)

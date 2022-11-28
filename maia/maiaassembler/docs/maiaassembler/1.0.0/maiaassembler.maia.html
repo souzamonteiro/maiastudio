@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: maiaassembler.maia</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: maiaassembler.maia</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>#!/usr/bin/env maiascript
+
+///
+/// @license
+/// Copyright 2020 Roberto Luiz Souza Monteiro,
+///                Renata Souza Barreto,
+///                Hernane Borges de Barros Pereira.
+///
+/// Licensed under the Apache License, Version 2.0 (the "License")
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///   http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, eitherMath.express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+///
+
+///
+/// MaiaAssembler core class.
+/// @namespace maiaassembler
+///
+maiaassembler {
+    appTitle = "MaiaAssembler"
+    appName = "maiaassembler"
+
+    wasmLibrary = this.scriptPath + "/js/wast.js"
+
+    /// Starts the application and processes the data passed as command line arguments.
+    /// @method run
+    /// @memberof maiaassembler
+    run() {
+        // Supports only the Node.js interpreter.
+        if (typeof(process) != "undefined") {
+            command = "node"
+            
+            fs = system.require("fs")
+            buffer = system.require("buffer")
+            Buffer = buffer.Buffer
+
+            realPath = fs.realpathSync(system.argv[0])
+            filePath = realPath.split("/")
+            filePath = core.slice(filePath, 0, filePath.length - 2)
+            filePath = filePath.join("/")
+            this.scriptPath = filePath
+            
+            this.wasmLibrary = this.scriptPath + "/js/wast.js"
+            wast = system.require(this.wasmLibrary)
+            
+            // Command line options.
+            inputFile = ""
+            outputFile = ""
+            disassemble = false
+            
+            // Get command line arguments.
+            if (system.argc > 1) {
+                i = 1
+                while (i &lt; system.argc) {
+                    if ((system.argv[i] == "-h") || (system.argv[i] == "--help")) {
+                        system.log(this.appTitle + " Command Line Interface (CLI)")
+                        system.log("Usage: " + this.appName + " [options] [input file] [--] [arguments]")
+                        system.log("Options:")
+                        system.log("-h     --help               Displays this help message.")
+                        system.log("-o     [output file]        Output file name.")
+                        system.log("-d     --disassemble        Disassembles the WebAssembly module.")
+                        process.exit(0)
+                    } else if (system.argv[i] == "-o") {
+                        i++
+                        outputFile = system.argv[i]
+                    } else if ((system.argv[i] == "-d") || (system.argv[i] == "--disassemble")) {
+                        disassemble = true
+                    } else {
+                        inputFile = system.argv[i]
+                        break
+                    }
+                    i++
+                }
+
+                if (inputFile != "") {
+                    local Glob = system.require("glob")
+                    // Process each file based on glob pattern.
+                    processFiles(er, files) {
+                        if (files.length == 0) {
+                            system.log(this.appTitle + " Command Line Interface (CLI)")
+                            system.log("Usage: " + this.appName + " [options] [input file] [--] [arguments]")
+                        } else {
+                            for (i = 0; i &lt; files.length; i++) {
+                                // Get the full file name.
+                                file = files[i]
+                                
+                                // Get the file without extension.
+                                fileName = file.split(".")
+                                fileName = fileName.shift()
+                                // Get the file name extension.
+                                fileExtension = file.split(".")
+                                fileExtension = fileExtension.pop()
+
+                                // Read the file contents.
+
+                                if (!disassemble) {
+                                    fileContents = fs.readFileSync(String(file), "utf-8")
+                                } else {
+                                    fileContents = fs.readFileSync(String(file))
+                                }
+
+                                // Turns a module in S-expression syntax into a WebAssembly binary.
+                                if (!disassemble) {
+                                    wasmBinary = wast.WebAssemblyText.encode(fileContents)
+                                    outputContents = Buffer.from(wasmBinary)
+
+                                    // Sets the output file.
+                                    if (outputFile == "") {
+                                        outputFile = fileName + ".wasm"
+                                    }
+                                    // Saves the output file.
+
+                                    fs.writeFileSync(outputFile, outputContents)
+                                // Pretty-prints a binary back into a canonicalised S-expression string.
+                                } else {
+                                    wasmText = wast.WebAssemblyText.decode(fileContents, fileContents.length)
+                                    outputContents = wasmText
+
+                                    // Sets the output file.
+                                    if (outputFile == "") {
+                                        outputFile = fileName + ".wat"
+                                    }
+                                    // Saves the output file.
+                                    fs.writeFileSync(outputFile, outputContents)
+                                }
+                            }
+                        }
+                    }
+
+                    options = {}
+
+                    // Get all file names based on glob pattern.
+                    local glob := Glob(inputFile, options, processFiles)
+                } else {
+                    system.log(this.appTitle + " Command Line Interface (CLI)")
+                    system.log("Usage: " + this.appName + " [options] [input file] [--] [arguments]")
+                }
+            } else {
+                system.log(this.appTitle + " Command Line Interface (CLI)")
+                system.log("Usage: " + this.appName + " [options] [input file] [--] [arguments]")
+            }
+        }
+    }
+}
+
+// Run the maiaassembler code if this script has been invoked
+// from the command line.
+if (typeof(process) != "undefined") {
+    maiaassembler.run()
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="maiaassembler.html">maiaassembler</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Nov 14 2022 23:57:32 GMT+0000 (Coordinated Universal Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

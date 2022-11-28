@@ -1,0 +1,451 @@
+{
+    "Program": {
+        "Expression": {
+            "Statement": {
+                "Try": {
+                    "TOKEN": "try",
+                    "Expression": {
+                        "Block": {
+                            "TOKEN": [
+                                "{",
+                                "}"
+                            ],
+                            "Expression": [
+                                {
+                                    "Operation": {
+                                        "Op": [
+                                            {
+                                                "Primary": {
+                                                    "Member": {
+                                                        "Identifier": "x"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "Primary": {
+                                                    "Value": {
+                                                        "String": "\"50\""
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "="
+                                    }
+                                },
+                                {
+                                    "Statement": {
+                                        "If": {
+                                            "TOKEN": [
+                                                "if",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "Expression": [
+                                                {
+                                                    "Operation": {
+                                                        "Op": [
+                                                            {
+                                                                "Primary": {
+                                                                    "Member": {
+                                                                        "Identifier": "x"
+                                                                    }
+                                                                }
+                                                            },
+                                                            {
+                                                                "Primary": {
+                                                                    "Value": {
+                                                                        "String": "\"\""
+                                                                    }
+                                                                }
+                                                            }
+                                                        ],
+                                                        "TOKEN": "=="
+                                                    }
+                                                },
+                                                {
+                                                    "Statement": {
+                                                        "Throw": {
+                                                            "TOKEN": "throw",
+                                                            "Expression": {
+                                                                "Operation": {
+                                                                    "Primary": {
+                                                                        "ParenthesizedExpression": {
+                                                                            "TOKEN": [
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "Expression": {
+                                                                                "Operation": {
+                                                                                    "Primary": {
+                                                                                        "Value": {
+                                                                                            "String": "\"empty\""
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "Statement": {
+                                        "If": {
+                                            "TOKEN": [
+                                                "if",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "Expression": [
+                                                {
+                                                    "Operation": {
+                                                        "Primary": {
+                                                            "Member": {
+                                                                "Identifier": "isNaN",
+                                                                "TOKEN": [
+                                                                    "(",
+                                                                    ")"
+                                                                ],
+                                                                "Arguments": {
+                                                                    "Expression": {
+                                                                        "Operation": {
+                                                                            "Primary": {
+                                                                                "Member": {
+                                                                                    "Identifier": "x"
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "Block": {
+                                                        "TOKEN": [
+                                                            "{",
+                                                            "}"
+                                                        ],
+                                                        "Expression": {
+                                                            "Statement": {
+                                                                "Throw": {
+                                                                    "TOKEN": "throw",
+                                                                    "Expression": {
+                                                                        "Operation": {
+                                                                            "Primary": {
+                                                                                "ParenthesizedExpression": {
+                                                                                    "TOKEN": [
+                                                                                        "(",
+                                                                                        ")"
+                                                                                    ],
+                                                                                    "Expression": {
+                                                                                        "Operation": {
+                                                                                            "Primary": {
+                                                                                                "Value": {
+                                                                                                    "String": "\"not a number\""
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "Operation": {
+                                        "Op": [
+                                            {
+                                                "Primary": {
+                                                    "Member": {
+                                                        "Identifier": "x"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "Primary": {
+                                                    "Member": {
+                                                        "Identifier": "Number",
+                                                        "TOKEN": [
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "Arguments": {
+                                                            "Expression": {
+                                                                "Operation": {
+                                                                    "Primary": {
+                                                                        "Member": {
+                                                                            "Identifier": "x"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "TOKEN": "="
+                                    }
+                                },
+                                {
+                                    "Statement": {
+                                        "If": {
+                                            "TOKEN": [
+                                                "if",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "Expression": [
+                                                {
+                                                    "Operation": {
+                                                        "Op": [
+                                                            {
+                                                                "Primary": {
+                                                                    "Member": {
+                                                                        "Identifier": "x"
+                                                                    }
+                                                                }
+                                                            },
+                                                            {
+                                                                "Primary": {
+                                                                    "Value": {
+                                                                        "Integer": "5"
+                                                                    }
+                                                                }
+                                                            }
+                                                        ],
+                                                        "TOKEN": "<"
+                                                    }
+                                                },
+                                                {
+                                                    "Block": {
+                                                        "TOKEN": [
+                                                            "{",
+                                                            "}"
+                                                        ],
+                                                        "Expression": {
+                                                            "Statement": {
+                                                                "Throw": {
+                                                                    "TOKEN": "throw",
+                                                                    "Expression": {
+                                                                        "Operation": {
+                                                                            "Primary": {
+                                                                                "ParenthesizedExpression": {
+                                                                                    "TOKEN": [
+                                                                                        "(",
+                                                                                        ")"
+                                                                                    ],
+                                                                                    "Expression": {
+                                                                                        "Operation": {
+                                                                                            "Primary": {
+                                                                                                "Value": {
+                                                                                                    "String": "\"too low\""
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "Statement": {
+                                        "If": {
+                                            "TOKEN": [
+                                                "if",
+                                                "(",
+                                                ")"
+                                            ],
+                                            "Expression": [
+                                                {
+                                                    "Operation": {
+                                                        "Op": [
+                                                            {
+                                                                "Primary": {
+                                                                    "Member": {
+                                                                        "Identifier": "x"
+                                                                    }
+                                                                }
+                                                            },
+                                                            {
+                                                                "Primary": {
+                                                                    "Value": {
+                                                                        "Integer": "10"
+                                                                    }
+                                                                }
+                                                            }
+                                                        ],
+                                                        "TOKEN": ">"
+                                                    }
+                                                },
+                                                {
+                                                    "Statement": {
+                                                        "Throw": {
+                                                            "TOKEN": "throw",
+                                                            "Expression": {
+                                                                "Operation": {
+                                                                    "Primary": {
+                                                                        "ParenthesizedExpression": {
+                                                                            "TOKEN": [
+                                                                                "(",
+                                                                                ")"
+                                                                            ],
+                                                                            "Expression": {
+                                                                                "Operation": {
+                                                                                    "Primary": {
+                                                                                        "Value": {
+                                                                                            "String": "\"too high\""
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Catch": {
+                        "TOKEN": [
+                            "catch",
+                            "(",
+                            ")"
+                        ],
+                        "Expression": [
+                            {
+                                "Operation": {
+                                    "Primary": {
+                                        "Member": {
+                                            "Identifier": "err"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Block": {
+                                    "TOKEN": [
+                                        "{",
+                                        "}"
+                                    ],
+                                    "Expression": [
+                                        {
+                                            "Operation": {
+                                                "Primary": {
+                                                    "Member": {
+                                                        "Identifier": [
+                                                            "system",
+                                                            "print"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "Arguments": {
+                                                            "Expression": {
+                                                                "Operation": {
+                                                                    "Primary": {
+                                                                        "Value": {
+                                                                            "String": "\"Error: \""
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Operation": {
+                                                "Primary": {
+                                                    "Member": {
+                                                        "Identifier": [
+                                                            "system",
+                                                            "println"
+                                                        ],
+                                                        "TOKEN": [
+                                                            ".",
+                                                            "(",
+                                                            ")"
+                                                        ],
+                                                        "Arguments": {
+                                                            "Expression": {
+                                                                "Operation": {
+                                                                    "Op": [
+                                                                        {
+                                                                            "Primary": {
+                                                                                "Value": {
+                                                                                    "String": "\"input is \""
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "Primary": {
+                                                                                "Member": {
+                                                                                    "Identifier": "err"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "Primary": {
+                                                                                "Value": {
+                                                                                    "String": "\"!\""
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "TOKEN": [
+                                                                        "+",
+                                                                        "+"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

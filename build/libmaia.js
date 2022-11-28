@@ -6211,7 +6211,7 @@ function Core() {
      * This property needs to be updated
      * with each new version of MaiaStudio.
      */
-    this.version = "3.9.11";
+    this.version = "4.0.0";
 
     this.testResult = {
         "expected": {},
