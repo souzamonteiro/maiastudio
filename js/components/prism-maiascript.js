@@ -14,7 +14,7 @@ Prism.languages.maiascript = {
 		pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,
 		greedy: true
 	},
-	'keyword': /\b(?:break|case|catch|continue|default|do|else|export|f32|f64|for|foreach|i32|i64|if|import|include|global|local|null|return|switch|test|throw|try|while)\b/,
+	'keyword': /\b(?:break|case|catch|continue|default|do|else|export|f32|f64|for|foreach|i32|i64|if|import|include|global|local|null|return|switch|test|throw|try|typeof|while)\b/,
 	'boolean': /\b(?:true|false)\b/,
 	'function': /\w+(?=\()/,
 	'number': /\b0x[\da-f]+\b|(?:\b\d+\.?\d*|\B\.\d+)(?:e[+-]?\d+)?/i,
