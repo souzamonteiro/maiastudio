@@ -1,0 +1,64 @@
+// Create two 512x512 matrices.
+a = core.zero(512, 512)
+b = core.zero(512, 512)
+
+// Fill the matrices.
+for (i = 0; i < 512; i++) {
+    for (j = 0; j < 512; j++) {
+        v = i * 512 + j
+        a[i, j] = v
+        b[i, j] = v
+    }
+}
+
+// Compute shader.
+shader(a, b) #= {
+    local sum = 0
+    for (local i = 0; i < 512; i++) {
+        sum = sum + a[this.thread.y, i] * b[i, this.thread.x]
+    }
+    return(sum)
+}
+
+// Computation function using the GPU.
+useGPU() ?= {
+    device = gpu.new()
+    multiplyMatrices = device.createKernel(shader)
+    multiplyMatrices.setOutput([512, 512])
+    
+    startTime := Date()
+    c = multiplyMatrices(a, b)
+    endTime := Date()
+    
+    elapsedTime = endTime - startTime
+    
+    system.log("GPU result:")
+    system.log("c[511,511]: " + c[511,511])
+    system.log("Elapsed time: " + elapsedTime + " ms\n")
+}
+
+// Computation function using the CPU.
+useCPU() ?= {
+    startTime := Date()
+    d = core.zero(512, 512)
+    for (i = 0; i < 512; i++) {
+        for (j = 0; j < 512; j++) {
+            s = 0
+            for (k = 0; k < 512; k++) {
+                s = s + a[i, k] * b[k, j]
+            }
+            d[i, j] = s
+        }
+    }
+    endTime := Date()
+    
+    elapsedTime = endTime - startTime
+    
+    system.log("CPU result:")
+    system.log("d[511,511]: " + d[511,511])
+    system.log("Elapsed time: " + elapsedTime + " ms\n")
+}
+
+// Start computation.
+useGPU()
+useCPU()

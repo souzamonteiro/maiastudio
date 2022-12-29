@@ -131,6 +131,29 @@ function MaiaVM() {
                     var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
                     var compiler = new MaiaCompiler();
                     compiledCode = compiler.compile(xml, false, indentationLength);
+                    
+                    var js = '';
+                    if (compiledCode.wat.length > 0) {
+                        var serialNumber = Date.now();
+                        var textWasmVar = 'textWasm_' + serialNumber;
+                        var binaryWasmVar = 'binaryWasm_' + serialNumber;
+                        var wasmModuleVar = 'wasmModule_' + serialNumber;
+                        var wasmInstanceVar = 'wasmInstance_' + serialNumber;
+                        js += 'var ' + textWasmVar + ' = ' + JSON.stringify(compiledCode.wat) + ';' + (indentCode ? '\n' : '');
+                        js += 'var ' + binaryWasmVar + ' = system.wat2wasm(' + textWasmVar + ');' + (indentCode ? '\n' : '');
+                        js += 'var ' + wasmModuleVar + ' = new WebAssembly.Module(' + binaryWasmVar + ');' + (indentCode ? '\n' : '');
+                        js += 'var ' + wasmInstanceVar + ' = new WebAssembly.Instance(' + wasmModuleVar + ', {});' + (indentCode ? '\n' : '');
+                    }
+                    if (compiledCode.exports.length > 0) {
+                        var names = '';
+                        for (j = 0; j < compiledCode.exports.length; j++) {
+                            var wasmExport = compiledCode.exports[j];
+                            names += wasmExport.target + (j < compiledCode.exports.length - 1 ? ', ' : '');
+                        }
+                        js += 'var {' + names + '} = ' + wasmInstanceVar + '.exports;' + (indentCode ? '\n' : '');
+                    }
+                    compiledCode.js = js + compiledCode.js;
+
                     try {
                         var script = document.createElement('script');
                         script.type = 'text/javascript';
@@ -264,7 +287,6 @@ function MaiaVM() {
                     compiledCode = compiler.compile(xml, indentCode, indentationLength);
 
                     var js = '';
-
                     if (compiledCode.wat.length > 0) {
                         var serialNumber = Date.now();
                         var textWasmVar = 'textWasm_' + serialNumber;

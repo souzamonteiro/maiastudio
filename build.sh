@@ -9,22 +9,19 @@ cat src/MaiaScript.js src/ComplexNumber.js src/MaiaCompiler.js src/Core.js src/S
 
 cp build/maiascript.js bin/
 cp build/maiascript.js js/
-cp build/maiascript.js examples/js/
 cp build/libmaia.js js/
 
 chmod 755 bin/*
 
-bin/maiascript.js -c -o build/cna.js ./maia/cna/cna.maia
-cp build/cna.js js/
-bin/maiascript.js -c -o build/snet.js ./maia/snet/snet.maia
-cp build/snet.js js/
-bin/maiascript.js -c -o build/recorder.js ./maia/maiarecorder/maia/recorder.maia
-cp build/recorder.js js/
-
 jsdoc -d ./docs ./package.json ./src
 jsdoc -c ./jsdoc.json -d ./docs ./maia/cna/package.json ./maia/cna
-jsdoc -c ./jsdoc.json -d ./docs ./maia/snet/package.json ./maia/snet/
+jsdoc -c ./jsdoc.json -d ./docs ./maia/dfa/package.json ./maia/dfa
 jsdoc -c ./jsdoc.json -d ./docs ./maia/maiarecorder/package.json ./maia/maiarecorder/maia/
+jsdoc -c ./jsdoc.json -d ./docs ./maia/snet/package.json ./maia/snet/
+jsdoc -c ./jsdoc.json -d ./docs ./maia/statistics/package.json ./maia/statistics/
 
 mkdir docs/grammar
+mkdir docs/guide
+
 cp -r grammar/MaiaScript.xhtml docs/grammar
+cp -r md/*.html docs/guide

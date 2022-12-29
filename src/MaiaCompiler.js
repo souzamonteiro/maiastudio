@@ -963,7 +963,7 @@ function MaiaCompiler() {
                         };
                         var condition = this.parse(nodeCondition, nodeInfo, isKernelFunction);
                     }
-                    js += 'do {' + (nodeInfo.indentCode ? '\n' : '') + body + '} while (' + condition + ')';
+                    js += 'do {' + (nodeInfo.indentCode ? '\n' : '') + body + core.space(nodeInfo.indentation) + '} while (' + condition + ')';
                 }
             }
             parentNodeInfo.terminalNode = 'Do';
@@ -1006,7 +1006,7 @@ function MaiaCompiler() {
                             }
                         }
                     }
-                    js += 'while (' + condition + ') {' + (nodeInfo.indentCode ? '\n' : '') + body + '}';
+                    js += 'while (' + condition + ') {' + (nodeInfo.indentCode ? '\n' : '') + body + core.space(nodeInfo.indentation) + '}';
                 }
             }
             parentNodeInfo.terminalNode = 'While';
@@ -1062,7 +1062,7 @@ function MaiaCompiler() {
                             }
                         }
                     }
-                    js += 'for (' + before + ';' + condition + ';' + after + ') {' + (nodeInfo.indentCode ? '\n' : '') + body + '}';
+                    js += 'for (' + before + ';' + condition + ';' + after + ') {' + (nodeInfo.indentCode ? '\n' : '') + body + core.space(nodeInfo.indentation) + '}';
                 }
             }
             parentNodeInfo.terminalNode = 'For';
@@ -1116,7 +1116,7 @@ function MaiaCompiler() {
                             }
                         }
                     }
-                    js += 'for (' + keyVarName + ' in ' + arrayName + ') {' + (nodeInfo.indentCode ? '\n' : '') + (nodeInfo.indentCode ? core.space(nodeInfo.indentationLength) : '') + 'var ' + valueVarName + ' = ' + arrayName + '[' + keyVarName + '];' + (nodeInfo.indentCode ? '\n' : '') + body + '}';
+                    js += 'for (' + keyVarName + ' in ' + arrayName + ') {' + (nodeInfo.indentCode ? '\n' : '') + (nodeInfo.indentCode ? core.space(nodeInfo.indentationLength) : '') + 'var ' + valueVarName + ' = ' + arrayName + '[' + keyVarName + '];' + (nodeInfo.indentCode ? '\n' : '') + body + core.space(nodeInfo.indentation) + '}';
                 }
             }
             parentNodeInfo.terminalNode = 'ForEach';
@@ -1317,6 +1317,24 @@ function MaiaCompiler() {
                     js += 'throw ' + returnValue;
                 } else {
                     js += 'throw';
+                }
+            }
+        } else if ('TypeOf' in mil) {
+            node = mil['TypeOf'];
+            var nodeInfo = {
+                'parentNode': 'TypeOf',
+                'childNode': '',
+                'terminalNode' : 'TypeOf',
+                'indentation': parentNodeInfo.indentation,
+                'indentationLength': parentNodeInfo.indentationLength,
+                'indentCode': parentNodeInfo.indentCode
+            };
+            parentNodeInfo.childNode = 'TypeOf';
+
+            if (typeof node != 'undefined') {
+                if ('Expression' in node) {
+                    var returnValue = this.parse(node, nodeInfo, isKernelFunction);
+                    js += 'typeof ' + returnValue;
                 }
             }
         } else if ('Operation' in mil) {
@@ -1750,7 +1768,7 @@ function MaiaCompiler() {
                     if (Array.isArray(nodeExpression)) {
                         for (var i = 0; i < nodeExpression.length; i++) {
                             if (i < (nodeExpression.length - 1)) {
-                                js += this.parse(nodeExpression[i], nodeInfo, isKernelFunction) + ',';
+                                js += this.parse(nodeExpression[i], nodeInfo, isKernelFunction) + ';';
                                 parentNodeInfo.terminalNode = nodeInfo.terminalNode;
                             } else {
                                 js += this.parse(nodeExpression[i], nodeInfo, isKernelFunction);
@@ -1843,7 +1861,7 @@ function MaiaCompiler() {
             parentNodeInfo.terminalNode = 'Character';
 
             if (typeof node == 'string') {
-                js += node.replace("'", "");
+                js += node;
             }
         } else if ('String' in mil) {
             node = mil['String'];
@@ -2072,7 +2090,7 @@ function MaiaCompiler() {
         if (typeof indentationLength == 'undefined') {
             indentationLength = 4;
         }
-
+        
         var nodeInfo = {
             'parentNode': '',
             'childNode': 'Program',

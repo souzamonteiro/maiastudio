@@ -1,0 +1,26 @@
+// Uma função paralela.
+task1() #= {
+    i = 0
+    timedCount() #= {
+        i++
+        postMessage(i)
+        if (i < 10) {
+            setTimeout(timedCount(), 500)
+        }
+    }
+    timedCount()
+}
+
+onMessage1(m) {
+    system.log("Task 1: " + m.data)
+    if (m.data >= 5) {
+        t1.terminate()
+    }
+}
+
+try {
+    t1 = task.new(task1)
+    t1.onmessage = onMessage1
+} catch (e) {
+    system.log(e.message)
+}

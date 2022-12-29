@@ -1,6 +1,7 @@
 a = 0
 b = [1, 2, 3]
 c = {a: 1, b: 2}
+c = [1, 2, 3; 4, 5, 6]
 
 do {
     system.println(a)
@@ -25,6 +26,14 @@ for (a = 0; a < 10; ++a) {
 
 for (i = 0; i < b.length; i++) {
     system.println(b[i])
+}
+
+dimC = core.dim(c)
+
+for (i = 0; i < dimC[0]; i++) {
+    for (j = 0; j < dimC[1]; j++) {
+        system.println(c[i, j] + (j < dimC[1] - 1 ? '\t' : '\n'))
+    }
 }
 
 // A TCL-like foreach statement.
