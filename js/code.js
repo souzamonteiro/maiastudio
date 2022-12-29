@@ -32,8 +32,14 @@ var fileData;
 compiledCode = {
     'xml': '',
     'mil': '',
-    'js': ''
+    'js': '',
+    'wat': '',
+    'wasm': '',
+    'exports': []
 }
+
+var indentCode = true;
+var indentationLength = 4;
 
 /**
  * Call the startup function when the document has finished to load.
@@ -232,7 +238,7 @@ function compileAndRun() {
         var xml = parser.parseFromString(compiledCode.xml, 'text/xml');
 
         var compiler = new MaiaCompiler();
-        compiledCode.js = compiler.compile(xml);
+        compiledCode = compiler.compile(xml, indentCode, indentationLength);
     } else if (editorMode == 'mil') {
         var mil = JSON.parse(code);
         var nodeInfo = {
@@ -259,6 +265,27 @@ function compileAndRun() {
         var win = window.open("", fileName + '.' + fileExtension, "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600,top=0,left=0");
         win.document.body.innerHTML = html;
     } else if ((editorMode == 'maia') || (editorMode == 'mil') || (editorMode == 'js')) {
+        var js = '';
+        if (compiledCode.wat.length > 0) {
+            var serialNumber = Date.now();
+            var textWasmVar = 'textWasm_' + serialNumber;
+            var binaryWasmVar = 'binaryWasm_' + serialNumber;
+            var wasmModuleVar = 'wasmModule_' + serialNumber;
+            var wasmInstanceVar = 'wasmInstance_' + serialNumber;
+            js += 'var ' + textWasmVar + ' = ' + JSON.stringify(compiledCode.wat) + ';' + (indentCode ? '\n' : '');
+            js += 'var ' + binaryWasmVar + ' = system.wat2wasm(' + textWasmVar + ');' + (indentCode ? '\n' : '');
+            js += 'var ' + wasmModuleVar + ' = new WebAssembly.Module(' + binaryWasmVar + ');' + (indentCode ? '\n' : '');
+            js += 'var ' + wasmInstanceVar + ' = new WebAssembly.Instance(' + wasmModuleVar + ', {});' + (indentCode ? '\n' : '');
+        }
+        if (compiledCode.exports.length > 0) {
+            var names = '';
+            for (j = 0; j < compiledCode.exports.length; j++) {
+                var wasmExport = compiledCode.exports[j];
+                names += wasmExport.target + (j < compiledCode.exports.length - 1 ? ', ' : '');
+            }
+            js += 'var {' + names + '} = ' + wasmInstanceVar + '.exports;' + (indentCode ? '\n' : '');
+        }
+        compiledCode.js = js + compiledCode.js;
         try {
             eval(compiledCode.js);
         } catch (e) {

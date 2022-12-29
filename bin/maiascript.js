@@ -27679,6 +27679,9 @@ function MaiaVM() {
      */
     this.compile = function() {
         var scripts = document.querySelectorAll('script[type="text/maiascript"]');
+        var indentCode = true;
+        var indentationLength = 4;
+        
         for (index in scripts) {
             if (typeof scripts[index].getAttribute != 'undefined') {
                 var fileName = scripts[index].getAttribute('src');
