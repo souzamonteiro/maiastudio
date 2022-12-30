@@ -473,9 +473,14 @@ function MaiaCompiler() {
                         }
 
                         var nodeScript = node['Script'];
-                        var body = nodeScript.replace("/{", "").replace("}/", "")
-                        wat += body + (nodeInfo.indentCode ? '\n' : '') + core.space(nodeInfo.indentation) + ')' + (nodeInfo.indentCode ? '\n' : '');
-
+                        var body = core.trim(nodeScript.replace('/{', '').replace('}/', ''), ' \t\r\n');
+                        if (nodeInfo.indentCode) {
+                            nodeInfo.indentation += nodeInfo.indentationLength;
+                        }
+                        wat += (nodeInfo.indentCode ? '\n' : ' ') + core.space(nodeInfo.indentation) + body + (nodeInfo.indentCode ? '\n' : '') + ')' + (nodeInfo.indentCode ? '\n' : ' ');
+                        if (nodeInfo.indentCode) {
+                            nodeInfo.indentation -= nodeInfo.indentationLength;
+                        }
                         watCode += wat;
 
                         wasmExport = {
@@ -489,94 +494,14 @@ function MaiaCompiler() {
                                 'Identifier': node['Identifier']
                             };
                             var name = this.parse(nodeIdentifier, nodeInfo, isKernelFunction);
-    
-                            if ('TOKEN' in node) {
-                                if (node['TOKEN'].length == 3) {
-                                    var token = node['TOKEN'][2];
-                                    if (token == '=') {
-                                        var statement = "FunctionAssignment";
-                                        js += name + ' = function ';
-                                    } else if (token == '?=') {
-                                        var statement = "AsyncFunction";
-                                        js += name + ' = async function ';
-                                    } else if (token == ':=') {
-                                        var statement = "Constructor";
-                                        nodeInfo.parentNode = 'NamespaceDeclaration';
-                                        js += name + ' = function ';
-                                    } else if (token == '#=') {
-                                        var statement = "KernelFunction";
-                                        js += name + ' = function ';
-                                    } else {
-                                        var statement = "FunctionDeclaration";
-                                        js += name + ' = function ';
-                                    }
-                                } else {
-                                    var statement = "FunctionDeclaration";
-                                    js += name + ' = function ';
-                                }
-                            } else {
-                                var statement = 'FunctionDeclaration';
-                                js += name + ' = function ';
-                            }
-                            
-                            if ('Arguments' in node) {
-                                var nodeArguments = {
-                                    'Arguments': node['Arguments']
-                                };
-                                var args = this.parse(nodeArguments, nodeInfo, isKernelFunction);
-                                js += '(' + args + ')';
-                            } else {
-                                js += '()';
-                            }
 
-                            if ('Expression' in node) {
-                                var nodeExpression = {
-                                    'Expression': node['Expression']
-                                };
-                                if (nodeInfo.indentCode) {
-                                    nodeInfo.indentation += nodeInfo.indentationLength;
-                                }
-                                if (statement == 'FunctionAssignment') {
-                                    var body = core.space(nodeInfo.indentation) + 'return ' + core.trim(this.parse(nodeExpression, nodeInfo, isKernelFunction)) + (nodeInfo.indentCode ? '\n' : '');
-                                } else if (statement == 'KernelFunction') {
-                                        var body = this.parse(nodeExpression, nodeInfo, true);
-                                } else {
-                                    var body = this.parse(nodeExpression, nodeInfo, isKernelFunction);
-                                }
-                                if (nodeInfo.indentCode) {
-                                    nodeInfo.indentation -= nodeInfo.indentationLength;
-                                }
-                                js += ' {' + (nodeInfo.indentCode ? '\n' : '') + body + core.space(nodeInfo.indentation) + '}';
-                            } else {
-                                if ('Block' in node) {
-                                    var nodeBlock = node['Block'];
-                                    if ('Expression' in nodeBlock) {
-                                        var nodeExpression = {
-                                            'Expression': nodeBlock['Expression']
-                                        };
-                                        if (nodeInfo.indentCode) {
-                                            nodeInfo.indentation += nodeInfo.indentationLength;
-                                        }
-                                        if (statement == 'KernelFunction') {
-                                            var body = this.parse(nodeExpression, nodeInfo, true);
-                                        } else {
-                                            var body = this.parse(nodeExpression, nodeInfo, isKernelFunction);
-                                        }
-                                        if (nodeInfo.indentCode) {
-                                            nodeInfo.indentation -= nodeInfo.indentationLength;
-                                        }
-                                        js += ' {' + (nodeInfo.indentCode ? '\n' : '') + body + core.space(nodeInfo.indentation) + '}';
-                                    } else {
-                                        js += ' {}';
-                                    }
-                                } else {
-                                    if ('Script' in node) {
-                                        var nodeScript = node['Script'];
-                                        var body = nodeScript.replace("/{", "").replace("}/", "")
-                                        js += ' {' + body + core.space(nodeInfo.indentation) + '}';
-                                    }
-                                }
-                            }
+                            var nodeFunctionDeclaration = {
+                                'FunctionDeclaration': node
+                            };
+                            var maiaAssemblyCompiler = new MaiaAssemblyCompiler();
+                            var compiledCode = maiaAssemblyCompiler.compile(nodeFunctionDeclaration, parentNodeInfo.indentCode, parentNodeInfo.indentationLength);
+
+                            js += compiledCode.js;
                         }
                     }
                 } else {
@@ -2077,15 +2002,15 @@ function MaiaCompiler() {
     }
 
     /**
-     * Compiles the MaiaScript XML tree for JavaScript.
+     * Compiles the MaiaScript XML tree to JavaScript.
      * @param {xml}      xml - The XML data.
      * @param {boolean}  indentCode - Indent the output code.
      * @param {number}   indentationLength - Number of spaces in the indentation.
      * @return {object}  XML data converted to JavaScript and WebAssembly.
      */
     this.compile = function(xml, indentCode, indentationLength) {
-        if (typeof indent == 'undefined') {
-            indent = false;
+        if (typeof indentCode == 'undefined') {
+            indentCode = false;
         }
         if (typeof indentationLength == 'undefined') {
             indentationLength = 4;
